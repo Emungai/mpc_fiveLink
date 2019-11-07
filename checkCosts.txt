@@ -1,0 +1,43 @@
+**************************************************
+Checking cost value of DoubleSupportConstHeight:
+**************************************************
+        Cost 	        Value
+Cost: torque_DoubleSupportConstHeight 
+torque_DoubleSupportConstHeight 	 0.00000000E+00
+**************************************************
+**************************************************
+Checking cost value of ds1_LSlift:
+**************************************************
+        Cost 	        Value
+**************************************************
+**************************************************
+Checking cost value of LeftStanceLift:
+**************************************************
+        Cost 	        Value
+Cost: torque_DoubleSupportConstHeight 
+torque_DoubleSupportConstHeight 	 0.00000000E+00
+**************************************************
+**************************************************
+Checking cost value of LSlift_LSland:
+**************************************************
+        Cost 	        Value
+**************************************************
+**************************************************
+Checking cost value of LeftStanceLand:
+**************************************************
+        Cost 	        Value
+Cost: torque_DoubleSupportConstHeight 
+torque_DoubleSupportConstHeight 	 0.00000000E+00
+**************************************************
+**************************************************
+Checking cost value of LSland_DS2:
+**************************************************
+        Cost 	        Value
+**************************************************
+**************************************************
+Checking cost value of DoubleSupportDiffHeight:
+**************************************************
+        Cost 	        Value
+Cost: torque_DoubleSupportConstHeight 
+torque_DoubleSupportConstHeight 	 0.00000000E+00
+**************************************************
