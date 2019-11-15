@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Wed 6 Nov 2019 23:22:26 GMT-05:00
+ * Tue 12 Nov 2019 15:30:27 GMT-05:00
  */
 
 #ifndef J_D1Y_TIME_DOUBLESUPPORTCONSTHEIGHT_HH
@@ -14,7 +14,7 @@
 #include "math2mat.hpp"
 #include "mdefs.hpp"
 
-namespace DoubleSupportConstHeight
+namespace Pattern[DS1, Blank[opt]]
 {
 
   void J_d1y_time_DoubleSupportConstHeight_raw(double *p_output1, const double *var1,const double *var2,const double *var3,const double *var4,const double *var5,const double *var6,const double *var7);

@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Wed 6 Nov 2019 23:21:35 GMT-05:00
+ * Tue 12 Nov 2019 15:30:06 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -45,77 +45,77 @@ const double Degree = 0.01745329251994329576924;
  */
 static void output1(double *p_output1,const double *var1,const double *var2)
 {
-  double t17831;
-  double t17833;
-  double t17827;
-  double t17834;
-  double t14219;
-  double t17832;
-  double t17835;
-  double t17846;
-  double t17848;
-  double t17849;
-  double t17850;
-  double t17851;
-  double t14378;
-  double t14386;
-  double t17847;
-  double t17852;
-  double t17853;
-  double t17854;
-  double t17855;
-  double t17856;
-  double t17857;
-  double t17861;
-  double t17862;
-  double t17863;
-  double t17873;
-  double t17880;
-  double t17881;
-  double t17882;
-  double t17879;
-  double t17883;
-  double t17884;
-  double t17885;
-  double t17886;
-  double t17887;
-  t17831 = Cos(var1[3]);
-  t17833 = Sin(var1[2]);
-  t17827 = Cos(var1[2]);
-  t17834 = Sin(var1[3]);
-  t14219 = Cos(var1[4]);
-  t17832 = t17827*t17831;
-  t17835 = -1.*t17833*t17834;
-  t17846 = t17832 + t17835;
-  t17848 = -1.*t17831*t17833;
-  t17849 = -1.*t17827*t17834;
-  t17850 = t17848 + t17849;
-  t17851 = Sin(var1[4]);
-  t14378 = -1.*t14219;
-  t14386 = 1. + t14378;
-  t17847 = 0.4*t14386*t17846;
-  t17852 = -0.4*t17850*t17851;
-  t17853 = t14219*t17846;
-  t17854 = t17850*t17851;
-  t17855 = t17853 + t17854;
-  t17856 = 0.8*t17855;
-  t17857 = t17847 + t17852 + t17856;
-  t17861 = t17831*t17833;
-  t17862 = t17827*t17834;
-  t17863 = t17861 + t17862;
-  t17873 = t14219*t17850;
-  t17880 = -1.*t17827*t17831;
-  t17881 = t17833*t17834;
-  t17882 = t17880 + t17881;
-  t17879 = 0.4*t14386*t17850;
-  t17883 = -0.4*t17882*t17851;
-  t17884 = t17882*t17851;
-  t17885 = t17873 + t17884;
-  t17886 = 0.8*t17885;
-  t17887 = t17879 + t17883 + t17886;
-  p_output1[0]=var2[0] + t17857*var2[2] + t17857*var2[3] + (-0.4*t14219*t17846 + 0.4*t17851*t17863 + 0.8*(t17853 - 1.*t17851*t17863))*var2[4];
+  double t9335;
+  double t9337;
+  double t9331;
+  double t9338;
+  double t2987;
+  double t9336;
+  double t9339;
+  double t9350;
+  double t9352;
+  double t9394;
+  double t9395;
+  double t9396;
+  double t3411;
+  double t5758;
+  double t9351;
+  double t9397;
+  double t9398;
+  double t9399;
+  double t9400;
+  double t9401;
+  double t9402;
+  double t9406;
+  double t9407;
+  double t9408;
+  double t9418;
+  double t9425;
+  double t9426;
+  double t9427;
+  double t9424;
+  double t9428;
+  double t9429;
+  double t9430;
+  double t9431;
+  double t9432;
+  t9335 = Cos(var1[3]);
+  t9337 = Sin(var1[2]);
+  t9331 = Cos(var1[2]);
+  t9338 = Sin(var1[3]);
+  t2987 = Cos(var1[4]);
+  t9336 = t9331*t9335;
+  t9339 = -1.*t9337*t9338;
+  t9350 = t9336 + t9339;
+  t9352 = -1.*t9335*t9337;
+  t9394 = -1.*t9331*t9338;
+  t9395 = t9352 + t9394;
+  t9396 = Sin(var1[4]);
+  t3411 = -1.*t2987;
+  t5758 = 1. + t3411;
+  t9351 = 0.4*t5758*t9350;
+  t9397 = -0.4*t9395*t9396;
+  t9398 = t2987*t9350;
+  t9399 = t9395*t9396;
+  t9400 = t9398 + t9399;
+  t9401 = 0.8*t9400;
+  t9402 = t9351 + t9397 + t9401;
+  t9406 = t9335*t9337;
+  t9407 = t9331*t9338;
+  t9408 = t9406 + t9407;
+  t9418 = t2987*t9395;
+  t9425 = -1.*t9331*t9335;
+  t9426 = t9337*t9338;
+  t9427 = t9425 + t9426;
+  t9424 = 0.4*t5758*t9395;
+  t9428 = -0.4*t9427*t9396;
+  t9429 = t9427*t9396;
+  t9430 = t9418 + t9429;
+  t9431 = 0.8*t9430;
+  t9432 = t9424 + t9428 + t9431;
+  p_output1[0]=var2[0] + t9402*var2[2] + t9402*var2[3] + (-0.4*t2987*t9350 + 0.4*t9396*t9408 + 0.8*(t9398 - 1.*t9396*t9408))*var2[4];
   p_output1[1]=0;
-  p_output1[2]=var2[1] + t17887*var2[2] + t17887*var2[3] + (-0.4*t14219*t17850 + 0.4*t17846*t17851 + 0.8*(-1.*t17846*t17851 + t17873))*var2[4];
+  p_output1[2]=var2[1] + t9432*var2[2] + t9432*var2[3] + (-0.4*t2987*t9395 + 0.4*t9350*t9396 + 0.8*(-1.*t9350*t9396 + t9418))*var2[4];
 }
 
 
@@ -184,7 +184,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "dh_RightToe_DoubleSupportConstHeight.hh"
 
-namespace DoubleSupportConstHeight
+namespace Pattern[DS1, Blank[opt]]
 {
 
 void dh_RightToe_DoubleSupportConstHeight_raw(double *p_output1, const double *var1,const double *var2)

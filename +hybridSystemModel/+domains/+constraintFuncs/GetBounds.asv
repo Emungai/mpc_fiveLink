@@ -1,14 +1,21 @@
 function bounds =GetBounds(model,args)
-x_step=args.x_step;
-y_step=args.y_step;
-r_buff=args.r_buff;
+% x_step=args.x_step;
+% y_step=args.y_step;
+% r_buff=args.r_buff;
 
 common_bounds = model.getLimits();
 common_bounds.gains.kp =100;
 common_bounds.gains.kd = 20;
 
-common_bounds.I
+model_bounds.states.x.lb = [-10, 0.5, -1, 2, 0.5, 2, 0.5];
+model_bounds.states.x.ub = [10, 2, 1, 5, 2, 5, 2];
+model_bounds.states.dx.lb = -20*ones(1,7);
+model_bounds.states.dx.ub = 20*ones(1,7);
+model_bounds.states.ddx.lb = -100*ones(1,7);
+model_bounds.states.ddx.ub = 100*ones(1,7);
 
+
+bounds = struct();
 %% DS1
 bounds.DoubleSupportConstHeight=common_bounds;
 bounds.DoubleSupportConstHeight.time.t0.lb=0;
@@ -25,27 +32,31 @@ bounds.DoubleSupportConstHeight.constrBounds.feetPosDiff.ub=0;
 bounds.DoubleSupportConstHeight.constrBounds.feetPos.lb=[0;0];
 bounds.DoubleSupportConstHeight.constrBounds.feetPos.ub=[0;0];
 
+bounds.DoubleSupportConstHeight.gains.kp =100;
+bounds.DoubleSupportConstHeight.gains.kd = 20;
 
-%% LS_lift
-bounds.LeftStanceLift=common_bounds;
-bounds.LeftStanceLift.time.tf.lb = 1;
-bounds.LeftStanceLift.time.tf.ub = 2;
-bounds.LeftStanceLift.time.tf.x0 = 0.8;
-
-bounds.LeftStanceLift.constrBounds.rFootPos.lb=-inf;
-bounds.LeftStanceLift.constrBounds.rFootPos.ub=(2*x_step^2+r_buff);
-
-%% LS_land
-bounds.LeftStanceLand=common_bounds;
-bounds.LeftStanceLand.time.tf.lb = 2;
-bounds.LeftStanceLand.time.tf.ub = 3;
-bounds.LeftStanceLand.time.tf.x0 = 1;
-
-%% DS2
-bounds.DoubleSupportDiffHeight=common_bounds;
-bounds.DoubleSupportDiffHeight.time.tf.lb = 3;
-bounds.DoubleSupportDiffHeight.time.tf.ub = 4;
-bounds.DoubleSupportDiffHeight.time.tf.x0 = 1.2;
+bounds.DoubleSupportConstHeight.inputs.Control.u.lb=zeros(4,1);
+bounds.DoubleSupportConstHeight.inputs.Control.u.ub=inf*ones(4,1);
+% %% LS_lift
+% bounds.LeftStanceLift=common_bounds;
+% bounds.LeftStanceLift.time.tf.lb = 1;
+% bounds.LeftStanceLift.time.tf.ub = 2;
+% bounds.LeftStanceLift.time.tf.x0 = 0.8;
+% 
+% bounds.LeftStanceLift.constrBounds.rFootPos.lb=-inf;
+% bounds.LeftStanceLift.constrBounds.rFootPos.ub=(2*x_step^2+r_buff);
+% 
+% %% LS_land
+% bounds.LeftStanceLand=common_bounds;
+% bounds.LeftStanceLand.time.tf.lb = 2;
+% bounds.LeftStanceLand.time.tf.ub = 3;
+% bounds.LeftStanceLand.time.tf.x0 = 1;
+% 
+% %% DS2
+% bounds.DoubleSupportDiffHeight=common_bounds;
+% bounds.DoubleSupportDiffHeight.time.tf.lb = 3;
+% bounds.DoubleSupportDiffHeight.time.tf.ub = 4;
+% bounds.DoubleSupportDiffHeight.time.tf.x0 = 1.2;
 
 
 end

@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Wed 6 Nov 2019 23:18:58 GMT-05:00
+ * Tue 12 Nov 2019 14:38:13 GMT-05:00
  */
 
 #ifndef CE1_VEC2_FIVE_LINK_WALKER_HH
@@ -14,7 +14,7 @@
 #include "math2mat.hpp"
 #include "mdefs.hpp"
 
-namespace DoubleSupportConstHeight
+namespace Pattern[DS1, Blank[opt]]
 {
 
   void Ce1_vec2_five_link_walker_raw(double *p_output1, const double *var1,const double *var2);

@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Wed 6 Nov 2019 23:21:32 GMT-05:00
+ * Tue 12 Nov 2019 15:30:03 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -45,84 +45,84 @@ const double Degree = 0.01745329251994329576924;
  */
 static void output1(double *p_output1,const double *var1,const double *var2)
 {
-  double t12171;
-  double t12195;
-  double t12162;
-  double t12196;
-  double t1037;
-  double t12185;
-  double t12197;
-  double t12198;
-  double t12223;
-  double t12232;
-  double t12233;
-  double t14149;
-  double t3008;
-  double t10895;
-  double t12222;
-  double t14150;
-  double t17822;
-  double t17823;
-  double t17824;
-  double t17825;
-  double t17826;
-  double t17828;
-  double t17829;
-  double t17830;
-  double t17837;
-  double t17838;
-  double t17839;
-  double t17836;
-  double t17840;
-  double t17841;
-  double t17842;
-  double t17843;
-  double t17844;
-  double t17845;
-  t12171 = Cos(var1[3]);
-  t12195 = Sin(var1[2]);
-  t12162 = Cos(var1[2]);
-  t12196 = Sin(var1[3]);
-  t1037 = Cos(var1[4]);
-  t12185 = t12162*t12171;
-  t12197 = -1.*t12195*t12196;
-  t12198 = t12185 + t12197;
-  t12223 = -1.*t12171*t12195;
-  t12232 = -1.*t12162*t12196;
-  t12233 = t12223 + t12232;
-  t14149 = Sin(var1[4]);
-  t3008 = -1.*t1037;
-  t10895 = 1. + t3008;
-  t12222 = 0.4*t10895*t12198;
-  t14150 = -0.4*t12233*t14149;
-  t17822 = t1037*t12198;
-  t17823 = t12233*t14149;
-  t17824 = t17822 + t17823;
-  t17825 = 0.8*t17824;
-  t17826 = t12222 + t14150 + t17825;
-  t17828 = t12171*t12195;
-  t17829 = t12162*t12196;
-  t17830 = t17828 + t17829;
-  t17837 = -1.*t12162*t12171;
-  t17838 = t12195*t12196;
-  t17839 = t17837 + t17838;
-  t17836 = 0.4*t10895*t12233;
-  t17840 = -0.4*t17839*t14149;
-  t17841 = t1037*t12233;
-  t17842 = t17839*t14149;
-  t17843 = t17841 + t17842;
-  t17844 = 0.8*t17843;
-  t17845 = t17836 + t17840 + t17844;
+  double t9311;
+  double t9313;
+  double t9310;
+  double t9314;
+  double t3132;
+  double t9312;
+  double t9315;
+  double t9316;
+  double t9321;
+  double t9322;
+  double t9323;
+  double t9324;
+  double t9303;
+  double t9309;
+  double t9317;
+  double t9325;
+  double t9326;
+  double t9327;
+  double t9328;
+  double t9329;
+  double t9330;
+  double t9332;
+  double t9333;
+  double t9334;
+  double t9341;
+  double t9342;
+  double t9343;
+  double t9340;
+  double t9344;
+  double t9345;
+  double t9346;
+  double t9347;
+  double t9348;
+  double t9349;
+  t9311 = Cos(var1[3]);
+  t9313 = Sin(var1[2]);
+  t9310 = Cos(var1[2]);
+  t9314 = Sin(var1[3]);
+  t3132 = Cos(var1[4]);
+  t9312 = t9310*t9311;
+  t9315 = -1.*t9313*t9314;
+  t9316 = t9312 + t9315;
+  t9321 = -1.*t9311*t9313;
+  t9322 = -1.*t9310*t9314;
+  t9323 = t9321 + t9322;
+  t9324 = Sin(var1[4]);
+  t9303 = -1.*t3132;
+  t9309 = 1. + t9303;
+  t9317 = 0.4*t9309*t9316;
+  t9325 = -0.4*t9323*t9324;
+  t9326 = t3132*t9316;
+  t9327 = t9323*t9324;
+  t9328 = t9326 + t9327;
+  t9329 = 0.8*t9328;
+  t9330 = t9317 + t9325 + t9329;
+  t9332 = t9311*t9313;
+  t9333 = t9310*t9314;
+  t9334 = t9332 + t9333;
+  t9341 = -1.*t9310*t9311;
+  t9342 = t9313*t9314;
+  t9343 = t9341 + t9342;
+  t9340 = 0.4*t9309*t9323;
+  t9344 = -0.4*t9343*t9324;
+  t9345 = t3132*t9323;
+  t9346 = t9343*t9324;
+  t9347 = t9345 + t9346;
+  t9348 = 0.8*t9347;
+  t9349 = t9340 + t9344 + t9348;
   p_output1[0]=1.;
-  p_output1[1]=t17826;
-  p_output1[2]=t17826;
-  p_output1[3]=-0.4*t1037*t12198 + 0.4*t14149*t17830 + 0.8*(t17822 - 1.*t14149*t17830);
+  p_output1[1]=t9330;
+  p_output1[2]=t9330;
+  p_output1[3]=-0.4*t3132*t9316 + 0.4*t9324*t9334 + 0.8*(t9326 - 1.*t9324*t9334);
   p_output1[4]=-1.;
   p_output1[5]=-1.;
   p_output1[6]=1.;
-  p_output1[7]=t17845;
-  p_output1[8]=t17845;
-  p_output1[9]=-0.4*t1037*t12233 + 0.4*t12198*t14149 + 0.8*(-1.*t12198*t14149 + t17841);
+  p_output1[7]=t9349;
+  p_output1[8]=t9349;
+  p_output1[9]=-0.4*t3132*t9323 + 0.4*t9316*t9324 + 0.8*(-1.*t9316*t9324 + t9345);
   p_output1[10]=-1.;
 }
 
@@ -192,7 +192,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "J_h_RightToe_DoubleSupportConstHeight.hh"
 
-namespace DoubleSupportConstHeight
+namespace Pattern[DS1, Blank[opt]]
 {
 
 void J_h_RightToe_DoubleSupportConstHeight_raw(double *p_output1, const double *var1,const double *var2)

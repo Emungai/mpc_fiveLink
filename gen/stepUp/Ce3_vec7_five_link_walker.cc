@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Wed 6 Nov 2019 23:19:35 GMT-05:00
+ * Tue 12 Nov 2019 14:39:00 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -45,93 +45,93 @@ const double Degree = 0.01745329251994329576924;
  */
 static void output1(double *p_output1,const double *var1,const double *var2)
 {
-  double t581;
-  double t573;
-  double t574;
-  double t582;
-  double t594;
-  double t575;
-  double t587;
-  double t592;
-  double t555;
-  double t597;
-  double t598;
-  double t599;
-  double t673;
-  double t675;
-  double t677;
-  double t678;
-  double t679;
-  double t694;
-  double t695;
-  double t697;
-  double t593;
-  double t634;
-  double t714;
-  double t715;
-  double t717;
-  double t681;
-  double t690;
-  double t691;
-  double t692;
-  double t693;
-  double t698;
-  double t702;
-  double t703;
-  double t704;
-  double t718;
-  double t731;
-  double t732;
-  double t733;
-  double t734;
-  double t735;
-  t581 = Cos(var1[5]);
-  t573 = Cos(var1[6]);
-  t574 = Sin(var1[5]);
-  t582 = Sin(var1[6]);
-  t594 = Cos(var1[2]);
-  t575 = -1.*t573*t574;
-  t587 = -1.*t581*t582;
-  t592 = t575 + t587;
-  t555 = Sin(var1[2]);
-  t597 = t581*t573;
-  t598 = -1.*t574*t582;
-  t599 = t597 + t598;
-  t673 = -1.*t573;
-  t675 = 1. + t673;
-  t677 = 0.4*t675;
-  t678 = 0.64*t573;
-  t679 = t677 + t678;
-  t694 = t581*t679;
-  t695 = -0.24*t574*t582;
-  t697 = t694 + t695;
-  t593 = -1.*t555*t592;
-  t634 = t594*t592;
-  t714 = -1.*t581*t573;
-  t715 = t574*t582;
-  t717 = t714 + t715;
-  t681 = -0.24*t581*t582;
-  t690 = t679*t574;
-  t691 = 0.24*t581*t582;
-  t692 = t690 + t691;
-  t693 = t692*t599;
-  t698 = t592*t697;
-  t702 = t573*t574;
-  t703 = t581*t582;
-  t704 = t702 + t703;
-  t718 = t594*t717;
-  t731 = t593 + t718;
-  t732 = 0.384*var2[1]*t731;
-  t733 = t555*t717;
-  t734 = t634 + t733;
-  t735 = 0.384*var2[0]*t734;
+  double t2562;
+  double t2554;
+  double t2555;
+  double t2563;
+  double t2567;
+  double t2556;
+  double t2564;
+  double t2565;
+  double t2543;
+  double t2568;
+  double t2569;
+  double t2570;
+  double t2604;
+  double t2606;
+  double t2608;
+  double t2609;
+  double t2610;
+  double t2625;
+  double t2626;
+  double t2627;
+  double t2566;
+  double t2587;
+  double t2635;
+  double t2636;
+  double t2637;
+  double t2612;
+  double t2621;
+  double t2622;
+  double t2623;
+  double t2624;
+  double t2628;
+  double t2629;
+  double t2630;
+  double t2631;
+  double t2638;
+  double t2639;
+  double t2640;
+  double t2641;
+  double t2642;
+  double t2643;
+  t2562 = Cos(var1[5]);
+  t2554 = Cos(var1[6]);
+  t2555 = Sin(var1[5]);
+  t2563 = Sin(var1[6]);
+  t2567 = Cos(var1[2]);
+  t2556 = -1.*t2554*t2555;
+  t2564 = -1.*t2562*t2563;
+  t2565 = t2556 + t2564;
+  t2543 = Sin(var1[2]);
+  t2568 = t2562*t2554;
+  t2569 = -1.*t2555*t2563;
+  t2570 = t2568 + t2569;
+  t2604 = -1.*t2554;
+  t2606 = 1. + t2604;
+  t2608 = 0.4*t2606;
+  t2609 = 0.64*t2554;
+  t2610 = t2608 + t2609;
+  t2625 = t2562*t2610;
+  t2626 = -0.24*t2555*t2563;
+  t2627 = t2625 + t2626;
+  t2566 = -1.*t2543*t2565;
+  t2587 = t2567*t2565;
+  t2635 = -1.*t2562*t2554;
+  t2636 = t2555*t2563;
+  t2637 = t2635 + t2636;
+  t2612 = -0.24*t2562*t2563;
+  t2621 = t2610*t2555;
+  t2622 = 0.24*t2562*t2563;
+  t2623 = t2621 + t2622;
+  t2624 = t2623*t2570;
+  t2628 = t2565*t2627;
+  t2629 = t2554*t2555;
+  t2630 = t2562*t2563;
+  t2631 = t2629 + t2630;
+  t2638 = t2567*t2637;
+  t2639 = t2566 + t2638;
+  t2640 = 0.384*var2[1]*t2639;
+  t2641 = t2543*t2637;
+  t2642 = t2587 + t2641;
+  t2643 = 0.384*var2[0]*t2642;
   p_output1[0]=0;
   p_output1[1]=0;
-  p_output1[2]=(0.384*(-1.*t555*t599 + t634)*var2[0] + 0.384*(t593 - 1.*t594*t599)*var2[1])*var2[6];
+  p_output1[2]=(0.384*(-1.*t2543*t2570 + t2587)*var2[0] + 0.384*(t2566 - 1.*t2567*t2570)*var2[1])*var2[6];
   p_output1[3]=0;
   p_output1[4]=0;
-  p_output1[5]=(t732 + t735 + 0.384*(t599*(-1.*t574*t679 + t681) + t693 + t698 + t697*t704)*var2[2])*var2[6];
-  p_output1[6]=(t732 + t735 + 0.384*(t599*(-0.24*t573*t574 + t681) + t693 + t698 + (0.24*t573*t581 + t695)*t704)*var2[2] + 0.384*(0.24*t573*t582 - 1.*t582*t679)*var2[5])*var2[6];
+  p_output1[5]=(t2640 + t2643 + 0.384*(t2570*(-1.*t2555*t2610 + t2612) + t2624 + t2628 + t2627*t2631)*var2[2])*var2[6];
+  p_output1[6]=(t2640 + t2643 + 0.384*(t2570*(-0.24*t2554*t2555 + t2612) + t2624 + t2628 + (0.24*t2554*t2562 + t2626)*t2631)*var2[2] + 0.384*(0.24*t2554*t2563 - 1.*t2563*t2610)*var2[5])*var2[6];
 }
 
 
@@ -200,7 +200,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "Ce3_vec7_five_link_walker.hh"
 
-namespace DoubleSupportConstHeight
+namespace Pattern[DS1, Blank[opt]]
 {
 
 void Ce3_vec7_five_link_walker_raw(double *p_output1, const double *var1,const double *var2)

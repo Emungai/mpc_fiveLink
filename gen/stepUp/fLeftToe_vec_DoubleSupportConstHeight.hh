@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Wed 6 Nov 2019 23:19:43 GMT-05:00
+ * Tue 12 Nov 2019 14:39:10 GMT-05:00
  */
 
 #ifndef FLEFTTOE_VEC_DOUBLESUPPORTCONSTHEIGHT_HH
@@ -14,7 +14,7 @@
 #include "math2mat.hpp"
 #include "mdefs.hpp"
 
-namespace DoubleSupportConstHeight
+namespace Pattern[DS1, Blank[opt]]
 {
 
   void fLeftToe_vec_DoubleSupportConstHeight_raw(double *p_output1, const double *var1,const double *var2);

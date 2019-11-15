@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Wed 6 Nov 2019 23:28:01 GMT-05:00
+ * Tue 12 Nov 2019 16:18:10 GMT-05:00
  */
 
 #ifndef JS_HS_INT_DX_HH
@@ -14,7 +14,7 @@
 #include "math2mat.hpp"
 #include "mdefs.hpp"
 
-namespace DoubleSupportDiffHeight
+namespace Pattern[righStance, Blank[opt]]
 {
 
   void Js_hs_int_dx_raw(double *p_output1, const double *var1);

@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Wed 6 Nov 2019 23:27:56 GMT-05:00
+ * Tue 12 Nov 2019 16:18:05 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -302,7 +302,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "Js_hs_int_x.hh"
 
-namespace DoubleSupportDiffHeight
+namespace Pattern[righStance, Blank[opt]]
 {
 
 void Js_hs_int_x_raw(double *p_output1, const double *var1)

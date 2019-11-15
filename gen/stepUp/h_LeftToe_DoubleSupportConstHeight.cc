@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Wed 6 Nov 2019 23:21:48 GMT-05:00
+ * Tue 12 Nov 2019 14:41:44 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -45,43 +45,43 @@ const double Degree = 0.01745329251994329576924;
  */
 static void output1(double *p_output1,const double *var1,const double *var2)
 {
-  double t12092;
-  double t11681;
-  double t11682;
-  double t12110;
-  double t5015;
-  double t12065;
-  double t12122;
-  double t13923;
-  double t14136;
-  double t14212;
-  double t14213;
-  double t14217;
-  double t5945;
-  double t11560;
-  double t18061;
-  double t18062;
-  double t18063;
-  t12092 = Cos(var1[2]);
-  t11681 = Cos(var1[5]);
-  t11682 = Sin(var1[2]);
-  t12110 = Sin(var1[5]);
-  t5015 = Cos(var1[6]);
-  t12065 = t11681*t11682;
-  t12122 = t12092*t12110;
-  t13923 = t12065 + t12122;
-  t14136 = t12092*t11681;
-  t14212 = -1.*t11682*t12110;
-  t14213 = t14136 + t14212;
-  t14217 = Sin(var1[6]);
-  t5945 = -1.*t5015;
-  t11560 = 1. + t5945;
-  t18061 = -1.*t11681*t11682;
-  t18062 = -1.*t12092*t12110;
-  t18063 = t18061 + t18062;
-  p_output1[0]=0.4*t11560*t13923 - 0.4*t14213*t14217 + 0.8*(t14213*t14217 + t13923*t5015) + var1[0] - 1.*var2[0];
+  double t8765;
+  double t8762;
+  double t8763;
+  double t8766;
+  double t8754;
+  double t8764;
+  double t8767;
+  double t8768;
+  double t8770;
+  double t8771;
+  double t8772;
+  double t8773;
+  double t8755;
+  double t8756;
+  double t8821;
+  double t8822;
+  double t8823;
+  t8765 = Cos(var1[2]);
+  t8762 = Cos(var1[5]);
+  t8763 = Sin(var1[2]);
+  t8766 = Sin(var1[5]);
+  t8754 = Cos(var1[6]);
+  t8764 = t8762*t8763;
+  t8767 = t8765*t8766;
+  t8768 = t8764 + t8767;
+  t8770 = t8765*t8762;
+  t8771 = -1.*t8763*t8766;
+  t8772 = t8770 + t8771;
+  t8773 = Sin(var1[6]);
+  t8755 = -1.*t8754;
+  t8756 = 1. + t8755;
+  t8821 = -1.*t8762*t8763;
+  t8822 = -1.*t8765*t8766;
+  t8823 = t8821 + t8822;
+  p_output1[0]=0.4*t8756*t8768 - 0.4*t8772*t8773 + 0.8*(t8754*t8768 + t8772*t8773) + var1[0] - 1.*var2[0];
   p_output1[1]=-1.*var2[1];
-  p_output1[2]=0.4*t11560*t14213 - 0.4*t14217*t18063 + 0.8*(t14217*t18063 + t14213*t5015) + var1[1] - 1.*var2[2];
+  p_output1[2]=0.4*t8756*t8772 - 0.4*t8773*t8823 + 0.8*(t8754*t8772 + t8773*t8823) + var1[1] - 1.*var2[2];
 }
 
 
@@ -150,7 +150,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "h_LeftToe_DoubleSupportConstHeight.hh"
 
-namespace DoubleSupportConstHeight
+namespace Pattern[DS1, Blank[opt]]
 {
 
 void h_LeftToe_DoubleSupportConstHeight_raw(double *p_output1, const double *var1,const double *var2)

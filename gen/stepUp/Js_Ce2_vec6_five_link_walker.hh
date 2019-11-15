@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Wed 6 Nov 2019 23:20:41 GMT-05:00
+ * Tue 12 Nov 2019 14:40:20 GMT-05:00
  */
 
 #ifndef JS_CE2_VEC6_FIVE_LINK_WALKER_HH
@@ -14,7 +14,7 @@
 #include "math2mat.hpp"
 #include "mdefs.hpp"
 
-namespace DoubleSupportConstHeight
+namespace Pattern[DS1, Blank[opt]]
 {
 
   void Js_Ce2_vec6_five_link_walker_raw(double *p_output1, const double *var1);

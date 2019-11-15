@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Wed 6 Nov 2019 23:19:10 GMT-05:00
+ * Tue 12 Nov 2019 14:38:28 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -122,7 +122,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "Ce2_vec1_five_link_walker.hh"
 
-namespace DoubleSupportConstHeight
+namespace Pattern[DS1, Blank[opt]]
 {
 
 void Ce2_vec1_five_link_walker_raw(double *p_output1, const double *var1,const double *var2)

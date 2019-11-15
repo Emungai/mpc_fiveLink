@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Wed 6 Nov 2019 23:21:53 GMT-05:00
+ * Tue 12 Nov 2019 14:41:52 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -45,77 +45,77 @@ const double Degree = 0.01745329251994329576924;
  */
 static void output1(double *p_output1,const double *var1,const double *var2)
 {
-  double t18117;
-  double t18119;
-  double t18083;
-  double t18130;
-  double t13628;
-  double t18118;
-  double t18135;
-  double t18136;
-  double t18138;
-  double t18139;
-  double t18140;
-  double t18141;
-  double t18073;
-  double t18081;
-  double t18137;
-  double t18142;
-  double t18143;
-  double t18144;
-  double t18145;
-  double t18146;
-  double t18147;
-  double t18151;
-  double t18152;
-  double t18153;
-  double t18163;
-  double t18170;
-  double t18171;
-  double t18172;
-  double t18169;
-  double t18173;
-  double t18174;
-  double t18175;
-  double t18176;
-  double t18177;
-  t18117 = Cos(var1[5]);
-  t18119 = Sin(var1[2]);
-  t18083 = Cos(var1[2]);
-  t18130 = Sin(var1[5]);
-  t13628 = Cos(var1[6]);
-  t18118 = t18083*t18117;
-  t18135 = -1.*t18119*t18130;
-  t18136 = t18118 + t18135;
-  t18138 = -1.*t18117*t18119;
-  t18139 = -1.*t18083*t18130;
-  t18140 = t18138 + t18139;
-  t18141 = Sin(var1[6]);
-  t18073 = -1.*t13628;
-  t18081 = 1. + t18073;
-  t18137 = 0.4*t18081*t18136;
-  t18142 = -0.4*t18140*t18141;
-  t18143 = t13628*t18136;
-  t18144 = t18140*t18141;
-  t18145 = t18143 + t18144;
-  t18146 = 0.8*t18145;
-  t18147 = t18137 + t18142 + t18146;
-  t18151 = t18117*t18119;
-  t18152 = t18083*t18130;
-  t18153 = t18151 + t18152;
-  t18163 = t13628*t18140;
-  t18170 = -1.*t18083*t18117;
-  t18171 = t18119*t18130;
-  t18172 = t18170 + t18171;
-  t18169 = 0.4*t18081*t18140;
-  t18173 = -0.4*t18172*t18141;
-  t18174 = t18172*t18141;
-  t18175 = t18163 + t18174;
-  t18176 = 0.8*t18175;
-  t18177 = t18169 + t18173 + t18176;
-  p_output1[0]=var2[0] + t18147*var2[2] + t18147*var2[5] + (-0.4*t13628*t18136 + 0.4*t18141*t18153 + 0.8*(t18143 - 1.*t18141*t18153))*var2[6];
+  double t8842;
+  double t8844;
+  double t8841;
+  double t8855;
+  double t3491;
+  double t8843;
+  double t8856;
+  double t8857;
+  double t8859;
+  double t8860;
+  double t8861;
+  double t8862;
+  double t8836;
+  double t8840;
+  double t8858;
+  double t8863;
+  double t8864;
+  double t8865;
+  double t8866;
+  double t8867;
+  double t8868;
+  double t8872;
+  double t8873;
+  double t8874;
+  double t8884;
+  double t8891;
+  double t8892;
+  double t8893;
+  double t8890;
+  double t8894;
+  double t8895;
+  double t8896;
+  double t8897;
+  double t8898;
+  t8842 = Cos(var1[5]);
+  t8844 = Sin(var1[2]);
+  t8841 = Cos(var1[2]);
+  t8855 = Sin(var1[5]);
+  t3491 = Cos(var1[6]);
+  t8843 = t8841*t8842;
+  t8856 = -1.*t8844*t8855;
+  t8857 = t8843 + t8856;
+  t8859 = -1.*t8842*t8844;
+  t8860 = -1.*t8841*t8855;
+  t8861 = t8859 + t8860;
+  t8862 = Sin(var1[6]);
+  t8836 = -1.*t3491;
+  t8840 = 1. + t8836;
+  t8858 = 0.4*t8840*t8857;
+  t8863 = -0.4*t8861*t8862;
+  t8864 = t3491*t8857;
+  t8865 = t8861*t8862;
+  t8866 = t8864 + t8865;
+  t8867 = 0.8*t8866;
+  t8868 = t8858 + t8863 + t8867;
+  t8872 = t8842*t8844;
+  t8873 = t8841*t8855;
+  t8874 = t8872 + t8873;
+  t8884 = t3491*t8861;
+  t8891 = -1.*t8841*t8842;
+  t8892 = t8844*t8855;
+  t8893 = t8891 + t8892;
+  t8890 = 0.4*t8840*t8861;
+  t8894 = -0.4*t8893*t8862;
+  t8895 = t8893*t8862;
+  t8896 = t8884 + t8895;
+  t8897 = 0.8*t8896;
+  t8898 = t8890 + t8894 + t8897;
+  p_output1[0]=var2[0] + t8868*var2[2] + t8868*var2[5] + (-0.4*t3491*t8857 + 0.4*t8862*t8874 + 0.8*(t8864 - 1.*t8862*t8874))*var2[6];
   p_output1[1]=0;
-  p_output1[2]=var2[1] + t18177*var2[2] + t18177*var2[5] + (-0.4*t13628*t18140 + 0.4*t18136*t18141 + 0.8*(-1.*t18136*t18141 + t18163))*var2[6];
+  p_output1[2]=var2[1] + t8898*var2[2] + t8898*var2[5] + (-0.4*t3491*t8861 + 0.4*t8857*t8862 + 0.8*(-1.*t8857*t8862 + t8884))*var2[6];
 }
 
 
@@ -184,7 +184,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "dh_LeftToe_DoubleSupportConstHeight.hh"
 
-namespace DoubleSupportConstHeight
+namespace Pattern[DS1, Blank[opt]]
 {
 
 void dh_LeftToe_DoubleSupportConstHeight_raw(double *p_output1, const double *var1,const double *var2)

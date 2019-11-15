@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Wed 6 Nov 2019 23:22:24 GMT-05:00
+ * Tue 12 Nov 2019 15:30:25 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -45,54 +45,54 @@ const double Degree = 0.01745329251994329576924;
  */
 static void output1(double *p_output1,const double *var1,const double *var2,const double *var3,const double *var4,const double *var5,const double *var6,const double *var7)
 {
-  double t90;
-  double t91;
-  double t293;
-  double t2458;
-  double t2517;
-  double t2816;
-  double t2834;
-  double t2943;
-  double t2960;
-  double t2982;
-  double t5977;
-  double t6002;
-  double t7622;
-  double t8011;
-  double t8022;
-  double t8084;
-  double t9350;
-  double t9511;
-  double t9533;
-  double t10939;
-  double t11169;
-  double t11311;
-  t90 = -1.*var5[1];
-  t91 = var5[0] + t90;
-  t293 = Power(t91,-5);
-  t2458 = -1. + var6[0];
-  t2517 = -1. + var7[0];
-  t2816 = 1/t2517;
-  t2834 = -1.*var1[0];
-  t2943 = t2834 + var1[1];
-  t2960 = t2458*t2816*t2943;
-  t2982 = t90 + var1[0] + t2960;
-  t5977 = Power(t2982,4);
-  t6002 = Power(t91,-4);
-  t7622 = Power(t2982,3);
-  t8011 = 1/t91;
-  t8022 = -1.*t8011*t2982;
-  t8084 = 1. + t8022;
-  t9350 = Power(t91,-3);
-  t9511 = Power(t2982,2);
-  t9533 = Power(t8084,2);
-  t10939 = Power(t91,-2);
-  t11169 = Power(t8084,3);
-  t11311 = Power(t8084,4);
-  p_output1[0]=var3[3] + 5.*t11311*t8011*var4[0] + 20.*t10939*t11169*t2982*var4[4] - 5.*t11311*t8011*var4[4] - 20.*t10939*t11169*t2982*var4[8] + 30.*t9350*t9511*t9533*var4[8] + 20.*t6002*t7622*t8084*var4[12] - 30.*t9350*t9511*t9533*var4[12] + 5.*t293*t5977*var4[16] - 20.*t6002*t7622*t8084*var4[16] - 5.*t293*t5977*var4[20];
-  p_output1[1]=var3[4] + 5.*t11311*t8011*var4[1] + 20.*t10939*t11169*t2982*var4[5] - 5.*t11311*t8011*var4[5] - 20.*t10939*t11169*t2982*var4[9] + 30.*t9350*t9511*t9533*var4[9] + 20.*t6002*t7622*t8084*var4[13] - 30.*t9350*t9511*t9533*var4[13] + 5.*t293*t5977*var4[17] - 20.*t6002*t7622*t8084*var4[17] - 5.*t293*t5977*var4[21];
-  p_output1[2]=var3[5] + 5.*t11311*t8011*var4[2] + 20.*t10939*t11169*t2982*var4[6] - 5.*t11311*t8011*var4[6] - 20.*t10939*t11169*t2982*var4[10] + 30.*t9350*t9511*t9533*var4[10] + 20.*t6002*t7622*t8084*var4[14] - 30.*t9350*t9511*t9533*var4[14] + 5.*t293*t5977*var4[18] - 20.*t6002*t7622*t8084*var4[18] - 5.*t293*t5977*var4[22];
-  p_output1[3]=var3[6] + 5.*t11311*t8011*var4[3] + 20.*t10939*t11169*t2982*var4[7] - 5.*t11311*t8011*var4[7] - 20.*t10939*t11169*t2982*var4[11] + 30.*t9350*t9511*t9533*var4[11] + 20.*t6002*t7622*t8084*var4[15] - 30.*t9350*t9511*t9533*var4[15] + 5.*t293*t5977*var4[19] - 20.*t6002*t7622*t8084*var4[19] - 5.*t293*t5977*var4[23];
+  double t301;
+  double t409;
+  double t2451;
+  double t2775;
+  double t2778;
+  double t3310;
+  double t3547;
+  double t3593;
+  double t3789;
+  double t5547;
+  double t5558;
+  double t5717;
+  double t5855;
+  double t9683;
+  double t9688;
+  double t9694;
+  double t9700;
+  double t9703;
+  double t9704;
+  double t9708;
+  double t9709;
+  double t9712;
+  t301 = -1.*var5[1];
+  t409 = var5[0] + t301;
+  t2451 = Power(t409,-5);
+  t2775 = -1. + var6[0];
+  t2778 = -1. + var7[0];
+  t3310 = 1/t2778;
+  t3547 = -1.*var1[0];
+  t3593 = t3547 + var1[1];
+  t3789 = t2775*t3310*t3593;
+  t5547 = t301 + var1[0] + t3789;
+  t5558 = Power(t5547,4);
+  t5717 = Power(t409,-4);
+  t5855 = Power(t5547,3);
+  t9683 = 1/t409;
+  t9688 = -1.*t9683*t5547;
+  t9694 = 1. + t9688;
+  t9700 = Power(t409,-3);
+  t9703 = Power(t5547,2);
+  t9704 = Power(t9694,2);
+  t9708 = Power(t409,-2);
+  t9709 = Power(t9694,3);
+  t9712 = Power(t9694,4);
+  p_output1[0]=var3[3] + 5.*t9683*t9712*var4[0] + 20.*t5547*t9708*t9709*var4[4] - 5.*t9683*t9712*var4[4] + 30.*t9700*t9703*t9704*var4[8] - 20.*t5547*t9708*t9709*var4[8] + 20.*t5717*t5855*t9694*var4[12] - 30.*t9700*t9703*t9704*var4[12] + 5.*t2451*t5558*var4[16] - 20.*t5717*t5855*t9694*var4[16] - 5.*t2451*t5558*var4[20];
+  p_output1[1]=var3[4] + 5.*t9683*t9712*var4[1] + 20.*t5547*t9708*t9709*var4[5] - 5.*t9683*t9712*var4[5] + 30.*t9700*t9703*t9704*var4[9] - 20.*t5547*t9708*t9709*var4[9] + 20.*t5717*t5855*t9694*var4[13] - 30.*t9700*t9703*t9704*var4[13] + 5.*t2451*t5558*var4[17] - 20.*t5717*t5855*t9694*var4[17] - 5.*t2451*t5558*var4[21];
+  p_output1[2]=var3[5] + 5.*t9683*t9712*var4[2] + 20.*t5547*t9708*t9709*var4[6] - 5.*t9683*t9712*var4[6] + 30.*t9700*t9703*t9704*var4[10] - 20.*t5547*t9708*t9709*var4[10] + 20.*t5717*t5855*t9694*var4[14] - 30.*t9700*t9703*t9704*var4[14] + 5.*t2451*t5558*var4[18] - 20.*t5717*t5855*t9694*var4[18] - 5.*t2451*t5558*var4[22];
+  p_output1[3]=var3[6] + 5.*t9683*t9712*var4[3] + 20.*t5547*t9708*t9709*var4[7] - 5.*t9683*t9712*var4[7] + 30.*t9700*t9703*t9704*var4[11] - 20.*t5547*t9708*t9709*var4[11] + 20.*t5717*t5855*t9694*var4[15] - 30.*t9700*t9703*t9704*var4[15] + 5.*t2451*t5558*var4[19] - 20.*t5717*t5855*t9694*var4[19] - 5.*t2451*t5558*var4[23];
 }
 
 
@@ -206,7 +206,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "d1y_time_DoubleSupportConstHeight.hh"
 
-namespace DoubleSupportConstHeight
+namespace Pattern[DS1, Blank[opt]]
 {
 
 void d1y_time_DoubleSupportConstHeight_raw(double *p_output1, const double *var1,const double *var2,const double *var3,const double *var4,const double *var5,const double *var6,const double *var7)

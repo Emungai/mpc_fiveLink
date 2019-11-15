@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Wed 6 Nov 2019 23:27:52 GMT-05:00
+ * Tue 12 Nov 2019 16:18:02 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -45,42 +45,42 @@ const double Degree = 0.01745329251994329576924;
  */
 static void output1(double *p_output1,const double *var1,const double *var2,const double *var3,const double *var4,const double *var5,const double *var6,const double *var7,const double *var8)
 {
-  double t7;
-  double t8;
-  double t9;
-  double t13;
-  double t109;
-  double t961;
-  double t1041;
-  double t2453;
-  double t2630;
-  double t2759;
-  double t2827;
-  t7 = -1. + var8[0];
-  t8 = 1/t7;
-  t9 = -1.*var1[0];
-  t13 = t9 + var1[1];
-  t109 = -1.*var2[0];
-  t961 = -1.*var2[1];
-  t1041 = -1.*var2[2];
-  t2453 = -1.*var2[3];
-  t2630 = -1.*var2[4];
-  t2759 = -1.*var2[5];
-  t2827 = -1.*var2[6];
-  p_output1[0]=t109 + var6[0] - 0.333333333333333*t13*t8*(var3[0] + 4.*var5[0] + var7[0]);
-  p_output1[1]=t961 + var6[1] - 0.333333333333333*t13*t8*(var3[1] + 4.*var5[1] + var7[1]);
-  p_output1[2]=t1041 + var6[2] - 0.333333333333333*t13*t8*(var3[2] + 4.*var5[2] + var7[2]);
-  p_output1[3]=t2453 + var6[3] - 0.333333333333333*t13*t8*(var3[3] + 4.*var5[3] + var7[3]);
-  p_output1[4]=t2630 + var6[4] - 0.333333333333333*t13*t8*(var3[4] + 4.*var5[4] + var7[4]);
-  p_output1[5]=t2759 + var6[5] - 0.333333333333333*t13*t8*(var3[5] + 4.*var5[5] + var7[5]);
-  p_output1[6]=t2827 + var6[6] - 0.333333333333333*t13*t8*(var3[6] + 4.*var5[6] + var7[6]);
-  p_output1[7]=var4[0] + 0.5*(t109 - 1.*var6[0]) - 0.25*t13*t8*(var3[0] - 1.*var7[0]);
-  p_output1[8]=var4[1] + 0.5*(t961 - 1.*var6[1]) - 0.25*t13*t8*(var3[1] - 1.*var7[1]);
-  p_output1[9]=var4[2] + 0.5*(t1041 - 1.*var6[2]) - 0.25*t13*t8*(var3[2] - 1.*var7[2]);
-  p_output1[10]=var4[3] + 0.5*(t2453 - 1.*var6[3]) - 0.25*t13*t8*(var3[3] - 1.*var7[3]);
-  p_output1[11]=var4[4] + 0.5*(t2630 - 1.*var6[4]) - 0.25*t13*t8*(var3[4] - 1.*var7[4]);
-  p_output1[12]=var4[5] + 0.5*(t2759 - 1.*var6[5]) - 0.25*t13*t8*(var3[5] - 1.*var7[5]);
-  p_output1[13]=var4[6] + 0.5*(t2827 - 1.*var6[6]) - 0.25*t13*t8*(var3[6] - 1.*var7[6]);
+  double t9412;
+  double t9416;
+  double t9417;
+  double t9421;
+  double t9433;
+  double t9440;
+  double t9460;
+  double t9477;
+  double t9494;
+  double t9518;
+  double t9548;
+  t9412 = -1. + var8[0];
+  t9416 = 1/t9412;
+  t9417 = -1.*var1[0];
+  t9421 = t9417 + var1[1];
+  t9433 = -1.*var2[0];
+  t9440 = -1.*var2[1];
+  t9460 = -1.*var2[2];
+  t9477 = -1.*var2[3];
+  t9494 = -1.*var2[4];
+  t9518 = -1.*var2[5];
+  t9548 = -1.*var2[6];
+  p_output1[0]=t9433 + var6[0] - 0.333333333333333*t9416*t9421*(var3[0] + 4.*var5[0] + var7[0]);
+  p_output1[1]=t9440 + var6[1] - 0.333333333333333*t9416*t9421*(var3[1] + 4.*var5[1] + var7[1]);
+  p_output1[2]=t9460 + var6[2] - 0.333333333333333*t9416*t9421*(var3[2] + 4.*var5[2] + var7[2]);
+  p_output1[3]=t9477 + var6[3] - 0.333333333333333*t9416*t9421*(var3[3] + 4.*var5[3] + var7[3]);
+  p_output1[4]=t9494 + var6[4] - 0.333333333333333*t9416*t9421*(var3[4] + 4.*var5[4] + var7[4]);
+  p_output1[5]=t9518 + var6[5] - 0.333333333333333*t9416*t9421*(var3[5] + 4.*var5[5] + var7[5]);
+  p_output1[6]=t9548 + var6[6] - 0.333333333333333*t9416*t9421*(var3[6] + 4.*var5[6] + var7[6]);
+  p_output1[7]=var4[0] + 0.5*(t9433 - 1.*var6[0]) - 0.25*t9416*t9421*(var3[0] - 1.*var7[0]);
+  p_output1[8]=var4[1] + 0.5*(t9440 - 1.*var6[1]) - 0.25*t9416*t9421*(var3[1] - 1.*var7[1]);
+  p_output1[9]=var4[2] + 0.5*(t9460 - 1.*var6[2]) - 0.25*t9416*t9421*(var3[2] - 1.*var7[2]);
+  p_output1[10]=var4[3] + 0.5*(t9477 - 1.*var6[3]) - 0.25*t9416*t9421*(var3[3] - 1.*var7[3]);
+  p_output1[11]=var4[4] + 0.5*(t9494 - 1.*var6[4]) - 0.25*t9416*t9421*(var3[4] - 1.*var7[4]);
+  p_output1[12]=var4[5] + 0.5*(t9518 - 1.*var6[5]) - 0.25*t9416*t9421*(var3[5] - 1.*var7[5]);
+  p_output1[13]=var4[6] + 0.5*(t9548 - 1.*var6[6]) - 0.25*t9416*t9421*(var3[6] - 1.*var7[6]);
 }
 
 
@@ -203,7 +203,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "hs_int_x.hh"
 
-namespace DoubleSupportDiffHeight
+namespace Pattern[righStance, Blank[opt]]
 {
 
 void hs_int_x_raw(double *p_output1, const double *var1,const double *var2,const double *var3,const double *var4,const double *var5,const double *var6,const double *var7,const double *var8)

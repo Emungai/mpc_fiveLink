@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Wed 6 Nov 2019 23:19:41 GMT-05:00
+ * Tue 12 Nov 2019 15:29:56 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -45,85 +45,85 @@ const double Degree = 0.01745329251994329576924;
  */
 static void output1(double *p_output1,const double *var1,const double *var2)
 {
-  double t748;
-  double t759;
-  double t745;
-  double t770;
-  double t613;
-  double t749;
-  double t781;
-  double t795;
-  double t797;
-  double t799;
-  double t800;
-  double t801;
-  double t680;
-  double t738;
-  double t838;
-  double t2586;
-  double t2597;
-  double t796;
-  double t826;
-  double t827;
-  double t828;
-  double t829;
-  double t830;
-  double t832;
-  double t833;
-  double t834;
-  double t2617;
-  double t2621;
-  double t5698;
-  double t6214;
-  double t7162;
-  double t7642;
-  double t7644;
-  double t7715;
-  double t7734;
-  double t7741;
-  double t7750;
-  t748 = Cos(var1[3]);
-  t759 = Sin(var1[2]);
-  t745 = Cos(var1[2]);
-  t770 = Sin(var1[3]);
-  t613 = Cos(var1[4]);
-  t749 = t745*t748;
-  t781 = -1.*t759*t770;
-  t795 = t749 + t781;
-  t797 = -1.*t748*t759;
-  t799 = -1.*t745*t770;
-  t800 = t797 + t799;
-  t801 = Sin(var1[4]);
-  t680 = -1.*t613;
-  t738 = 1. + t680;
-  t838 = -1.*t745*t748;
-  t2586 = t759*t770;
-  t2597 = t838 + t2586;
-  t796 = 0.4*t738*t795;
-  t826 = -0.4*t800*t801;
-  t827 = t613*t795;
-  t828 = t800*t801;
-  t829 = t827 + t828;
-  t830 = 0.8*t829;
-  t832 = t796 + t826 + t830;
-  t833 = var2[0]*t832;
-  t834 = 0.4*t738*t800;
-  t2617 = -0.4*t2597*t801;
-  t2621 = t613*t800;
-  t5698 = t2597*t801;
-  t6214 = t2621 + t5698;
-  t7162 = 0.8*t6214;
-  t7642 = t834 + t2617 + t7162;
-  t7644 = var2[2]*t7642;
-  t7715 = t833 + t7644;
-  t7734 = t748*t759;
-  t7741 = t745*t770;
-  t7750 = t7734 + t7741;
+  double t5637;
+  double t5670;
+  double t5575;
+  double t5671;
+  double t5321;
+  double t5651;
+  double t5694;
+  double t5697;
+  double t5718;
+  double t5722;
+  double t5726;
+  double t5733;
+  double t5383;
+  double t5564;
+  double t5772;
+  double t5781;
+  double t5782;
+  double t5716;
+  double t5734;
+  double t5745;
+  double t5746;
+  double t5749;
+  double t5751;
+  double t5764;
+  double t5766;
+  double t5769;
+  double t5785;
+  double t5787;
+  double t5794;
+  double t5795;
+  double t5798;
+  double t5800;
+  double t5801;
+  double t5802;
+  double t5807;
+  double t5808;
+  double t5809;
+  t5637 = Cos(var1[3]);
+  t5670 = Sin(var1[2]);
+  t5575 = Cos(var1[2]);
+  t5671 = Sin(var1[3]);
+  t5321 = Cos(var1[4]);
+  t5651 = t5575*t5637;
+  t5694 = -1.*t5670*t5671;
+  t5697 = t5651 + t5694;
+  t5718 = -1.*t5637*t5670;
+  t5722 = -1.*t5575*t5671;
+  t5726 = t5718 + t5722;
+  t5733 = Sin(var1[4]);
+  t5383 = -1.*t5321;
+  t5564 = 1. + t5383;
+  t5772 = -1.*t5575*t5637;
+  t5781 = t5670*t5671;
+  t5782 = t5772 + t5781;
+  t5716 = 0.4*t5564*t5697;
+  t5734 = -0.4*t5726*t5733;
+  t5745 = t5321*t5697;
+  t5746 = t5726*t5733;
+  t5749 = t5745 + t5746;
+  t5751 = 0.8*t5749;
+  t5764 = t5716 + t5734 + t5751;
+  t5766 = var2[0]*t5764;
+  t5769 = 0.4*t5564*t5726;
+  t5785 = -0.4*t5782*t5733;
+  t5787 = t5321*t5726;
+  t5794 = t5782*t5733;
+  t5795 = t5787 + t5794;
+  t5798 = 0.8*t5795;
+  t5800 = t5769 + t5785 + t5798;
+  t5801 = var2[2]*t5800;
+  t5802 = t5766 + t5801;
+  t5807 = t5637*t5670;
+  t5808 = t5575*t5671;
+  t5809 = t5807 + t5808;
   p_output1[0]=var2[0];
   p_output1[1]=var2[2];
-  p_output1[2]=t7715;
-  p_output1[3]=t7715;
-  p_output1[4]=(-0.4*t613*t795 + 0.4*t7750*t801 + 0.8*(-1.*t7750*t801 + t827))*var2[0] + (-0.4*t613*t800 + 0.4*t795*t801 + 0.8*(t2621 - 1.*t795*t801))*var2[2];
+  p_output1[2]=t5802;
+  p_output1[3]=t5802;
+  p_output1[4]=(-0.4*t5321*t5697 + 0.4*t5733*t5809 + 0.8*(t5745 - 1.*t5733*t5809))*var2[0] + (-0.4*t5321*t5726 + 0.4*t5697*t5733 + 0.8*(-1.*t5697*t5733 + t5787))*var2[2];
   p_output1[5]=0;
   p_output1[6]=0;
 }
@@ -194,7 +194,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "fRightToe_vec_DoubleSupportConstHeight.hh"
 
-namespace DoubleSupportConstHeight
+namespace Pattern[DS1, Blank[opt]]
 {
 
 void fRightToe_vec_DoubleSupportConstHeight_raw(double *p_output1, const double *var1,const double *var2)

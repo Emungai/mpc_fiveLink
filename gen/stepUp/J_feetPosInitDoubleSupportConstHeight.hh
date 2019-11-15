@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Wed 6 Nov 2019 23:22:57 GMT-05:00
+ * Tue 12 Nov 2019 15:30:47 GMT-05:00
  */
 
 #ifndef J_FEETPOSINITDOUBLESUPPORTCONSTHEIGHT_HH
@@ -14,7 +14,7 @@
 #include "math2mat.hpp"
 #include "mdefs.hpp"
 
-namespace DoubleSupportConstHeight
+namespace Pattern[DS1, Blank[opt]]
 {
 
   void J_feetPosInitDoubleSupportConstHeight_raw(double *p_output1, const double *var1);

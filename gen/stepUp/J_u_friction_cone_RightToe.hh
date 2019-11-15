@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Wed 6 Nov 2019 23:28:49 GMT-05:00
+ * Tue 12 Nov 2019 16:18:55 GMT-05:00
  */
 
 #ifndef J_U_FRICTION_CONE_RIGHTTOE_HH
@@ -14,7 +14,7 @@
 #include "math2mat.hpp"
 #include "mdefs.hpp"
 
-namespace DoubleSupportDiffHeight
+namespace Pattern[righStance, Blank[opt]]
 {
 
   void J_u_friction_cone_RightToe_raw(double *p_output1, const double *var1,const double *var2);

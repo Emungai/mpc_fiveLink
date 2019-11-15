@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Wed 6 Nov 2019 23:22:57 GMT-05:00
+ * Tue 12 Nov 2019 15:30:47 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -45,58 +45,58 @@ const double Degree = 0.01745329251994329576924;
  */
 static void output1(double *p_output1,const double *var1)
 {
-  double t14004;
-  double t14012;
-  double t13990;
-  double t14013;
-  double t13718;
-  double t14009;
-  double t14014;
-  double t14029;
-  double t14095;
-  double t14109;
-  double t14113;
-  double t14122;
-  double t13724;
-  double t13899;
-  double t14030;
-  double t14127;
-  double t14130;
-  double t14142;
-  double t14144;
-  double t14154;
-  double t14155;
-  double t14191;
-  double t14193;
-  double t14196;
-  t14004 = Cos(var1[5]);
-  t14012 = Sin(var1[2]);
-  t13990 = Cos(var1[2]);
-  t14013 = Sin(var1[5]);
-  t13718 = Cos(var1[6]);
-  t14009 = t13990*t14004;
-  t14014 = -1.*t14012*t14013;
-  t14029 = t14009 + t14014;
-  t14095 = -1.*t14004*t14012;
-  t14109 = -1.*t13990*t14013;
-  t14113 = t14095 + t14109;
-  t14122 = Sin(var1[6]);
-  t13724 = -1.*t13718;
-  t13899 = 1. + t13724;
-  t14030 = 0.4*t13899*t14029;
-  t14127 = -0.4*t14113*t14122;
-  t14130 = t13718*t14029;
-  t14142 = t14113*t14122;
-  t14144 = t14130 + t14142;
-  t14154 = 0.8*t14144;
-  t14155 = t14030 + t14127 + t14154;
-  t14191 = t14004*t14012;
-  t14193 = t13990*t14013;
-  t14196 = t14191 + t14193;
+  double t3170;
+  double t3183;
+  double t3149;
+  double t3333;
+  double t437;
+  double t3172;
+  double t3470;
+  double t3507;
+  double t3527;
+  double t3539;
+  double t3631;
+  double t3634;
+  double t2754;
+  double t3093;
+  double t3514;
+  double t3637;
+  double t3702;
+  double t3811;
+  double t3827;
+  double t3829;
+  double t3833;
+  double t3840;
+  double t3841;
+  double t3846;
+  t3170 = Cos(var1[5]);
+  t3183 = Sin(var1[2]);
+  t3149 = Cos(var1[2]);
+  t3333 = Sin(var1[5]);
+  t437 = Cos(var1[6]);
+  t3172 = t3149*t3170;
+  t3470 = -1.*t3183*t3333;
+  t3507 = t3172 + t3470;
+  t3527 = -1.*t3170*t3183;
+  t3539 = -1.*t3149*t3333;
+  t3631 = t3527 + t3539;
+  t3634 = Sin(var1[6]);
+  t2754 = -1.*t437;
+  t3093 = 1. + t2754;
+  t3514 = 0.4*t3093*t3507;
+  t3637 = -0.4*t3631*t3634;
+  t3702 = t437*t3507;
+  t3811 = t3631*t3634;
+  t3827 = t3702 + t3811;
+  t3829 = 0.8*t3827;
+  t3833 = t3514 + t3637 + t3829;
+  t3840 = t3170*t3183;
+  t3841 = t3149*t3333;
+  t3846 = t3840 + t3841;
   p_output1[0]=1.;
-  p_output1[1]=t14155;
-  p_output1[2]=t14155;
-  p_output1[3]=-0.4*t13718*t14029 + 0.4*t14122*t14196 + 0.8*(t14130 - 1.*t14122*t14196);
+  p_output1[1]=t3833;
+  p_output1[2]=t3833;
+  p_output1[3]=0.4*t3634*t3846 + 0.8*(t3702 - 1.*t3634*t3846) - 0.4*t3507*t437;
 }
 
 
@@ -156,7 +156,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "J_feetPosInitDoubleSupportConstHeight.hh"
 
-namespace DoubleSupportConstHeight
+namespace Pattern[DS1, Blank[opt]]
 {
 
 void J_feetPosInitDoubleSupportConstHeight_raw(double *p_output1, const double *var1)

@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Wed 6 Nov 2019 23:28:54 GMT-05:00
+ * Tue 12 Nov 2019 16:19:00 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -45,17 +45,17 @@ const double Degree = 0.01745329251994329576924;
  */
 static void output1(double *p_output1,const double *var1,const double *var2)
 {
-  double t807;
-  t807 = 0.7071065623731627*var2[0];
+  double t5384;
+  t5384 = 0.7071065623731627*var2[0];
   p_output1[0]=1.;
   p_output1[1]=1.;
-  p_output1[2]=t807;
+  p_output1[2]=t5384;
   p_output1[3]=-1.;
-  p_output1[4]=t807;
+  p_output1[4]=t5384;
   p_output1[5]=1.;
-  p_output1[6]=t807;
+  p_output1[6]=t5384;
   p_output1[7]=-1.;
-  p_output1[8]=t807;
+  p_output1[8]=t5384;
 }
 
 
@@ -124,7 +124,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "J_u_friction_cone_LeftToe.hh"
 
-namespace DoubleSupportDiffHeight
+namespace Pattern[righStance, Blank[opt]]
 {
 
 void J_u_friction_cone_LeftToe_raw(double *p_output1, const double *var1,const double *var2)

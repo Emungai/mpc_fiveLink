@@ -25,19 +25,22 @@ function domain = DoubleSupportConstHeight(model, load_path)
     % load symbolic expressions for contact (holonomic) constraints
     domain = addContact(domain,right_sole,fric_coef, [], load_path);
     
-    % add contact
+        % add contact
     left_sole = ToContactFrame(domain.ContactPoints.LeftToe,...
         'PointContactWithFriction');
     fric_coef.mu = 0.6;
+    % load symbolic expressions for contact (holonomic) constraints
     domain = addContact(domain,left_sole,fric_coef, [], load_path);
     
     
     % add event
-    % height of non-stance foot (right toe)
-    GRFRight=domain.Inputs.ConstraintWrench.fRightToe;
-    Fy = UnilateralConstraint(domain,GRFRight(2),'rightFootHeightDS','fRightToe'); %GRF: x,y,moment
+    % height of non-stance foot (left toe)
+    grfZ=UnilateralConstraint(domain,domain.Inputs.ConstraintWrench.fLeftToe(2),'leftFootZForce','fLeftToe');
+    
+%     p_nsf = getCartesianPosition(domain, domain.ContactPoints.LeftToe);
+%     h_nsf = UnilateralConstraint(domain,p_nsf(3),'leftFootHeight','x');
     % often very simple, no need to load expression. Compute them directly
-    domain = addEvent(domain, Fy);
+    domain = addEvent(domain, grfZ);
    
     % phase variable: time
     t = SymVariable('t');

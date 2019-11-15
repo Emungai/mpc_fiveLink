@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Wed 6 Nov 2019 23:22:35 GMT-05:00
+ * Tue 12 Nov 2019 15:30:34 GMT-05:00
  */
 
 #ifndef JS_D2Y_TIME_DOUBLESUPPORTCONSTHEIGHT_HH
@@ -14,7 +14,7 @@
 #include "math2mat.hpp"
 #include "mdefs.hpp"
 
-namespace DoubleSupportConstHeight
+namespace Pattern[DS1, Blank[opt]]
 {
 
   void Js_d2y_time_DoubleSupportConstHeight_raw(double *p_output1, const double *var1);

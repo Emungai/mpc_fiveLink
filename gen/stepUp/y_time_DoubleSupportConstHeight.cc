@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Wed 6 Nov 2019 23:22:18 GMT-05:00
+ * Tue 12 Nov 2019 15:30:20 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -45,58 +45,58 @@ const double Degree = 0.01745329251994329576924;
  */
 static void output1(double *p_output1,const double *var1,const double *var2,const double *var3,const double *var4,const double *var5,const double *var6)
 {
-  double t8835;
-  double t8894;
-  double t8904;
-  double t10783;
-  double t10977;
-  double t10987;
-  double t11112;
-  double t12855;
-  double t12877;
-  double t18257;
-  double t18258;
-  double t18259;
-  double t8896;
-  double t14220;
-  double t14232;
-  double t14467;
-  double t18266;
-  double t18267;
-  double t18268;
-  double t18270;
-  double t18271;
-  double t18272;
-  double t18274;
-  double t18276;
-  t8835 = -1.*var4[1];
-  t8894 = var4[0] + t8835;
-  t8904 = -1. + var5[0];
-  t10783 = -1. + var6[0];
-  t10977 = 1/t10783;
-  t10987 = -1.*var1[0];
-  t11112 = t10987 + var1[1];
-  t12855 = t8904*t10977*t11112;
-  t12877 = t8835 + var1[0] + t12855;
-  t18257 = 1/t8894;
-  t18258 = -1.*t18257*t12877;
-  t18259 = 1. + t18258;
-  t8896 = Power(t8894,-5);
-  t14220 = Power(t12877,5);
-  t14232 = Power(t8894,-4);
-  t14467 = Power(t12877,4);
-  t18266 = Power(t8894,-3);
-  t18267 = Power(t12877,3);
-  t18268 = Power(t18259,2);
-  t18270 = Power(t8894,-2);
-  t18271 = Power(t12877,2);
-  t18272 = Power(t18259,3);
-  t18274 = Power(t18259,4);
-  t18276 = Power(t18259,5);
-  p_output1[0]=var2[3] - 1.*t18276*var3[0] - 5.*t12877*t18257*t18274*var3[4] - 10.*t18270*t18271*t18272*var3[8] - 10.*t18266*t18267*t18268*var3[12] - 5.*t14232*t14467*t18259*var3[16] - 1.*t14220*t8896*var3[20];
-  p_output1[1]=var2[4] - 1.*t18276*var3[1] - 5.*t12877*t18257*t18274*var3[5] - 10.*t18270*t18271*t18272*var3[9] - 10.*t18266*t18267*t18268*var3[13] - 5.*t14232*t14467*t18259*var3[17] - 1.*t14220*t8896*var3[21];
-  p_output1[2]=var2[5] - 1.*t18276*var3[2] - 5.*t12877*t18257*t18274*var3[6] - 10.*t18270*t18271*t18272*var3[10] - 10.*t18266*t18267*t18268*var3[14] - 5.*t14232*t14467*t18259*var3[18] - 1.*t14220*t8896*var3[22];
-  p_output1[3]=var2[6] - 1.*t18276*var3[3] - 5.*t12877*t18257*t18274*var3[7] - 10.*t18270*t18271*t18272*var3[11] - 10.*t18266*t18267*t18268*var3[15] - 5.*t14232*t14467*t18259*var3[19] - 1.*t14220*t8896*var3[23];
+  double t5843;
+  double t9605;
+  double t9607;
+  double t9608;
+  double t9614;
+  double t9615;
+  double t9616;
+  double t9617;
+  double t9618;
+  double t9623;
+  double t9624;
+  double t9625;
+  double t9606;
+  double t9619;
+  double t9621;
+  double t9622;
+  double t9631;
+  double t9632;
+  double t9633;
+  double t9636;
+  double t9670;
+  double t9671;
+  double t9673;
+  double t9675;
+  t5843 = -1.*var4[1];
+  t9605 = var4[0] + t5843;
+  t9607 = -1. + var5[0];
+  t9608 = -1. + var6[0];
+  t9614 = 1/t9608;
+  t9615 = -1.*var1[0];
+  t9616 = t9615 + var1[1];
+  t9617 = t9607*t9614*t9616;
+  t9618 = t5843 + var1[0] + t9617;
+  t9623 = 1/t9605;
+  t9624 = -1.*t9623*t9618;
+  t9625 = 1. + t9624;
+  t9606 = Power(t9605,-5);
+  t9619 = Power(t9618,5);
+  t9621 = Power(t9605,-4);
+  t9622 = Power(t9618,4);
+  t9631 = Power(t9605,-3);
+  t9632 = Power(t9618,3);
+  t9633 = Power(t9625,2);
+  t9636 = Power(t9605,-2);
+  t9670 = Power(t9618,2);
+  t9671 = Power(t9625,3);
+  t9673 = Power(t9625,4);
+  t9675 = Power(t9625,5);
+  p_output1[0]=var2[3] - 1.*t9675*var3[0] - 5.*t9618*t9623*t9673*var3[4] - 10.*t9636*t9670*t9671*var3[8] - 10.*t9631*t9632*t9633*var3[12] - 5.*t9621*t9622*t9625*var3[16] - 1.*t9606*t9619*var3[20];
+  p_output1[1]=var2[4] - 1.*t9675*var3[1] - 5.*t9618*t9623*t9673*var3[5] - 10.*t9636*t9670*t9671*var3[9] - 10.*t9631*t9632*t9633*var3[13] - 5.*t9621*t9622*t9625*var3[17] - 1.*t9606*t9619*var3[21];
+  p_output1[2]=var2[5] - 1.*t9675*var3[2] - 5.*t9618*t9623*t9673*var3[6] - 10.*t9636*t9670*t9671*var3[10] - 10.*t9631*t9632*t9633*var3[14] - 5.*t9621*t9622*t9625*var3[18] - 1.*t9606*t9619*var3[22];
+  p_output1[3]=var2[6] - 1.*t9675*var3[3] - 5.*t9618*t9623*t9673*var3[7] - 10.*t9636*t9670*t9671*var3[11] - 10.*t9631*t9632*t9633*var3[15] - 5.*t9621*t9622*t9625*var3[19] - 1.*t9606*t9619*var3[23];
 }
 
 
@@ -201,7 +201,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "y_time_DoubleSupportConstHeight.hh"
 
-namespace DoubleSupportConstHeight
+namespace Pattern[DS1, Blank[opt]]
 {
 
 void y_time_DoubleSupportConstHeight_raw(double *p_output1, const double *var1,const double *var2,const double *var3,const double *var4,const double *var5,const double *var6)

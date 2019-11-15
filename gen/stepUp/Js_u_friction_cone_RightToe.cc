@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Wed 6 Nov 2019 23:28:51 GMT-05:00
+ * Tue 12 Nov 2019 16:18:57 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -124,7 +124,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "Js_u_friction_cone_RightToe.hh"
 
-namespace DoubleSupportDiffHeight
+namespace Pattern[righStance, Blank[opt]]
 {
 
 void Js_u_friction_cone_RightToe_raw(double *p_output1, const double *var1)
