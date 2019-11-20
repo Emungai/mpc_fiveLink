@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 15:29:56 GMT-05:00
+ * Tue 19 Nov 2019 21:00:33 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -45,85 +45,85 @@ const double Degree = 0.01745329251994329576924;
  */
 static void output1(double *p_output1,const double *var1,const double *var2)
 {
-  double t5637;
-  double t5670;
-  double t5575;
-  double t5671;
-  double t5321;
-  double t5651;
-  double t5694;
-  double t5697;
-  double t5718;
-  double t5722;
-  double t5726;
-  double t5733;
-  double t5383;
-  double t5564;
-  double t5772;
-  double t5781;
-  double t5782;
-  double t5716;
-  double t5734;
-  double t5745;
-  double t5746;
-  double t5749;
-  double t5751;
-  double t5764;
-  double t5766;
-  double t5769;
-  double t5785;
-  double t5787;
-  double t5794;
-  double t5795;
-  double t5798;
-  double t5800;
-  double t5801;
-  double t5802;
-  double t5807;
-  double t5808;
-  double t5809;
-  t5637 = Cos(var1[3]);
-  t5670 = Sin(var1[2]);
-  t5575 = Cos(var1[2]);
-  t5671 = Sin(var1[3]);
-  t5321 = Cos(var1[4]);
-  t5651 = t5575*t5637;
-  t5694 = -1.*t5670*t5671;
-  t5697 = t5651 + t5694;
-  t5718 = -1.*t5637*t5670;
-  t5722 = -1.*t5575*t5671;
-  t5726 = t5718 + t5722;
-  t5733 = Sin(var1[4]);
-  t5383 = -1.*t5321;
-  t5564 = 1. + t5383;
-  t5772 = -1.*t5575*t5637;
-  t5781 = t5670*t5671;
-  t5782 = t5772 + t5781;
-  t5716 = 0.4*t5564*t5697;
-  t5734 = -0.4*t5726*t5733;
-  t5745 = t5321*t5697;
-  t5746 = t5726*t5733;
-  t5749 = t5745 + t5746;
-  t5751 = 0.8*t5749;
-  t5764 = t5716 + t5734 + t5751;
-  t5766 = var2[0]*t5764;
-  t5769 = 0.4*t5564*t5726;
-  t5785 = -0.4*t5782*t5733;
-  t5787 = t5321*t5726;
-  t5794 = t5782*t5733;
-  t5795 = t5787 + t5794;
-  t5798 = 0.8*t5795;
-  t5800 = t5769 + t5785 + t5798;
-  t5801 = var2[2]*t5800;
-  t5802 = t5766 + t5801;
-  t5807 = t5637*t5670;
-  t5808 = t5575*t5671;
-  t5809 = t5807 + t5808;
+  double t8806;
+  double t8810;
+  double t8805;
+  double t8811;
+  double t330;
+  double t8807;
+  double t8812;
+  double t8813;
+  double t8815;
+  double t8816;
+  double t8817;
+  double t8818;
+  double t333;
+  double t8801;
+  double t8827;
+  double t8828;
+  double t8829;
+  double t8814;
+  double t8819;
+  double t8820;
+  double t8821;
+  double t8822;
+  double t8823;
+  double t8824;
+  double t8825;
+  double t8826;
+  double t8830;
+  double t8831;
+  double t8832;
+  double t8833;
+  double t8834;
+  double t8835;
+  double t8836;
+  double t8837;
+  double t8839;
+  double t8840;
+  double t8841;
+  t8806 = Cos(var1[3]);
+  t8810 = Sin(var1[2]);
+  t8805 = Cos(var1[2]);
+  t8811 = Sin(var1[3]);
+  t330 = Cos(var1[4]);
+  t8807 = t8805*t8806;
+  t8812 = -1.*t8810*t8811;
+  t8813 = t8807 + t8812;
+  t8815 = -1.*t8806*t8810;
+  t8816 = -1.*t8805*t8811;
+  t8817 = t8815 + t8816;
+  t8818 = Sin(var1[4]);
+  t333 = -1.*t330;
+  t8801 = 1. + t333;
+  t8827 = -1.*t8805*t8806;
+  t8828 = t8810*t8811;
+  t8829 = t8827 + t8828;
+  t8814 = 0.4*t8801*t8813;
+  t8819 = -0.4*t8817*t8818;
+  t8820 = t330*t8813;
+  t8821 = t8817*t8818;
+  t8822 = t8820 + t8821;
+  t8823 = 0.8*t8822;
+  t8824 = t8814 + t8819 + t8823;
+  t8825 = var2[0]*t8824;
+  t8826 = 0.4*t8801*t8817;
+  t8830 = -0.4*t8829*t8818;
+  t8831 = t330*t8817;
+  t8832 = t8829*t8818;
+  t8833 = t8831 + t8832;
+  t8834 = 0.8*t8833;
+  t8835 = t8826 + t8830 + t8834;
+  t8836 = var2[2]*t8835;
+  t8837 = t8825 + t8836;
+  t8839 = t8806*t8810;
+  t8840 = t8805*t8811;
+  t8841 = t8839 + t8840;
   p_output1[0]=var2[0];
   p_output1[1]=var2[2];
-  p_output1[2]=t5802;
-  p_output1[3]=t5802;
-  p_output1[4]=(-0.4*t5321*t5697 + 0.4*t5733*t5809 + 0.8*(t5745 - 1.*t5733*t5809))*var2[0] + (-0.4*t5321*t5726 + 0.4*t5697*t5733 + 0.8*(-1.*t5697*t5733 + t5787))*var2[2];
+  p_output1[2]=t8837;
+  p_output1[3]=t8837;
+  p_output1[4]=(-0.4*t330*t8813 + 0.4*t8818*t8841 + 0.8*(t8820 - 1.*t8818*t8841))*var2[0] + (-0.4*t330*t8817 + 0.4*t8813*t8818 + 0.8*(-1.*t8813*t8818 + t8831))*var2[2];
   p_output1[5]=0;
   p_output1[6]=0;
 }
@@ -194,7 +194,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "fRightToe_vec_DoubleSupportConstHeight.hh"
 
-namespace Pattern[DS1, Blank[opt]]
+namespace DoubleSupportConstHeight
 {
 
 void fRightToe_vec_DoubleSupportConstHeight_raw(double *p_output1, const double *var1,const double *var2)

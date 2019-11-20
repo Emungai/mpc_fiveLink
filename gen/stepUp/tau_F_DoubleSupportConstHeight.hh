@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 15:30:40 GMT-05:00
+ * Tue 19 Nov 2019 21:03:27 GMT-05:00
  */
 
 #ifndef TAU_F_DOUBLESUPPORTCONSTHEIGHT_HH
@@ -14,7 +14,7 @@
 #include "math2mat.hpp"
 #include "mdefs.hpp"
 
-namespace Pattern[DS1, Blank[opt]]
+namespace DoubleSupportConstHeight
 {
 
   void tau_F_DoubleSupportConstHeight_raw(double *p_output1, const double *var1,const double *var2);

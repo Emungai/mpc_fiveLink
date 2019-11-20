@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 14:41:52 GMT-05:00
+ * Tue 19 Nov 2019 21:02:46 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -45,77 +45,77 @@ const double Degree = 0.01745329251994329576924;
  */
 static void output1(double *p_output1,const double *var1,const double *var2)
 {
-  double t8842;
-  double t8844;
-  double t8841;
-  double t8855;
-  double t3491;
-  double t8843;
-  double t8856;
-  double t8857;
-  double t8859;
-  double t8860;
-  double t8861;
-  double t8862;
-  double t8836;
-  double t8840;
-  double t8858;
-  double t8863;
-  double t8864;
-  double t8865;
-  double t8866;
-  double t8867;
-  double t8868;
-  double t8872;
-  double t8873;
-  double t8874;
-  double t8884;
-  double t8891;
-  double t8892;
-  double t8893;
-  double t8890;
-  double t8894;
-  double t8895;
-  double t8896;
-  double t8897;
-  double t8898;
-  t8842 = Cos(var1[5]);
-  t8844 = Sin(var1[2]);
-  t8841 = Cos(var1[2]);
-  t8855 = Sin(var1[5]);
-  t3491 = Cos(var1[6]);
-  t8843 = t8841*t8842;
-  t8856 = -1.*t8844*t8855;
-  t8857 = t8843 + t8856;
-  t8859 = -1.*t8842*t8844;
-  t8860 = -1.*t8841*t8855;
-  t8861 = t8859 + t8860;
-  t8862 = Sin(var1[6]);
-  t8836 = -1.*t3491;
-  t8840 = 1. + t8836;
-  t8858 = 0.4*t8840*t8857;
-  t8863 = -0.4*t8861*t8862;
-  t8864 = t3491*t8857;
-  t8865 = t8861*t8862;
-  t8866 = t8864 + t8865;
-  t8867 = 0.8*t8866;
-  t8868 = t8858 + t8863 + t8867;
-  t8872 = t8842*t8844;
-  t8873 = t8841*t8855;
-  t8874 = t8872 + t8873;
-  t8884 = t3491*t8861;
-  t8891 = -1.*t8841*t8842;
-  t8892 = t8844*t8855;
-  t8893 = t8891 + t8892;
-  t8890 = 0.4*t8840*t8861;
-  t8894 = -0.4*t8893*t8862;
-  t8895 = t8893*t8862;
-  t8896 = t8884 + t8895;
-  t8897 = 0.8*t8896;
-  t8898 = t8890 + t8894 + t8897;
-  p_output1[0]=var2[0] + t8868*var2[2] + t8868*var2[5] + (-0.4*t3491*t8857 + 0.4*t8862*t8874 + 0.8*(t8864 - 1.*t8862*t8874))*var2[6];
+  double t9422;
+  double t9438;
+  double t9421;
+  double t9439;
+  double t9415;
+  double t9427;
+  double t9440;
+  double t9441;
+  double t9443;
+  double t9444;
+  double t9445;
+  double t9446;
+  double t9419;
+  double t9420;
+  double t9442;
+  double t9447;
+  double t9448;
+  double t9449;
+  double t9450;
+  double t9451;
+  double t9452;
+  double t9456;
+  double t9457;
+  double t9458;
+  double t9468;
+  double t9475;
+  double t9476;
+  double t9477;
+  double t9474;
+  double t9478;
+  double t9479;
+  double t9480;
+  double t9481;
+  double t9482;
+  t9422 = Cos(var1[5]);
+  t9438 = Sin(var1[2]);
+  t9421 = Cos(var1[2]);
+  t9439 = Sin(var1[5]);
+  t9415 = Cos(var1[6]);
+  t9427 = t9421*t9422;
+  t9440 = -1.*t9438*t9439;
+  t9441 = t9427 + t9440;
+  t9443 = -1.*t9422*t9438;
+  t9444 = -1.*t9421*t9439;
+  t9445 = t9443 + t9444;
+  t9446 = Sin(var1[6]);
+  t9419 = -1.*t9415;
+  t9420 = 1. + t9419;
+  t9442 = 0.4*t9420*t9441;
+  t9447 = -0.4*t9445*t9446;
+  t9448 = t9415*t9441;
+  t9449 = t9445*t9446;
+  t9450 = t9448 + t9449;
+  t9451 = 0.8*t9450;
+  t9452 = t9442 + t9447 + t9451;
+  t9456 = t9422*t9438;
+  t9457 = t9421*t9439;
+  t9458 = t9456 + t9457;
+  t9468 = t9415*t9445;
+  t9475 = -1.*t9421*t9422;
+  t9476 = t9438*t9439;
+  t9477 = t9475 + t9476;
+  t9474 = 0.4*t9420*t9445;
+  t9478 = -0.4*t9477*t9446;
+  t9479 = t9477*t9446;
+  t9480 = t9468 + t9479;
+  t9481 = 0.8*t9480;
+  t9482 = t9474 + t9478 + t9481;
+  p_output1[0]=var2[0] + t9452*var2[2] + t9452*var2[5] + (-0.4*t9415*t9441 + 0.4*t9446*t9458 + 0.8*(t9448 - 1.*t9446*t9458))*var2[6];
   p_output1[1]=0;
-  p_output1[2]=var2[1] + t8898*var2[2] + t8898*var2[5] + (-0.4*t3491*t8861 + 0.4*t8857*t8862 + 0.8*(-1.*t8857*t8862 + t8884))*var2[6];
+  p_output1[2]=var2[1] + t9482*var2[2] + t9482*var2[5] + (-0.4*t9415*t9445 + 0.4*t9441*t9446 + 0.8*(-1.*t9441*t9446 + t9468))*var2[6];
 }
 
 
@@ -184,7 +184,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "dh_LeftToe_DoubleSupportConstHeight.hh"
 
-namespace Pattern[DS1, Blank[opt]]
+namespace DoubleSupportConstHeight
 {
 
 void dh_LeftToe_DoubleSupportConstHeight_raw(double *p_output1, const double *var1,const double *var2)

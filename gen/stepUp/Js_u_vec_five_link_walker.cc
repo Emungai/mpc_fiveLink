@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 14:41:10 GMT-05:00
+ * Tue 19 Nov 2019 20:21:34 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -114,7 +114,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "Js_u_vec_five_link_walker.hh"
 
-namespace Pattern[DS1, Blank[opt]]
+namespace LeftStance
 {
 
 void Js_u_vec_five_link_walker_raw(double *p_output1, const double *var1)

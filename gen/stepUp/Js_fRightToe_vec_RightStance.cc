@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 16:18:16 GMT-05:00
+ * Tue 19 Nov 2019 21:07:19 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -140,7 +140,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "Js_fRightToe_vec_RightStance.hh"
 
-namespace Pattern[righStance, Blank[opt]]
+namespace RightStance
 {
 
 void Js_fRightToe_vec_RightStance_raw(double *p_output1, const double *var1)

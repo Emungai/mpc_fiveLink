@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 16:19:51 GMT-05:00
+ * Tue 19 Nov 2019 21:06:00 GMT-05:00
  */
 
 #ifndef J_TORQUES_RIGHTSTANCE_INTEGRAL_HH
@@ -14,7 +14,7 @@
 #include "math2mat.hpp"
 #include "mdefs.hpp"
 
-namespace Pattern[righStance, Blank[opt]]
+namespace RightStance
 {
 
   void J_torques_RightStance_integral_raw(double *p_output1, const double *var1,const double *var2,const double *var3);

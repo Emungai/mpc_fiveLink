@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 15:30:04 GMT-05:00
+ * Tue 19 Nov 2019 21:02:27 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -128,7 +128,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "Js_h_RightToe_DoubleSupportConstHeight.hh"
 
-namespace Pattern[DS1, Blank[opt]]
+namespace DoubleSupportConstHeight
 {
 
 void Js_h_RightToe_DoubleSupportConstHeight_raw(double *p_output1, const double *var1)

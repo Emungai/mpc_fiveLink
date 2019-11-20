@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 16:18:15 GMT-05:00
+ * Tue 19 Nov 2019 21:07:18 GMT-05:00
  */
 
 #ifndef J_FRIGHTTOE_VEC_RIGHTSTANCE_HH
@@ -14,7 +14,7 @@
 #include "math2mat.hpp"
 #include "mdefs.hpp"
 
-namespace Pattern[righStance, Blank[opt]]
+namespace RightStance
 {
 
   void J_fRightToe_vec_RightStance_raw(double *p_output1, const double *var1,const double *var2);

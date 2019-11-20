@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 16:18:26 GMT-05:00
+ * Tue 19 Nov 2019 21:07:26 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -45,77 +45,77 @@ const double Degree = 0.01745329251994329576924;
  */
 static void output1(double *p_output1,const double *var1,const double *var2)
 {
-  double t9546;
-  double t11088;
-  double t9544;
-  double t11092;
-  double t8538;
-  double t9592;
-  double t11093;
-  double t11094;
-  double t11096;
-  double t11107;
-  double t11108;
-  double t11109;
-  double t8548;
-  double t9541;
-  double t11095;
-  double t11110;
-  double t11111;
-  double t11112;
-  double t11113;
-  double t11114;
-  double t11115;
-  double t11119;
-  double t11120;
-  double t11121;
-  double t11131;
-  double t11138;
-  double t11139;
-  double t11140;
-  double t11137;
-  double t11141;
-  double t11142;
-  double t11143;
-  double t11144;
-  double t11145;
-  t9546 = Cos(var1[3]);
-  t11088 = Sin(var1[2]);
-  t9544 = Cos(var1[2]);
-  t11092 = Sin(var1[3]);
-  t8538 = Cos(var1[4]);
-  t9592 = t9544*t9546;
-  t11093 = -1.*t11088*t11092;
-  t11094 = t9592 + t11093;
-  t11096 = -1.*t9546*t11088;
-  t11107 = -1.*t9544*t11092;
-  t11108 = t11096 + t11107;
-  t11109 = Sin(var1[4]);
-  t8548 = -1.*t8538;
-  t9541 = 1. + t8548;
-  t11095 = 0.4*t9541*t11094;
-  t11110 = -0.4*t11108*t11109;
-  t11111 = t8538*t11094;
-  t11112 = t11108*t11109;
-  t11113 = t11111 + t11112;
-  t11114 = 0.8*t11113;
-  t11115 = t11095 + t11110 + t11114;
-  t11119 = t9546*t11088;
-  t11120 = t9544*t11092;
-  t11121 = t11119 + t11120;
-  t11131 = t8538*t11108;
-  t11138 = -1.*t9544*t9546;
-  t11139 = t11088*t11092;
-  t11140 = t11138 + t11139;
-  t11137 = 0.4*t9541*t11108;
-  t11141 = -0.4*t11140*t11109;
-  t11142 = t11140*t11109;
-  t11143 = t11131 + t11142;
-  t11144 = 0.8*t11143;
-  t11145 = t11137 + t11141 + t11144;
-  p_output1[0]=var2[0] + t11115*var2[2] + t11115*var2[3] + (0.4*t11109*t11121 + 0.8*(t11111 - 1.*t11109*t11121) - 0.4*t11094*t8538)*var2[4];
+  double t10603;
+  double t10627;
+  double t10597;
+  double t10629;
+  double t10586;
+  double t10604;
+  double t10631;
+  double t10632;
+  double t10648;
+  double t10655;
+  double t10656;
+  double t10661;
+  double t10595;
+  double t10596;
+  double t10647;
+  double t10662;
+  double t10663;
+  double t10664;
+  double t10668;
+  double t10669;
+  double t10670;
+  double t10674;
+  double t10675;
+  double t10676;
+  double t10708;
+  double t10715;
+  double t10716;
+  double t10722;
+  double t10714;
+  double t10723;
+  double t10724;
+  double t10725;
+  double t10726;
+  double t10727;
+  t10603 = Cos(var1[3]);
+  t10627 = Sin(var1[2]);
+  t10597 = Cos(var1[2]);
+  t10629 = Sin(var1[3]);
+  t10586 = Cos(var1[4]);
+  t10604 = t10597*t10603;
+  t10631 = -1.*t10627*t10629;
+  t10632 = t10604 + t10631;
+  t10648 = -1.*t10603*t10627;
+  t10655 = -1.*t10597*t10629;
+  t10656 = t10648 + t10655;
+  t10661 = Sin(var1[4]);
+  t10595 = -1.*t10586;
+  t10596 = 1. + t10595;
+  t10647 = 0.4*t10596*t10632;
+  t10662 = -0.4*t10656*t10661;
+  t10663 = t10586*t10632;
+  t10664 = t10656*t10661;
+  t10668 = t10663 + t10664;
+  t10669 = 0.8*t10668;
+  t10670 = t10647 + t10662 + t10669;
+  t10674 = t10603*t10627;
+  t10675 = t10597*t10629;
+  t10676 = t10674 + t10675;
+  t10708 = t10586*t10656;
+  t10715 = -1.*t10597*t10603;
+  t10716 = t10627*t10629;
+  t10722 = t10715 + t10716;
+  t10714 = 0.4*t10596*t10656;
+  t10723 = -0.4*t10722*t10661;
+  t10724 = t10722*t10661;
+  t10725 = t10708 + t10724;
+  t10726 = 0.8*t10725;
+  t10727 = t10714 + t10723 + t10726;
+  p_output1[0]=var2[0] + t10670*var2[2] + t10670*var2[3] + (-0.4*t10586*t10632 + 0.4*t10661*t10676 + 0.8*(t10663 - 1.*t10661*t10676))*var2[4];
   p_output1[1]=0;
-  p_output1[2]=var2[1] + t11145*var2[2] + t11145*var2[3] + (0.4*t11094*t11109 + 0.8*(-1.*t11094*t11109 + t11131) - 0.4*t11108*t8538)*var2[4];
+  p_output1[2]=var2[1] + t10727*var2[2] + t10727*var2[3] + (-0.4*t10586*t10656 + 0.4*t10632*t10661 + 0.8*(-1.*t10632*t10661 + t10708))*var2[4];
 }
 
 
@@ -184,7 +184,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "dh_RightToe_RightStance.hh"
 
-namespace Pattern[righStance, Blank[opt]]
+namespace RightStance
 {
 
 void dh_RightToe_RightStance_raw(double *p_output1, const double *var1,const double *var2)

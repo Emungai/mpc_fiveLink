@@ -18,12 +18,12 @@ function domain = DoubleSupportDiffHeight(model, load_path)
     x = domain.States.x;
     dx = domain.States.dx;
     
-    % add contact
-    right_sole = ToContactFrame(domain.ContactPoints.RightToe,...
-        'PointContactWithFriction');
-    fric_coef.mu = 0.6;
-    % load symbolic expressions for contact (holonomic) constraints
-    domain = addContact(domain,right_sole,fric_coef, [], load_path);
+%     % add contact
+%     right_sole = ToContactFrame(domain.ContactPoints.RightToe,...
+%         'PointContactWithFriction');
+%     fric_coef.mu = 0.6;
+%     % load symbolic expressions for contact (holonomic) constraints
+%     domain = addContact(domain,right_sole,fric_coef, [], load_path);
     
     % add contact
     left_sole = ToContactFrame(domain.ContactPoints.LeftToe,...
@@ -32,10 +32,10 @@ function domain = DoubleSupportDiffHeight(model, load_path)
     domain = addContact(domain,left_sole,fric_coef, [], load_path);
     
     
-    % add event
+%     % add event
     % height of non-stance foot (right toe)
-    GRFLeft=domain.Inputs.ConstraintWrench.fLeftToe;
-    Fy = UnilateralConstraint(domain,GRFLeft(2),'leftFootHeightDS','x'); %GRF: x,y,moment
+    GRFRight=domain.Inputs.ConstraintWrench.fRightToe;
+    Fy = UnilateralConstraint(domain,GRFRight(2),'RightFootZForce','fRightToe'); %GRF: x,y,moment
     % often very simple, no need to load expression. Compute them directly
     domain = addEvent(domain, Fy);
    

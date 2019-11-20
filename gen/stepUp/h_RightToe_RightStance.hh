@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 16:18:21 GMT-05:00
+ * Tue 19 Nov 2019 21:07:21 GMT-05:00
  */
 
 #ifndef H_RIGHTTOE_RIGHTSTANCE_HH
@@ -14,7 +14,7 @@
 #include "math2mat.hpp"
 #include "mdefs.hpp"
 
-namespace Pattern[righStance, Blank[opt]]
+namespace RightStance
 {
 
   void h_RightToe_RightStance_raw(double *p_output1, const double *var1,const double *var2);

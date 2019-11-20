@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 16:19:36 GMT-05:00
+ * Tue 19 Nov 2019 21:10:44 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -45,22 +45,22 @@ const double Degree = 0.01745329251994329576924;
  */
 static void output1(double *p_output1,const double *var1,const double *var2,const double *var3)
 {
-  double t152;
-  double t161;
-  double t178;
-  double t183;
-  double t216;
-  double t221;
-  t152 = -1.*var1[0];
-  t161 = t152 + var1[1];
-  t178 = Power(t161,-2);
-  t183 = -1.*var2[0];
-  t216 = t183 + var3[0];
-  t221 = 1/t161;
-  p_output1[0]=t178*t216;
-  p_output1[1]=-1.*t178*t216;
-  p_output1[2]=-1.*t221;
-  p_output1[3]=t221;
+  double t4094;
+  double t4316;
+  double t4348;
+  double t4468;
+  double t4539;
+  double t8899;
+  t4094 = -1.*var1[0];
+  t4316 = t4094 + var1[1];
+  t4348 = Power(t4316,-2);
+  t4468 = -1.*var2[0];
+  t4539 = t4468 + var3[0];
+  t8899 = 1/t4316;
+  p_output1[0]=t4348*t4539;
+  p_output1[1]=-1.*t4348*t4539;
+  p_output1[2]=-1.*t8899;
+  p_output1[3]=t8899;
 }
 
 
@@ -138,7 +138,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "J_average_velocity.hh"
 
-namespace Pattern[righStance, Blank[opt]]
+namespace LeftStance
 {
 
 void J_average_velocity_raw(double *p_output1, const double *var1,const double *var2,const double *var3)

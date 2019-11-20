@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 16:19:38 GMT-05:00
+ * Tue 19 Nov 2019 21:10:46 GMT-05:00
  */
 
 #ifndef JS_AVERAGE_VELOCITY_HH
@@ -14,7 +14,7 @@
 #include "math2mat.hpp"
 #include "mdefs.hpp"
 
-namespace Pattern[righStance, Blank[opt]]
+namespace LeftStance
 {
 
   void Js_average_velocity_raw(double *p_output1, const double *var1);

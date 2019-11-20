@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 16:19:49 GMT-05:00
+ * Tue 19 Nov 2019 21:05:58 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -125,7 +125,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "torques_RightStance_integral.hh"
 
-namespace Pattern[righStance, Blank[opt]]
+namespace RightStance
 {
 
 void torques_RightStance_integral_raw(double *p_output1, const double *var1,const double *var2,const double *var3)

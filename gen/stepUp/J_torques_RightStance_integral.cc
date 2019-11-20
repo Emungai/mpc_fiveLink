@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 16:19:51 GMT-05:00
+ * Tue 19 Nov 2019 21:06:00 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -45,26 +45,26 @@ const double Degree = 0.01745329251994329576924;
  */
 static void output1(double *p_output1,const double *var1,const double *var2,const double *var3)
 {
-  double t219;
-  double t220;
-  double t224;
-  double t227;
-  double t250;
-  double t275;
-  double t277;
-  t219 = Power(var2[0],2);
-  t220 = Power(var2[1],2);
-  t224 = Power(var2[2],2);
-  t227 = Power(var2[3],2);
-  t250 = t219 + t220 + t224 + t227;
-  t275 = -1.*var1[0];
-  t277 = t275 + var1[1];
-  p_output1[0]=-1.*t250*var3[0];
-  p_output1[1]=t250*var3[0];
-  p_output1[2]=2.*t277*var2[0]*var3[0];
-  p_output1[3]=2.*t277*var2[1]*var3[0];
-  p_output1[4]=2.*t277*var2[2]*var3[0];
-  p_output1[5]=2.*t277*var2[3]*var3[0];
+  double t4087;
+  double t4201;
+  double t4360;
+  double t4413;
+  double t4414;
+  double t4580;
+  double t4606;
+  t4087 = Power(var2[0],2);
+  t4201 = Power(var2[1],2);
+  t4360 = Power(var2[2],2);
+  t4413 = Power(var2[3],2);
+  t4414 = t4087 + t4201 + t4360 + t4413;
+  t4580 = -1.*var1[0];
+  t4606 = t4580 + var1[1];
+  p_output1[0]=-1.*t4414*var3[0];
+  p_output1[1]=t4414*var3[0];
+  p_output1[2]=2.*t4606*var2[0]*var3[0];
+  p_output1[3]=2.*t4606*var2[1]*var3[0];
+  p_output1[4]=2.*t4606*var2[2]*var3[0];
+  p_output1[5]=2.*t4606*var2[3]*var3[0];
 }
 
 
@@ -142,7 +142,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "J_torques_RightStance_integral.hh"
 
-namespace Pattern[righStance, Blank[opt]]
+namespace RightStance
 {
 
 void J_torques_RightStance_integral_raw(double *p_output1, const double *var1,const double *var2,const double *var3)

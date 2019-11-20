@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 16:17:45 GMT-05:00
+ * Tue 19 Nov 2019 21:06:53 GMT-05:00
  */
 
 #ifndef JS_PRIGHTTOECONT_RIGHTSTANCE_HH
@@ -14,7 +14,7 @@
 #include "math2mat.hpp"
 #include "mdefs.hpp"
 
-namespace Pattern[righStance, Blank[opt]]
+namespace RightStance
 {
 
   void Js_pRightToeCont_RightStance_raw(double *p_output1, const double *var1);

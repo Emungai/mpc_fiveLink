@@ -24,7 +24,7 @@ function domain = DoubleSupportConstHeight(model, load_path)
     fric_coef.mu = 0.6;
     % load symbolic expressions for contact (holonomic) constraints
     domain = addContact(domain,right_sole,fric_coef, [], load_path);
-    
+%     
         % add contact
     left_sole = ToContactFrame(domain.ContactPoints.LeftToe,...
         'PointContactWithFriction');
@@ -38,7 +38,7 @@ function domain = DoubleSupportConstHeight(model, load_path)
     grfZ=UnilateralConstraint(domain,domain.Inputs.ConstraintWrench.fLeftToe(2),'leftFootZForce','fLeftToe');
     
 %     p_nsf = getCartesianPosition(domain, domain.ContactPoints.LeftToe);
-%     h_nsf = UnilateralConstraint(domain,p_nsf(3),'leftFootHeight','x');
+%     h_nsf = UnilateralConstraint(domain,p_nsf(3)-0.1,'leftFootHeight','x');
     % often very simple, no need to load expression. Compute them directly
     domain = addEvent(domain, grfZ);
    
@@ -53,17 +53,17 @@ function domain = DoubleSupportConstHeight(model, load_path)
     y_q1L = x('q1_left');
     y_q2L = x('q2_left');
     
+%     ya_2 = [y_q1R;
+%             y_q2R;
+%             y_q1L;
+%             y_q2L];
     ya_2 = [y_q1R;
-            y_q2R;
-            y_q1L;
-            y_q2L];
+            y_q2R];
     
     y2_label = {'q1_right',...
-                'q2_right',...
-                'q1_left',...
-                'q2_left'};
+                'q2_right'};
     % optional: load expression for virtual constraints while creating
-    y2 = VirtualConstraint(domain,ya_2,'time','DesiredType','Bezier','PolyDegree',5,...
+    y2 = VirtualConstraint(domain,ya_2,'doubleSupportConst','DesiredType','Bezier','PolyDegree',5,...
         'RelativeDegree',2,'OutputLabel',{y2_label},'PhaseType','TimeBased',...
         'PhaseVariable',tau,'PhaseParams',p,'Holonomic',true,...
         'LoadPath', load_path);

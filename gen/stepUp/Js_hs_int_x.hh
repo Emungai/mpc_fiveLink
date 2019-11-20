@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 16:18:05 GMT-05:00
+ * Tue 19 Nov 2019 21:09:34 GMT-05:00
  */
 
 #ifndef JS_HS_INT_X_HH
@@ -14,7 +14,7 @@
 #include "math2mat.hpp"
 #include "mdefs.hpp"
 
-namespace Pattern[righStance, Blank[opt]]
+namespace LeftStance
 {
 
   void Js_hs_int_x_raw(double *p_output1, const double *var1);

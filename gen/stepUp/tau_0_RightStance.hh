@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 16:19:19 GMT-05:00
+ * Tue 19 Nov 2019 21:07:58 GMT-05:00
  */
 
 #ifndef TAU_0_RIGHTSTANCE_HH
@@ -14,7 +14,7 @@
 #include "math2mat.hpp"
 #include "mdefs.hpp"
 
-namespace Pattern[righStance, Blank[opt]]
+namespace RightStance
 {
 
   void tau_0_RightStance_raw(double *p_output1, const double *var1,const double *var2);

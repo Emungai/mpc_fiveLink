@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 14:38:42 GMT-05:00
+ * Tue 19 Nov 2019 20:19:50 GMT-05:00
  */
 
 #ifndef CE2_VEC6_FIVE_LINK_WALKER_HH
@@ -14,7 +14,7 @@
 #include "math2mat.hpp"
 #include "mdefs.hpp"
 
-namespace Pattern[DS1, Blank[opt]]
+namespace LeftStance
 {
 
   void Ce2_vec6_five_link_walker_raw(double *p_output1, const double *var1,const double *var2);

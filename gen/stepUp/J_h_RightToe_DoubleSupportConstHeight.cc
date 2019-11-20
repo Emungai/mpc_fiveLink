@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 15:30:03 GMT-05:00
+ * Tue 19 Nov 2019 21:02:25 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -45,84 +45,84 @@ const double Degree = 0.01745329251994329576924;
  */
 static void output1(double *p_output1,const double *var1,const double *var2)
 {
-  double t9311;
-  double t9313;
-  double t9310;
-  double t9314;
-  double t3132;
-  double t9312;
-  double t9315;
-  double t9316;
-  double t9321;
-  double t9322;
-  double t9323;
-  double t9324;
-  double t9303;
-  double t9309;
-  double t9317;
-  double t9325;
-  double t9326;
-  double t9327;
-  double t9328;
-  double t9329;
-  double t9330;
-  double t9332;
-  double t9333;
-  double t9334;
-  double t9341;
-  double t9342;
-  double t9343;
-  double t9340;
-  double t9344;
-  double t9345;
-  double t9346;
-  double t9347;
-  double t9348;
-  double t9349;
-  t9311 = Cos(var1[3]);
-  t9313 = Sin(var1[2]);
-  t9310 = Cos(var1[2]);
-  t9314 = Sin(var1[3]);
-  t3132 = Cos(var1[4]);
-  t9312 = t9310*t9311;
-  t9315 = -1.*t9313*t9314;
-  t9316 = t9312 + t9315;
-  t9321 = -1.*t9311*t9313;
-  t9322 = -1.*t9310*t9314;
-  t9323 = t9321 + t9322;
-  t9324 = Sin(var1[4]);
-  t9303 = -1.*t3132;
-  t9309 = 1. + t9303;
-  t9317 = 0.4*t9309*t9316;
-  t9325 = -0.4*t9323*t9324;
-  t9326 = t3132*t9316;
-  t9327 = t9323*t9324;
-  t9328 = t9326 + t9327;
-  t9329 = 0.8*t9328;
-  t9330 = t9317 + t9325 + t9329;
-  t9332 = t9311*t9313;
-  t9333 = t9310*t9314;
-  t9334 = t9332 + t9333;
-  t9341 = -1.*t9310*t9311;
-  t9342 = t9313*t9314;
-  t9343 = t9341 + t9342;
-  t9340 = 0.4*t9309*t9323;
-  t9344 = -0.4*t9343*t9324;
-  t9345 = t3132*t9323;
-  t9346 = t9343*t9324;
-  t9347 = t9345 + t9346;
-  t9348 = 0.8*t9347;
-  t9349 = t9340 + t9344 + t9348;
+  double t9074;
+  double t9078;
+  double t9073;
+  double t9081;
+  double t2831;
+  double t9077;
+  double t9082;
+  double t9085;
+  double t9089;
+  double t9095;
+  double t9096;
+  double t9097;
+  double t4812;
+  double t9060;
+  double t9086;
+  double t9098;
+  double t9099;
+  double t9100;
+  double t9101;
+  double t9102;
+  double t9103;
+  double t9105;
+  double t9106;
+  double t9107;
+  double t9114;
+  double t9115;
+  double t9116;
+  double t9113;
+  double t9117;
+  double t9118;
+  double t9119;
+  double t9120;
+  double t9121;
+  double t9122;
+  t9074 = Cos(var1[3]);
+  t9078 = Sin(var1[2]);
+  t9073 = Cos(var1[2]);
+  t9081 = Sin(var1[3]);
+  t2831 = Cos(var1[4]);
+  t9077 = t9073*t9074;
+  t9082 = -1.*t9078*t9081;
+  t9085 = t9077 + t9082;
+  t9089 = -1.*t9074*t9078;
+  t9095 = -1.*t9073*t9081;
+  t9096 = t9089 + t9095;
+  t9097 = Sin(var1[4]);
+  t4812 = -1.*t2831;
+  t9060 = 1. + t4812;
+  t9086 = 0.4*t9060*t9085;
+  t9098 = -0.4*t9096*t9097;
+  t9099 = t2831*t9085;
+  t9100 = t9096*t9097;
+  t9101 = t9099 + t9100;
+  t9102 = 0.8*t9101;
+  t9103 = t9086 + t9098 + t9102;
+  t9105 = t9074*t9078;
+  t9106 = t9073*t9081;
+  t9107 = t9105 + t9106;
+  t9114 = -1.*t9073*t9074;
+  t9115 = t9078*t9081;
+  t9116 = t9114 + t9115;
+  t9113 = 0.4*t9060*t9096;
+  t9117 = -0.4*t9116*t9097;
+  t9118 = t2831*t9096;
+  t9119 = t9116*t9097;
+  t9120 = t9118 + t9119;
+  t9121 = 0.8*t9120;
+  t9122 = t9113 + t9117 + t9121;
   p_output1[0]=1.;
-  p_output1[1]=t9330;
-  p_output1[2]=t9330;
-  p_output1[3]=-0.4*t3132*t9316 + 0.4*t9324*t9334 + 0.8*(t9326 - 1.*t9324*t9334);
+  p_output1[1]=t9103;
+  p_output1[2]=t9103;
+  p_output1[3]=-0.4*t2831*t9085 + 0.4*t9097*t9107 + 0.8*(t9099 - 1.*t9097*t9107);
   p_output1[4]=-1.;
   p_output1[5]=-1.;
   p_output1[6]=1.;
-  p_output1[7]=t9349;
-  p_output1[8]=t9349;
-  p_output1[9]=-0.4*t3132*t9323 + 0.4*t9316*t9324 + 0.8*(-1.*t9316*t9324 + t9345);
+  p_output1[7]=t9122;
+  p_output1[8]=t9122;
+  p_output1[9]=-0.4*t2831*t9096 + 0.4*t9085*t9097 + 0.8*(-1.*t9085*t9097 + t9118);
   p_output1[10]=-1.;
 }
 
@@ -192,7 +192,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "J_h_RightToe_DoubleSupportConstHeight.hh"
 
-namespace Pattern[DS1, Blank[opt]]
+namespace DoubleSupportConstHeight
 {
 
 void J_h_RightToe_DoubleSupportConstHeight_raw(double *p_output1, const double *var1,const double *var2)

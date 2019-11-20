@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 14:41:54 GMT-05:00
+ * Tue 19 Nov 2019 21:02:47 GMT-05:00
  */
 
 #ifndef J_DH_LEFTTOE_DOUBLESUPPORTCONSTHEIGHT_HH
@@ -14,7 +14,7 @@
 #include "math2mat.hpp"
 #include "mdefs.hpp"
 
-namespace Pattern[DS1, Blank[opt]]
+namespace DoubleSupportConstHeight
 {
 
   void J_dh_LeftToe_DoubleSupportConstHeight_raw(double *p_output1, const double *var1,const double *var2);

@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 16:17:32 GMT-05:00
+ * Tue 19 Nov 2019 21:09:09 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -117,7 +117,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "tCont.hh"
 
-namespace Pattern[righStance, Blank[opt]]
+namespace LeftStance
 {
 
 void tCont_raw(double *p_output1, const double *var1,const double *var2)

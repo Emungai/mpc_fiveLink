@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 15:29:58 GMT-05:00
+ * Tue 19 Nov 2019 21:00:36 GMT-05:00
  */
 
 #ifndef J_FRIGHTTOE_VEC_DOUBLESUPPORTCONSTHEIGHT_HH
@@ -14,7 +14,7 @@
 #include "math2mat.hpp"
 #include "mdefs.hpp"
 
-namespace Pattern[DS1, Blank[opt]]
+namespace DoubleSupportConstHeight
 {
 
   void J_fRightToe_vec_DoubleSupportConstHeight_raw(double *p_output1, const double *var1,const double *var2);

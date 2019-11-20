@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 12 Nov 2019 16:19:26 GMT-05:00
+ * Tue 19 Nov 2019 21:08:05 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -117,7 +117,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 #include "J_tau_F_RightStance.hh"
 
-namespace Pattern[righStance, Blank[opt]]
+namespace RightStance
 {
 
 void J_tau_F_RightStance_raw(double *p_output1, const double *var1,const double *var2)
