@@ -58,10 +58,12 @@ function domain = DoubleSupportConstHeight(model, load_path)
 %             y_q1L;
 %             y_q2L];
     ya_2 = [y_q1R;
-            y_q2R];
+            y_q2R;
+            y_q1L;];
     
     y2_label = {'q1_right',...
-                'q2_right'};
+                'q2_right',...
+                'q1_left'};
     % optional: load expression for virtual constraints while creating
     y2 = VirtualConstraint(domain,ya_2,'doubleSupportConst','DesiredType','Bezier','PolyDegree',5,...
         'RelativeDegree',2,'OutputLabel',{y2_label},'PhaseType','TimeBased',...

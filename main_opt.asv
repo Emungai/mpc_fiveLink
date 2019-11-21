@@ -38,35 +38,51 @@ end
 bounds=hybridSystemModel.domains.constraintFuncs.GetBounds(rabbit,{});
 system=hybridSystemModel.LoadSystem(rabbit,[],{});
 nlp=opt.LoadOpt(system,bounds,{});
+
 %removing constraints to create fake ending node
 nlp.Phase(6).removeConstraint('xDiscreteMaprightLand'); % gets rid of impact--> breaks connection between the 2 domains
 nlp.Phase(6).removeConstraint('dxDiscreteMaprightLand');
 nlp.Phase(6).removeConstraint('tContDomain') % need to remove to implement periodicity on last node; makes t+=t-
-
+constraint_names = nlp.Phase(6).ConstrTable.Properties.VariableNames';
+for i = 1:length(constraint_names)
+	removeConstraint(nlp.Phase(6), constraint_names{i});
+end
 %% compile objective and system equations
 if COMPILE
 compileObjective(nlp,[],[],export_path);
 compileConstraint(nlp,[],[],export_path);
 end
-compileConstraint(nlp,[1],{},export_path);
-
+compileConstraint(nlp,[5],{},export_path);
+%%
 compileConstraint(nlp,[],{'output_boundary_LeftStance'},export_path);
 compileConstraint(nlp,[],{'average_velocity_LeftStance'},export_path);
-compileConstraint(nlp,[],{'swing_foot_height_LeftStance'},export_path);
-%% remove constraints
-constraint_names = nlp.Phase(1).ConstrTable.Properties.VariableNames';
+compileConstraint(nlp,[],{'average_velocity_DoubleSupportConstHeight'},export_path);
 
-for i = 1:length(constraint_names)
-	removeConstraint(nlp.Phase(1), constraint_names{i});
+
+
+compileConstraint(nlp,[],{'d2y_rightStance_RightStance'},export_path); 
+
+%% remove constraints
+
+% constraint_names = nlp.Phase(5).ConstrTable.Properties.VariableNames';
+% for i = 1:length(constraint_names)
+% 	removeConstraint(nlp.Phase(5), constraint_names{i});
+% end
+% 
+
+
+
+for i = 5
+	removeConstraint(nlp.Phase(i), 'dynamics_equation');
 end
 
 
 %% Create Ipopt solver 
 addpath(genpath(export_path));
 nlp.update;
-% initGuess.LoadInitialGuess(nlp,gait)
+initGuess.LoadInitialGuess(nlp,gait)
 solver = IpoptApplication(nlp);
-% solver.Options.ipopt.max_iter = 250; %800    %cutting down the number of iterations//////////////////
+% solver.Options.ipopt.max_iter = 10; %800    %cutting down the number of iterations//////////////////
 
 % Run Optimization
 tic
@@ -81,20 +97,20 @@ gait = struct(...
     'inputs',inputs,...
     'params',params);
 %% check costs & constraints
-checkConstraints(nlp, sol, 1e-10, 'constraintCheck.txt');
+checkConstraints(nlp, sol, 1e-6, 'constraintCheck.txt');
 checkCosts(nlp, sol,'checkCosts.txt');
 open('constraintCheck.txt')
 open('checkCosts.txt')
 %% save solution
  SAVE_SOLUTION = 1;
-    CHARACTER_NAME = 'ifallelsefails';
+    CHARACTER_NAME = 'avgVel1_lb0_ub0.1';
     MODEL_NAME='Rabbit';
     if SAVE_SOLUTION
         data_name = char(datetime('now','TimeZone','local','Format','d-MMM-y-HH-mm-ssZ'));%'local/longer_double_support_wider_step_dummy';
 
         name = [CHARACTER_NAME, '_', data_name, '_', MODEL_NAME];
  
-        save_dir = fullfile(cur, 'trajectories\stepUp\phase3');
+        save_dir = fullfile(cur, 'trajectories\stepUp\debug\avgVel');
  
         if ~exist(save_dir,'dir'), mkdir(save_dir); end 
 
@@ -113,17 +129,7 @@ open('checkCosts.txt')
 
 
 %% Animation
-q_log_R = states{1}.x; % Right stance
-q_log_L = q_log_R([1:3,6:7,4:5],:); % symmetric Left stance
-q_log_L(1:3,:) = q_log_L(1:3,:) + repmat((q_log_R(1:3,end)-q_log_R(1:3,1)),1,size(q_log_L,2));
 
-t_log_R = tspan{1};
-t_log_L = t_log_R + t_log_R(end);
-
-q_log = [q_log_R, q_log_L];
-t_log = [t_log_R, t_log_L];
-
-%%
 
 anim = Animator.FiveLinkAnimator([gait(1).tspan,gait(3).tspan(2:end),gait(5).tspan(2:end)], [gait(1).states.x,gait(3).states.x(:,2:end),gait(5).states.x(:,2:end)]);
 

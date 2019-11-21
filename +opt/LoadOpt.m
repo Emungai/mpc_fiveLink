@@ -2,8 +2,7 @@ function [nlp] = LoadOpt(sys, bounds,arg)
 num_grid.DoubleSupportConstHeight=10;
 num_grid.RightStance=10;
 num_grid.LeftStance=10;
-% num_grid.LeftStanceLand=10;
-% num_grid.DoubleSupportDiffHeight=9;
+
 
 opts = struct(...
     'EqualityConstraintBoundary', 1e-4);

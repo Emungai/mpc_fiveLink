@@ -21,29 +21,7 @@ u2DS2_fun = SymFunction(['torques_' DS2Model.Name],u2DS2,{uDS2});
 ds2Stance = getPhaseIndex(nlp,'LeftStance');
 addRunningCost(nlp.Phase(ds2Stance),u2DS2_fun,{'u'});
 
-% DS2Model=system.Gamma.Nodes.Domain{2};
-% uDS2 = DS2Model.Inputs.Control.u;
-% u2DS2 = tovector(norm(uDS2).^2);
-% u2DS2_fun = SymFunction(['torques_' DS2Model.Name],u2DS2,{uDS2});
-% ds2Stance = getPhaseIndex(nlp,'DoubleSupportDiffHeight');
-% addRunningCost(nlp.Phase(ds2Stance),u2DS2_fun,{'u'});
-%%
-% %% LeftStanceLand
-% ls2=system.Gamma.Nodes.Domain{1}
-% uls2=ls2.Inputs.Control.u;
-% T  = SymVariable('t',[2, 1]);
-% Lls2 = tovector(norm(uls2).^2)./(T(2) - T(1));
-% Lls2_fun= SymFunction(['torque_' ls2.Name],Lls2,{uls2,T});
-% ls2_phase = getPhaseIndex(nlp,'LeftStanceLand');
-% addRunningCost(nlp.Phase(ls2_phase),Lls2_fun,{'u','T'});
-% %% DoubleSupportDiffHeight
-% ds2=system.Gamma.Nodes.Domain{1}
-% uds2=ds2.Inputs.Control.u;
-% T  = SymVariable('t',[2, 1]);
-% Lds2 = tovector(norm(uds2).^2)./(T(2) - T(1));
-% Lds2_fun= SymFunction(['torque_' ds2.Name],Lds2,{uds2,T});
-% ds2_phase = getPhaseIndex(nlp,'DoubleSupportDiffHeight');
-% addRunningCost(nlp.Phase(ds2_phase),Lds2_fun,{'u','T'});
+
 %%
 nlp.update;
 end
