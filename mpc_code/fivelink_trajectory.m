@@ -4,8 +4,17 @@ import casadi.*
 
 %% System Setup
 DT = 0.005; %[s]
-N = 400; % prediction horizon
+N = 95; % prediction horizon
 
+%% Load Reference Trajectory
+param=load(fullfile('C:\Users\gibso\Box Sync\Box Sync\Courses\Github\mpc_fiveLink\opt\trajectories\stepUp\singleDomain\opt_traj_3-Dec-2019-18-07-22-0500_Rabbit.mat'));
+addpath('C:\Users\gibso\Box Sync\Box Sync\Courses\Github\mpc_fiveLink\opt');
+trajRef=calculations.referenceTrajBez(param.gait,DT);
+X_REF = [trajRef.x; trajRef.dx];
+U_REF = trajRef.u;
+
+
+%% CasADi symbolic setup
 % Symbolic state variables [x,z,roty,q1R,q2R,q1L,q2L]
 x = SX.sym('x');
 z = SX.sym('z');
@@ -57,8 +66,16 @@ obj = 0; % Objective function
 g = [];  % constraints vector
 
 Q = eye(n_s);
-Q_terminal = Q;
-R = diag([0.1]); % weighing matrices (controls)
+Qx= diag([1 1 1 10 10 10 10]);
+Qdx= 0.01*eye(n_s/2);
+
+Q=blkdiag(Qx,Qdx);
+Q_terminal = [   -0.7584    0.8656   -7.8374    1.9785    0.4227   -2.6156   -1.7504   -5.1162    2.8324  -13.3248   -0.5759   -1.3113   -3.4692   -1.1094;
+    0.7587    2.2676   -4.4204   -0.0621    4.8910   -1.8552   -0.6727    2.1244    8.0445   -7.3401   -2.1954    2.5135   -2.3070   -0.6239;
+    2.2751   -1.5590    5.5302    1.2138    0.0344    6.2101    0.3768    7.8621   -4.9991    3.5811    0.6693    0.2589    4.0505    0.2063;
+    1.9165    1.2955    8.9236    1.7760    0.7191    2.2826    6.6817   11.3470    5.3480   21.5484    6.5641    2.4089    5.5172    5.1351];
+% Q_terminal from lqr
+R = diag([0.1 0.1 0.1 0.1]); % weighing matrices (controls)
 
 st  = X(:,1);        % initial state
 g = [g;st-P(1:n_s)]; % initial condition constraints
@@ -80,7 +97,7 @@ for k = 1:N
     g = [g;st_next-st_next_euler]; % compute constraints
 end
 % Terminal Stage Cost
-obj = obj + (st-P((N-1)*(n_s+n_c)+(n_s+1):(N-1)*(n_s+n_c)+(n_s+n_s)))'*Q_terminal*(st-P((N-1)*(n_s+n_c)+(n_s+1):(N-1)*(n_s+n_c)+(n_s+n_s)));
+% obj = obj + (st-P((N-1)*(n_s+n_c)+(n_s+1):(N-1)*(n_s+n_c)+(n_s+n_s)))'*Q_terminal*(st-P((N-1)*(n_s+n_c)+(n_s+1):(N-1)*(n_s+n_c)+(n_s+n_s)));
 
 %% NLP Settings
 % make the decision variable one column  vector
@@ -104,23 +121,41 @@ args.lbg(1:n_s*(N+1)) = 0;
 args.ubg(1:n_s*(N+1)) = 0; 
 
 % State inequalities
-args.lbx(1:n_s:n_s*(N+1),1) = -inf;             %state x lower bound
-args.ubx(1:n_s:n_s*(N+1),1) = inf;              %state x upper bound
-args.lbx(2:n_s:n_s*(N+1),1) = 0;                %state z lower bound
-args.ubx(2:n_s:n_s*(N+1),1) = inf;              %state z upper bound
-args.lbx(3:n_s:n_s*(N+1),1) = -pi;              %state roty lower bound
-args.ubx(3:n_s:n_s*(N+1),1) = pi;               %state roty upper bound
-args.lbx(4:n_s:n_s*(N+1),1) = -inf;             %state q1R lower bound
-args.ubx(4:n_s:n_s*(N+1),1) = inf;              %state q1R upper bound
-args.lbx(5:n_s:n_s*(N+1),1) = -inf;             %state q2R lower bound
-args.ubx(5:n_s:n_s*(N+1),1) = inf;              %state q2R upper bound
-args.lbx(6:n_s:n_s*(N+1),1) = -inf;             %state q1L lower bound
-args.ubx(6:n_s:n_s*(N+1),1) = inf;              %state q1L upper bound
-args.lbx(7:n_s:n_s*(N+1),1) = -inf;             %state q2L lower bound
-args.ubx(7:n_s:n_s*(N+1),1) = inf;              %state q2L upper bound
+args.lbx(1:n_s:n_s*(N+1),1) = param.bounds.RightStance.states.x.lb(1);             %state x lower bound
+args.ubx(1:n_s:n_s*(N+1),1) = param.bounds.RightStance.states.x.ub(1);              %state x upper bound
+args.lbx(2:n_s:n_s*(N+1),1) = param.bounds.RightStance.states.x.lb(2);                %state z lower bound
+args.ubx(2:n_s:n_s*(N+1),1) = param.bounds.RightStance.states.x.ub(2);              %state z upper bound
+args.lbx(3:n_s:n_s*(N+1),1) = param.bounds.RightStance.states.x.lb(3);              %state roty lower bound
+args.ubx(3:n_s:n_s*(N+1),1) = param.bounds.RightStance.states.x.ub(3);               %state roty upper bound
+args.lbx(4:n_s:n_s*(N+1),1) = param.bounds.RightStance.states.x.lb(4);             %state q1R lower bound
+args.ubx(4:n_s:n_s*(N+1),1) = param.bounds.RightStance.states.x.ub(4);              %state q1R upper bound
+args.lbx(5:n_s:n_s*(N+1),1) = param.bounds.RightStance.states.x.lb(5);             %state q2R lower bound
+args.ubx(5:n_s:n_s*(N+1),1) = param.bounds.RightStance.states.x.ub(5);              %state q2R upper bound
+args.lbx(6:n_s:n_s*(N+1),1) = param.bounds.RightStance.states.x.lb(6);             %state q1L lower bound
+args.ubx(6:n_s:n_s*(N+1),1) = param.bounds.RightStance.states.x.ub(6);              %state q1L upper bound
+args.lbx(7:n_s:n_s*(N+1),1) = param.bounds.RightStance.states.x.lb(7);             %state q2L lower bound
+args.ubx(7:n_s:n_s*(N+1),1) = param.bounds.RightStance.states.x.ub(7);   
+
+%velocity bounds
+args.lbx(8:n_s:n_s*(N+1),1) = -inf;             
+args.ubx(8:n_s:n_s*(N+1),1) = inf;              
+args.lbx(9:n_s:n_s*(N+1),1) = -inf;               
+args.ubx(9:n_s:n_s*(N+1),1) = inf;              
+args.lbx(10:n_s:n_s*(N+1),1) = -inf;             
+args.ubx(10:n_s:n_s*(N+1),1) = inf;             
+args.lbx(11:n_s:n_s*(N+1),1) = -inf;           
+args.ubx(11:n_s:n_s*(N+1),1) = inf;              
+args.lbx(12:n_s:n_s*(N+1),1) = -inf;             
+args.ubx(12:n_s:n_s*(N+1),1) = inf;             
+args.lbx(13:n_s:n_s*(N+1),1) = -inf;          
+args.ubx(13:n_s:n_s*(N+1),1) = inf;              
+args.lbx(14:n_s:n_s*(N+1),1) = -inf;             
+args.ubx(14:n_s:n_s*(N+1),1) = inf;  
 
 % Control inequalities
-torque_max = inf; torque_min = -torque_max;
+% torque_max =param.bounds.RightStance.inputs.Control.u.ub ; torque_min =param.bounds.RightStance.inputs.Control.u.lb;
+torque_max = 10; torque_min = -10;
+
 args.lbx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*N,1) = torque_min;    % force lower bound
 args.ubx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*N,1) = torque_max;    % force upper bound
 args.lbx(n_s*(N+1)+2:n_c:n_s*(N+1)+n_c*N,1) = torque_min;    % force lower bound
@@ -133,23 +168,20 @@ args.ubx(n_s*(N+1)+4:n_c:n_s*(N+1)+n_c*N,1) = torque_max;    % force upper bound
 % Remember Decision Variables are stored as {x0,...,xN,u0,...,u_N-1] for
 % figuring out indexing of args.lbx/ubx
 
-%% Load Reference Trajectory
-load('fivelink_reference_trajectory1.mat');
 
-%% MPC Calculation and Simulation
+%% MPC Calculation
 t0 = 0;
-x0 = [0 ; 0.3; 0; 0; 0; 0; 0];    % initial condition.
+x0 = [param.gait(1).states.x(:,1); param.gait(1).states.dx(:,1)];    % initial condition. 14X1
 
 x_traj(:,1) = x0; % xx contains the history of states
 t(1) = t0;
 
-u0 = zeros(N,n_c);
-u0 = U_REF(1:N);
+U_DEC = zeros(N,n_c);
 
-% X0 = repmat(x0,1,N+1)'; % initialization of the states decision variables
-X0 = X_REF(:,1:N+1)';
+X0 = repmat(x0,1,N+1)'; % initialization of the states decision variables
+% X_DEC = X_REF(:,1:N+1)';
 
-sim_tim = 10; % Maximum simulation time
+sim_tim = 0.47; % Maximum simulation time
 
 % Start MPC
 mpciter = 0;
@@ -171,7 +203,7 @@ while( (norm((x_traj(:,end)-X_REF(:,mpciter+1)),2) > 3e-2 || mpciter < 300)  && 
             U_REF(:,k);
     end
     
-    args.x0  = [reshape(X0',n_s*(N+1),1);reshape(u0',n_c*N,1)];
+    args.x0  = [reshape(X0',n_s*(N+1),1);reshape(U_DEC',n_c*N,1)];
     
     %% Solve MPC with CasADi NLP solver
     sol = solver('x0', args.x0, 'lbx', args.lbx, 'ubx', args.ubx,...
@@ -184,7 +216,7 @@ while( (norm((x_traj(:,end)-X_REF(:,mpciter+1)),2) > 3e-2 || mpciter < 300)  && 
     t(mpciter+1) = t0;
     
     %% Apply the control and guess next solution by shifting
-    [t0, x0, u0] = shift(DT, t0, x0, u,f);
+    [t0, x0, U_DEC] = shift(DT, t0, x0, u,f);
     x_traj(:,mpciter+2) = x0;
     X0 = reshape(full(sol.x(1:n_s*(N+1)))',n_s,N+1)'; % get solution TRAJECTORY
     
@@ -192,7 +224,7 @@ while( (norm((x_traj(:,end)-X_REF(:,mpciter+1)),2) > 3e-2 || mpciter < 300)  && 
     X0 = [X0(2:end,:);X0(end,:)];   % initialize with next step and add on last state twice
     
 %     mpciter
-    if mod(mpciter,50) == 0
+    if mod(mpciter,1) == 0
         mpciter
     end
     mpciter = mpciter + 1;
@@ -203,35 +235,186 @@ average_mpc_time = main_loop_time/(mpciter+1)
 t(end+1) = t(end) + DT;
 
 %%
-close alL
+close all
 
-if true
+if false
     animate_traj(t,X_REF,x_traj,l);
 end
 if true
     figure
-    subplot(2,2,1);
+    subplot(3,3,1);
     plot(t,x_traj(1,:)); title('x'); 
     hold on; plot(t(1:mpciter),X_REF(1,1:mpciter)); 
     legend('x','x_{ref}');
-    subplot(2,2,2); 
-    plot(t,x_traj(2,:)); title('\theta');
+    subplot(3,3,2); 
+    plot(t,x_traj(2,:)); title('z');
     hold on; plot(t(1:mpciter),X_REF(2,1:mpciter));
-    legend('\theta','\theta_{ref}');
-    subplot(2,2,3);
-    plot(t,x_traj(3,:)); title('dx');
+    legend('z','z_{ref}');
+    subplot(3,3,3);
+    plot(t,x_traj(3,:)); title('rotY');
     hold on; plot(t(1:mpciter),X_REF(3,1:mpciter));
-    legend('dx','dx_{ref}');
-    subplot(2,2,4);
-    plot(t,x_traj(4,:)); title('d \theta');
+    legend('rotY','rotY{ref}');
+    subplot(3,3,4);
+    plot(t,x_traj(4,:)); title('q1R');
     hold on; plot(t(1:mpciter),X_REF(4,1:mpciter)); 
-    legend('d \theta','d \theta_{ref}');
+    legend('q1R','q1R_{ref}');
+    subplot(3,3,5);
+    plot(t,x_traj(5,:)); title('q2R');
+    hold on; plot(t(1:mpciter),X_REF(5,1:mpciter)); 
+    legend('q2R','q2R{ref}');
+    subplot(3,3,6);
+    plot(t,x_traj(6,:)); title('q1L');
+    hold on; plot(t(1:mpciter),X_REF(6,1:mpciter)); 
+    legend('q1L','q1L_{ref}');
+    subplot(3,3,7);
+    plot(t,x_traj(7,:)); title('q2L');
+    hold on; plot(t(1:mpciter),X_REF(7,1:mpciter)); 
+    legend('q2L','q2L{ref}');
+    
+    figure
+    subplot(3,3,1);
+    plot(t,x_traj(8,:)); title('dx'); 
+    hold on; plot(t(1:mpciter),X_REF(8,1:mpciter)); 
+    legend('dx','dx_{ref}');
+    subplot(3,3,2); 
+    plot(t,x_traj(9,:)); title('dz');
+    hold on; plot(t(1:mpciter),X_REF(9,1:mpciter));
+    legend('dz','dz_{ref}');
+    
+    subplot(3,3,3);
+    plot(t,x_traj(10,:)); title('drotY');
+    hold on; plot(t(1:mpciter),X_REF(10,1:mpciter));
+    legend('drotY','drotY{ref}');
+    
+    subplot(3,3,4);
+    plot(t,x_traj(11,:)); title('dq1R');
+    hold on; plot(t(1:mpciter),X_REF(11,1:mpciter)); 
+    legend('dq1R','dq1R_{ref}');
+    
+    subplot(3,3,5);
+    plot(t,x_traj(12,:)); title('dq2R');
+    hold on; plot(t(1:mpciter),X_REF(12,1:mpciter)); 
+    legend('dq2R','dq2R{ref}');
+    
+    subplot(3,3,6);
+    plot(t,x_traj(13,:)); title('dq1L');
+    hold on; plot(t(1:mpciter),X_REF(13,1:mpciter)); 
+    legend('dq1L','dq1L_{ref}');
+    
+    subplot(3,3,7);
+    plot(t,x_traj(14,:)); title('dq2L');
+    hold on; plot(t(1:mpciter),X_REF(14,1:mpciter)); 
+    legend('dq2L','dq2L{ref}');
     
     figure 
-    plot(t(1:end-1),u_cl); title('Force');
+    subplot(2,2,1);
+    plot(t(1:end-1),u_cl(:,1)); title('u_q1R');
     hold on; plot(t(1:mpciter),U_REF(1,1:mpciter)); 
-    legend('F','F_{ref}');
+    legend('u_q1R','u_q1R_{ref}');
+    subplot(2,2,2);
+    plot(t(1:end-1),u_cl(:,2)); title('u_q2R');
+    hold on; plot(t(1:mpciter),U_REF(2,1:mpciter)); 
+    legend('u_q2R','u_q2R_{ref}');
+    subplot(2,2,3);
+    plot(t(1:end-1),u_cl(:,3)); title('u_q1L');
+    hold on; plot(t(1:mpciter),U_REF(3,1:mpciter)); 
+    legend('u_q1L','u_q1L_{ref}');
+    subplot(2,2,4);
+    plot(t(1:end-1),u_cl(:,4)); title('u_q2L');
+    hold on; plot(t(1:mpciter),U_REF(4,1:mpciter)); 
+    legend('u_q2L','u_q2L_{ref}');
+    
+    
 end
 
+%% Plotting during simulation
+if false
+    figure
+    subplot(3,3,1);
+    plot(t,x_traj(1,1:end-1)); title('x'); 
+    hold on; plot(t(1:mpciter),X_REF(1,1:mpciter)); 
+    legend('x','x_{ref}');
+    subplot(3,3,2); 
+    plot(t,x_traj(2,1:end-1)); title('z');
+    hold on; plot(t(1:mpciter),X_REF(2,1:mpciter));
+    legend('z','z_{ref}');
+    subplot(3,3,3);
+    plot(t,x_traj(3,1:end-1)); title('rotY');
+    hold on; plot(t(1:mpciter),X_REF(3,1:mpciter));
+    legend('rotY','rotY{ref}');
+    subplot(3,3,4);
+    plot(t,x_traj(4,1:end-1)); title('q1R');
+    hold on; plot(t(1:mpciter),X_REF(4,1:mpciter)); 
+    legend('q1R','q1R_{ref}');
+    subplot(3,3,5);
+    plot(t,x_traj(5,1:end-1)); title('q2R');
+    hold on; plot(t(1:mpciter),X_REF(5,1:mpciter)); 
+    legend('q2R','q2R{ref}');
+    subplot(3,3,6);
+    plot(t,x_traj(6,1:end-1)); title('q1L');
+    hold on; plot(t(1:mpciter),X_REF(6,1:mpciter)); 
+    legend('q1L','q1L_{ref}');
+    subplot(3,3,7);
+    plot(t,x_traj(7,1:end-1)); title('q2L');
+    hold on; plot(t(1:mpciter),X_REF(7,1:mpciter)); 
+    legend('q2L','q2L{ref}');
+    
+    figure
+    subplot(3,3,1);
+    plot(t,x_traj(8,1:end-1)); title('dx'); 
+    hold on; plot(t(1:mpciter),X_REF(8,1:mpciter)); 
+    legend('dx','dx_{ref}');
+    subplot(3,3,2); 
+    plot(t,x_traj(9,1:end-1)); title('dz');
+    hold on; plot(t(1:mpciter),X_REF(9,1:mpciter));
+    legend('dz','dz_{ref}');
+    
+    subplot(3,3,3);
+    plot(t,x_traj(10,1:end-1)); title('drotY');
+    hold on; plot(t(1:mpciter),X_REF(10,1:mpciter));
+    legend('drotY','drotY{ref}');
+    
+    subplot(3,3,4);
+    plot(t,x_traj(11,1:end-1)); title('dq1R');
+    hold on; plot(t(1:mpciter),X_REF(11,1:mpciter)); 
+    legend('dq1R','dq1R_{ref}');
+    
+    subplot(3,3,5);
+    plot(t,x_traj(12,1:end-1)); title('dq2R');
+    hold on; plot(t(1:mpciter),X_REF(12,1:mpciter)); 
+    legend('dq2R','dq2R{ref}');
+    
+    subplot(3,3,6);
+    plot(t,x_traj(13,1:end-1)); title('dq1L');
+    hold on; plot(t(1:mpciter),X_REF(13,1:mpciter)); 
+    legend('dq1L','dq1L_{ref}');
+    
+    subplot(3,3,7);
+    plot(t,x_traj(14,1:end-1)); title('dq2L');
+    hold on; plot(t(1:mpciter),X_REF(14,1:mpciter)); 
+    legend('dq2L','dq2L{ref}');
+end
+    %%
+if false
+    figure 
+    subplot(2,2,1);
+    plot(t(1:end-1),u_cl(:,1)); title('u_q1R');
+    hold on; plot(t(1:mpciter),U_REF(1,1:mpciter)); 
+    legend('u_q1R','u_q1R_{ref}');
+    subplot(2,2,2);
+    plot(t(1:end-1),u_cl(:,2)); title('u_q2R');
+    hold on; plot(t(1:mpciter),U_REF(2,1:mpciter)); 
+    legend('u_q2R','u_q2R_{ref}');
+    subplot(2,2,3);
+    plot(t(1:end-1),u_cl(:,3)); title('u_q1L');
+    hold on; plot(t(1:mpciter),U_REF(3,1:mpciter)); 
+    legend('u_q1L','u_q1L_{ref}');
+    subplot(2,2,4);
+    plot(t(1:end-1),u_cl(:,4)); title('u_q2L');
+    hold on; plot(t(1:mpciter),U_REF(4,1:mpciter)); 
+    legend('u_q2L','u_q2L_{ref}');
+    
+    
+end
 
 

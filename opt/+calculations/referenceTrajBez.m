@@ -1,6 +1,6 @@
 
 
-function traj=referenceTrajBez(bezCoef,gait,delT)
+function traj=referenceTrajBez(gait,delT)
 %example of bezCoef
     % bezCoef={};
     % bezCoef{1}=gait(1).params.adoubleSupportConst;
@@ -8,14 +8,12 @@ function traj=referenceTrajBez(bezCoef,gait,delT)
     % bezCoef{5}=gait(5).params.aleftStance;
 %% get the traj for position and velocity
 traj={};
-CHECK=1;
-for i=1:2:length(bezCoef)
+CHECK=0;
+for i=1:2:length(gait)
     t=gait(i).tspan;
     t0=t(1);
     tf=t(end);
     tdes=t0:delT:tf;
-    n=length(bezCoef{i})/6; %getting the number of virtual constraints
-    alpha=reshape(bezCoef{i},n,6);
     t_par=(t-t0)/(tf-t0);
     alpha_u=calculations.bezfit(t_par,gait(i).inputs.u,5);
     alpha_x=calculations.bezfit(t_par,gait(i).states.x,5);
@@ -24,7 +22,7 @@ for i=1:2:length(bezCoef)
         s=(tdes(k)-t0)/(tf-t0);
         ds=1/(tf-t0);
         traj(i).x(:,k)=calculations.bezier_Jessy(alpha_x,s);
-        traj(i).dx(:,k)=calculations.dbezier(alpha_dx,s);
+        traj(i).dx(:,k)=calculations.bezier_Jessy(alpha_dx,s);
         traj(i).u(:,k)=calculations.bezier_Jessy(alpha_u,s);
     end
 end
@@ -38,6 +36,6 @@ for j=1:21
 end
 est-gait(i).states.x;
 dest-gait(i).states.dx;
-uest-gait(i).states.u;
+uest-gait(i).inputs.u;
 end
 end

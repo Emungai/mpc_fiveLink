@@ -5,7 +5,14 @@ import casadi.*
 %% System Setup
 DT = 0.005; %[s]
 N = 400; % prediction horizon
+%% Load Reference Trajectory
+param=load(fullfile('C:\Users\gibso\Box Sync\Box Sync\Courses\Github\mpc_fiveLink\opt\trajectories\stepUp\singleDomain\opt_traj_3-Dec-2019-18-07-22-0500_Rabbit.mat'));
+addpath('C:\Users\gibso\Box Sync\Box Sync\Courses\Github\mpc_fiveLink\opt');
+trajRef=calculations.referenceTrajBez(param.gait,DT);
+X_REF = [trajRef.x; trajRef.dx];
+U_REF = trajRef.u;
 
+%% CasADi symbolics
 % Symbolic state variables [x,z,roty,q1R,q2R,q1L,q2L]
 x_tilde = SX.sym('x');
 z_tilde = SX.sym('z');
@@ -43,6 +50,10 @@ A = jacobian(rhs,states_tilde);
 B = jacobian(rhs,u_ctrl_tilde);
 rhs = A*states_tilde + B*u_ctrl_tilde;    % Remember to change how equality constraints g are constructed since (x = x_ref + x_tilde, u = u_ref + u_tilde)
 
+A_func = Function('A_Lin',{states_tilde,u_ctrl_tilde},{A});
+B_func = Function('B_Lin',{states_tilde,u_ctrl_tilde},{B});
+[A_num,B_num] = LinearizedDynamics();
+
 f_linearized = Function('f_linearized',{states_tilde,u_ctrl_tilde},{rhs});  % nonlinear mapping function f(x,u)
 U = SX.sym('U',n_c,N);                      % Decision variables (controls)
 P = SX.sym('P',n_s + N*(n_s+n_c));          
@@ -58,7 +69,9 @@ g = [];  % constraints vector
 
 Q = eye(n_s);
 Q_terminal = Q;
-R = diag([0.1]); % weighing matrices (controls)
+R = diag([0.1 0.1 0.1 0.1]); % weighing matrices (controls)
+
+[K_lqr,P_lqr,Eigens_lqr] = lqr(A_num,B_num,Q,R);
 
 st  = X(:,1);        % initial state
 g = [g;st-P(1:n_s)]; % initial condition constraints
@@ -198,7 +211,7 @@ while( (norm(x_traj(:,end)) > 3e-2 || mpciter < 300)  && mpciter < sim_tim / DT)
     mpciter = mpciter + 1;
 end
 main_loop_time = toc(main_loop);
-ss_error = norm((x_traj(:,end))
+ss_error = norm(x_traj(:,end))
 average_mpc_time = main_loop_time/(mpciter+1)
 t(end+1) = t(end) + DT;
 
