@@ -50,8 +50,9 @@ Mmat = Mmat_notorso(x,z,rotY,q1R,q2R,q1L,q2L); % 7x7
 G = GravityVector_notorso(x,z,rotY,q1R,q2R,q1L,q2L); %7x1
 B = 50*[zeros(3,4); eye(4)];    % Multiply by 50 b/c of gear reduction
 
+tic
 rhs = [dq; Mmat\(B*u_ctrl-G)]; % system r.h.s
-
+toc
 f = Function('f',{states,u_ctrl},{rhs});  % nonlinear mapping function f(x,u)
 U = SX.sym('U',n_c,N);                      % Decision variables (controls)
 P = SX.sym('P',n_s + N*(n_s+n_c));          
@@ -75,6 +76,7 @@ Q_terminal = [   -0.7584    0.8656   -7.8374    1.9785    0.4227   -2.6156   -1.
     2.2751   -1.5590    5.5302    1.2138    0.0344    6.2101    0.3768    7.8621   -4.9991    3.5811    0.6693    0.2589    4.0505    0.2063;
     1.9165    1.2955    8.9236    1.7760    0.7191    2.2826    6.6817   11.3470    5.3480   21.5484    6.5641    2.4089    5.5172    5.1351];
 % Q_terminal from lqr
+
 R = diag([0.1 0.1 0.1 0.1]); % weighing matrices (controls)
 
 st  = X(:,1);        % initial state
@@ -156,14 +158,14 @@ args.ubx(14:n_s:n_s*(N+1),1) = inf;
 % torque_max =param.bounds.RightStance.inputs.Control.u.ub ; torque_min =param.bounds.RightStance.inputs.Control.u.lb;
 torque_max = 10; torque_min = -10;
 
-args.lbx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*N,1) = torque_min;    % force lower bound
-args.ubx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*N,1) = torque_max;    % force upper bound
-args.lbx(n_s*(N+1)+2:n_c:n_s*(N+1)+n_c*N,1) = torque_min;    % force lower bound
-args.ubx(n_s*(N+1)+2:n_c:n_s*(N+1)+n_c*N,1) = torque_max;    % force upper bound
-args.lbx(n_s*(N+1)+3:n_c:n_s*(N+1)+n_c*N,1) = torque_min;    % force lower bound
-args.ubx(n_s*(N+1)+3:n_c:n_s*(N+1)+n_c*N,1) = torque_max;    % force upper bound
-args.lbx(n_s*(N+1)+4:n_c:n_s*(N+1)+n_c*N,1) = torque_min;    % force lower bound
-args.ubx(n_s*(N+1)+4:n_c:n_s*(N+1)+n_c*N,1) = torque_max;    % force upper bound
+args.lbx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*N,1) = torque_min;    % u_q1R lower bound
+args.ubx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*N,1) = torque_max;   
+args.lbx(n_s*(N+1)+2:n_c:n_s*(N+1)+n_c*N,1) = torque_min;    % u_q2R lower bound
+args.ubx(n_s*(N+1)+2:n_c:n_s*(N+1)+n_c*N,1) = torque_max;    
+args.lbx(n_s*(N+1)+3:n_c:n_s*(N+1)+n_c*N,1) = torque_min;    % u_q1L lower bound
+args.ubx(n_s*(N+1)+3:n_c:n_s*(N+1)+n_c*N,1) = torque_max;    
+args.lbx(n_s*(N+1)+4:n_c:n_s*(N+1)+n_c*N,1) = torque_min;    % u_q2L lower bound
+args.ubx(n_s*(N+1)+4:n_c:n_s*(N+1)+n_c*N,1) = torque_max;    
 
 % Remember Decision Variables are stored as {x0,...,xN,u0,...,u_N-1] for
 % figuring out indexing of args.lbx/ubx
@@ -234,12 +236,7 @@ ss_error = norm((x_traj(:,end)-X_REF(:,mpciter+1)),2)
 average_mpc_time = main_loop_time/(mpciter+1)
 t(end+1) = t(end) + DT;
 
-%%
-close all
-
-if false
-    animate_traj(t,X_REF,x_traj,l);
-end
+%% Plot results
 if true
     figure
     subplot(3,3,1);

@@ -18,16 +18,16 @@ dx = SX.sym('dx'); dtheta = SX.sym('dtheta');
 q = [x; theta]; dq = [dx; dtheta];
 states = [q; dq]; n_s = length(states);
 
-force = SX.sym('force');
-controls = force; n_c = length(controls);
+u = SX.sym('u');
+controls = u; n_c = length(controls);
 
 Mmat = [mc+mp mp*l*cos(theta); mp*l*cos(theta) mp*l^2];
 C = [0 -mp*l*dtheta*sin(theta); 0 0];
 G = [0; mp*g*l*sin(theta)];
 B = [1; 0];
-
-rhs = [dq; Mmat\(B*force-C*dq-G)]; % system r.h.s
-
+tic
+rhs = [dq; Mmat\(B*u-C*dq-G)]; % system r.h.s
+toc
 f = Function('f',{states,controls},{rhs});  % nonlinear mapping function f(x,u)
 U = SX.sym('U',n_c,N);                      % Decision variables (controls)
 P = SX.sym('P',n_s + n_s);                  % parameters (which include the initial state and the reference state)
@@ -81,9 +81,9 @@ args.ubx(3:n_s:n_s*(N+1),1) = inf;              %state dx upper bound
 args.lbx(4:n_s:n_s*(N+1),1) = -inf;             %state dtheta lower bound
 args.ubx(4:n_s:n_s*(N+1),1) = inf;              %state dtheta upper bound
 
-force_max = inf; force_min = -force_max;
-args.lbx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*N,1) = force_min;    % force lower bound
-args.ubx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*N,1) = force_max;    % force upper bound
+u_max = inf; u_min = -u_max;
+args.lbx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*N,1) = u_min;    % u lower bound
+args.ubx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*N,1) = u_max;    % u upper bound
 
 %% ----------------------------------------------
 % ALL OF THE ABOVE IS JUST A PROBLEM SET UP
@@ -174,5 +174,5 @@ if true
     plot(t,x_traj(4,:)); title('dtheta');
 
     figure 
-    plot(t(1:end-1),u_cl); title('Force');
+    plot(t(1:end-1),u_cl); title('u');
 end
