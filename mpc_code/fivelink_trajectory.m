@@ -14,8 +14,11 @@ trajName = 'one_sec_nocoriolis_9-Dec-2019-22-23-15-0500.mat';
 param=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\',trajName]);
 addpath('..\rabbit_stepUp');
 trajRef=calculations.referenceTrajBez(param.gait,DT);
-X_REF = [trajRef.x; trajRef.dx];
-U_REF = trajRef.u;
+X_REF_Original = [trajRef.x; trajRef.dx];
+U_REF_Original = trajRef.u;
+
+X_REF = X_REF_Original;
+U_REF = U_REF_Original;
 
 
 %% CasADi symbolic setup
@@ -113,8 +116,8 @@ X = SX.sym('X',n_s,(N+1));
 obj = 0; % Objective function
 g = [];  % constraints vector
 
-Qx= diag([1 1 1 1 1 1 1]);
-Qdx= 0*eye(n_s/2);
+Qx= diag([0.5 0.5 0.5 1 1 1 1]);
+Qdx= 0.1*eye(n_s/2);
 
 Q=blkdiag(Qx,Qdx);
 % Q_terminal = [   -0.7584    0.8656   -7.8374    1.9785    0.4227   -2.6156   -1.7504   -5.1162    2.8324  -13.3248   -0.5759   -1.3113   -3.4692   -1.1094;
@@ -228,7 +231,7 @@ U_DEC = zeros(N,n_c);
 
 X_DEC = repmat(x0,1,N+1)'; % initialization of the states decision variables
 
-sim_tim = 1; % Maximum simulation time
+sim_time = 1; % Maximum simulation time
 
 % Start MPC
 mpciter = 0;
@@ -238,8 +241,14 @@ u_cl=[];
 % the main simulaton loop... it works as long as the error is greater
 % than 10^-6 and the number of mpc steps is less than its maximum
 % value.
+
+x_ref_reg = X_REF(:,floor(10));
+u_ref_reg = U_REF(:,floor(10));
+X_REF_REG = repmat(x_ref_reg,1,ceil(sim_time+1)*size(X_REF,2));
+U_REF_REG = repmat(u_ref_reg,1,ceil(sim_time+1)*size(U_REF,2));
+
 main_loop = tic;
-while( (norm((x_traj(:,end)-X_REF(:,mpciter+1)),2) > 3e-2 || mpciter < 300)  && mpciter < sim_tim / DT)
+while( (norm((x_traj(:,end)-X_REF(:,mpciter+1)),2) > 3e-2 || mpciter < 300)  && mpciter < sim_time / DT)
     %% Set Parameter vector and Decision Variables    
     args.p(1:n_s) = x0; % initial condition of the robot posture
     for k = 1:N %new - set the reference to track             
@@ -248,6 +257,13 @@ while( (norm((x_traj(:,end)-X_REF(:,mpciter+1)),2) > 3e-2 || mpciter < 300)  && 
         
         args.p((k-1)*(n_s+n_c)+(n_s+n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s+n_c)) =...
             U_REF(:,k);
+
+%         args.p((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s)) = ...
+%             X_REF_REG(:,k);
+%         
+%         args.p((k-1)*(n_s+n_c)+(n_s+n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s+n_c)) =...
+%             U_REF_REG(:,k);
+        
     end
     
     args.x0  = [reshape(X_DEC',n_s*(N+1),1);reshape(U_DEC',n_c*N,1)];
@@ -275,10 +291,16 @@ while( (norm((x_traj(:,end)-X_REF(:,mpciter+1)),2) > 3e-2 || mpciter < 300)  && 
         mpciter
     end
     mpciter = mpciter + 1;
-    
     %% Shift X_REF and U_REF
-    X_REF = [X_REF(:,2:end)];
-    U_REF = [U_REF(:,2:end)];
+    X_REF = [X_REF(:,2:end),X_REF(:,end)];
+    U_REF = [U_REF(:,2:end),U_REF(:,end)];
+    
+    
+    
+%     if (norm((x_traj(:,end)-X_REF(:,mpciter+1)),2) < 1e-3)
+%         X_REF = [X_REF(:,2:end),X_REF(:,end)];
+%         U_REF = [U_REF(:,2:end),U_REF(:,end)];
+%     end
     
 end
 main_loop_time = toc(main_loop);
@@ -291,177 +313,207 @@ if true
     figure
     subplot(3,3,1);
     plot(t,x_traj(1,:)); title('x'); 
-    hold on; plot(t(1:mpciter),X_REF(1,1:mpciter)); 
+    hold on; plot(t(1:mpciter),X_REF_Original(1,1:mpciter)); 
     legend('x','x_{ref}');
     subplot(3,3,2); 
     plot(t,x_traj(2,:)); title('z');
-    hold on; plot(t(1:mpciter),X_REF(2,1:mpciter));
+    hold on; plot(t(1:mpciter),X_REF_Original(2,1:mpciter));
     legend('z','z_{ref}');
     subplot(3,3,3);
     plot(t,x_traj(3,:)); title('rotY');
-    hold on; plot(t(1:mpciter),X_REF(3,1:mpciter));
+    hold on; plot(t(1:mpciter),X_REF_Original(3,1:mpciter));
     legend('rotY','rotY{ref}');
     subplot(3,3,4);
     plot(t,x_traj(4,:)); title('q1R');
-    hold on; plot(t(1:mpciter),X_REF(4,1:mpciter)); 
+    hold on; plot(t(1:mpciter),X_REF_Original(4,1:mpciter)); 
     legend('q1R','q1R_{ref}');
     subplot(3,3,5);
     plot(t,x_traj(5,:)); title('q2R');
-    hold on; plot(t(1:mpciter),X_REF(5,1:mpciter)); 
+    hold on; plot(t(1:mpciter),X_REF_Original(5,1:mpciter)); 
     legend('q2R','q2R{ref}');
     subplot(3,3,6);
     plot(t,x_traj(6,:)); title('q1L');
-    hold on; plot(t(1:mpciter),X_REF(6,1:mpciter)); 
+    hold on; plot(t(1:mpciter),X_REF_Original(6,1:mpciter)); 
     legend('q1L','q1L_{ref}');
     subplot(3,3,7);
     plot(t,x_traj(7,:)); title('q2L');
-    hold on; plot(t(1:mpciter),X_REF(7,1:mpciter)); 
+    hold on; plot(t(1:mpciter),X_REF_Original(7,1:mpciter)); 
     legend('q2L','q2L{ref}');
     
     figure
     subplot(3,3,1);
     plot(t,x_traj(8,:)); title('dx'); 
-    hold on; plot(t(1:mpciter),X_REF(8,1:mpciter)); 
+    hold on; plot(t(1:mpciter),X_REF_Original(8,1:mpciter)); 
     legend('dx','dx_{ref}');
     subplot(3,3,2); 
     plot(t,x_traj(9,:)); title('dz');
-    hold on; plot(t(1:mpciter),X_REF(9,1:mpciter));
+    hold on; plot(t(1:mpciter),X_REF_Original(9,1:mpciter));
     legend('dz','dz_{ref}');
     
     subplot(3,3,3);
     plot(t,x_traj(10,:)); title('drotY');
-    hold on; plot(t(1:mpciter),X_REF(10,1:mpciter));
+    hold on; plot(t(1:mpciter),X_REF_Original(10,1:mpciter));
     legend('drotY','drotY{ref}');
     
     subplot(3,3,4);
     plot(t,x_traj(11,:)); title('dq1R');
-    hold on; plot(t(1:mpciter),X_REF(11,1:mpciter)); 
+    hold on; plot(t(1:mpciter),X_REF_Original(11,1:mpciter)); 
     legend('dq1R','dq1R_{ref}');
     
     subplot(3,3,5);
     plot(t,x_traj(12,:)); title('dq2R');
-    hold on; plot(t(1:mpciter),X_REF(12,1:mpciter)); 
+    hold on; plot(t(1:mpciter),X_REF_Original(12,1:mpciter)); 
     legend('dq2R','dq2R{ref}');
     
     subplot(3,3,6);
     plot(t,x_traj(13,:)); title('dq1L');
-    hold on; plot(t(1:mpciter),X_REF(13,1:mpciter)); 
+    hold on; plot(t(1:mpciter),X_REF_Original(13,1:mpciter)); 
     legend('dq1L','dq1L_{ref}');
     
     subplot(3,3,7);
     plot(t,x_traj(14,:)); title('dq2L');
-    hold on; plot(t(1:mpciter),X_REF(14,1:mpciter)); 
+    hold on; plot(t(1:mpciter),X_REF_Original(14,1:mpciter)); 
     legend('dq2L','dq2L{ref}');
     
     figure 
     subplot(2,2,1);
     plot(t(1:end-1),u_cl(:,1)); title('u_q1R');
-    hold on; plot(t(1:mpciter),U_REF(1,1:mpciter)); 
+    hold on; plot(t(1:mpciter),U_REF_Original(1,1:mpciter)); 
     legend('u_q1R','u_q1R_{ref}');
     subplot(2,2,2);
     plot(t(1:end-1),u_cl(:,2)); title('u_q2R');
-    hold on; plot(t(1:mpciter),U_REF(2,1:mpciter)); 
+    hold on; plot(t(1:mpciter),U_REF_Original(2,1:mpciter)); 
     legend('u_q2R','u_q2R_{ref}');
     subplot(2,2,3);
     plot(t(1:end-1),u_cl(:,3)); title('u_q1L');
-    hold on; plot(t(1:mpciter),U_REF(3,1:mpciter)); 
+    hold on; plot(t(1:mpciter),U_REF_Original(3,1:mpciter)); 
     legend('u_q1L','u_q1L_{ref}');
     subplot(2,2,4);
     plot(t(1:end-1),u_cl(:,4)); title('u_q2L');
-    hold on; plot(t(1:mpciter),U_REF(4,1:mpciter)); 
+    hold on; plot(t(1:mpciter),U_REF_Original(4,1:mpciter)); 
     legend('u_q2L','u_q2L_{ref}');
     
     
 end
 
-%% Plotting during simulation
-% if false
-%     figure
-%     subplot(3,3,1);
-%     plot(t,x_traj(1,1:end-1)); title('x'); 
-%     hold on; plot(t(1:mpciter),X_REF(1,1:mpciter)); 
-%     legend('x','x_{ref}');
-%     subplot(3,3,2); 
-%     plot(t,x_traj(2,1:end-1)); title('z');
-%     hold on; plot(t(1:mpciter),X_REF(2,1:mpciter));
-%     legend('z','z_{ref}');
-%     subplot(3,3,3);
-%     plot(t,x_traj(3,1:end-1)); title('rotY');
-%     hold on; plot(t(1:mpciter),X_REF(3,1:mpciter));
-%     legend('rotY','rotY{ref}');
-%     subplot(3,3,4);
-%     plot(t,x_traj(4,1:end-1)); title('q1R');
-%     hold on; plot(t(1:mpciter),X_REF(4,1:mpciter)); 
-%     legend('q1R','q1R_{ref}');
-%     subplot(3,3,5);
-%     plot(t,x_traj(5,1:end-1)); title('q2R');
-%     hold on; plot(t(1:mpciter),X_REF(5,1:mpciter)); 
-%     legend('q2R','q2R{ref}');
-%     subplot(3,3,6);
-%     plot(t,x_traj(6,1:end-1)); title('q1L');
-%     hold on; plot(t(1:mpciter),X_REF(6,1:mpciter)); 
-%     legend('q1L','q1L_{ref}');
-%     subplot(3,3,7);
-%     plot(t,x_traj(7,1:end-1)); title('q2L');
-%     hold on; plot(t(1:mpciter),X_REF(7,1:mpciter)); 
-%     legend('q2L','q2L{ref}');
-%     
-%     figure
-%     subplot(3,3,1);
-%     plot(t,x_traj(8,1:end-1)); title('dx'); 
-%     hold on; plot(t(1:mpciter),X_REF(8,1:mpciter)); 
-%     legend('dx','dx_{ref}');
-%     subplot(3,3,2); 
-%     plot(t,x_traj(9,1:end-1)); title('dz');
-%     hold on; plot(t(1:mpciter),X_REF(9,1:mpciter));
-%     legend('dz','dz_{ref}');
-%     
-%     subplot(3,3,3);
-%     plot(t,x_traj(10,1:end-1)); title('drotY');
-%     hold on; plot(t(1:mpciter),X_REF(10,1:mpciter));
-%     legend('drotY','drotY{ref}');
-%     
-%     subplot(3,3,4);
-%     plot(t,x_traj(11,1:end-1)); title('dq1R');
-%     hold on; plot(t(1:mpciter),X_REF(11,1:mpciter)); 
-%     legend('dq1R','dq1R_{ref}');
-%     
-%     subplot(3,3,5);
-%     plot(t,x_traj(12,1:end-1)); title('dq2R');
-%     hold on; plot(t(1:mpciter),X_REF(12,1:mpciter)); 
-%     legend('dq2R','dq2R{ref}');
-%     
-%     subplot(3,3,6);
-%     plot(t,x_traj(13,1:end-1)); title('dq1L');
-%     hold on; plot(t(1:mpciter),X_REF(13,1:mpciter)); 
-%     legend('dq1L','dq1L_{ref}');
-%     
-%     subplot(3,3,7);
-%     plot(t,x_traj(14,1:end-1)); title('dq2L');
-%     hold on; plot(t(1:mpciter),X_REF(14,1:mpciter)); 
-%     legend('dq2L','dq2L{ref}');
-% end
-%     %%
-% if false
-%     figure 
-%     subplot(2,2,1);
-%     plot(t(1:end-1),u_cl(:,1)); title('u_q1R');
-%     hold on; plot(t(1:mpciter),U_REF(1,1:mpciter)); 
-%     legend('u_q1R','u_q1R_{ref}');
-%     subplot(2,2,2);
-%     plot(t(1:end-1),u_cl(:,2)); title('u_q2R');
-%     hold on; plot(t(1:mpciter),U_REF(2,1:mpciter)); 
-%     legend('u_q2R','u_q2R_{ref}');
-%     subplot(2,2,3);
-%     plot(t(1:end-1),u_cl(:,3)); title('u_q1L');
-%     hold on; plot(t(1:mpciter),U_REF(3,1:mpciter)); 
-%     legend('u_q1L','u_q1L_{ref}');
-%     subplot(2,2,4);
-%     plot(t(1:end-1),u_cl(:,4)); title('u_q2L');
-%     hold on; plot(t(1:mpciter),U_REF(4,1:mpciter)); 
-%     legend('u_q2L','u_q2L_{ref}');
-%     
-%     
-% end
-% 
-% 
+%% Regulator plots
+if true
+    figure
+    subplot(3,3,1);
+    plot(t,x_traj(1,:)); title('x'); 
+    hold on; plot(t(1:mpciter),X_REF_REG(1,1:mpciter)); 
+    legend('x','x_{ref}');
+    subplot(3,3,2); 
+    plot(t,x_traj(2,:)); title('z');
+    hold on; plot(t(1:mpciter),X_REF_REG(2,1:mpciter));
+    legend('z','z_{ref}');
+    subplot(3,3,3);
+    plot(t,x_traj(3,:)); title('rotY');
+    hold on; plot(t(1:mpciter),X_REF_REG(3,1:mpciter));
+    legend('rotY','rotY{ref}');
+    subplot(3,3,4);
+    plot(t,x_traj(4,:)); title('q1R');
+    hold on; plot(t(1:mpciter),X_REF_REG(4,1:mpciter)); 
+    legend('q1R','q1R_{ref}');
+    subplot(3,3,5);
+    plot(t,x_traj(5,:)); title('q2R');
+    hold on; plot(t(1:mpciter),X_REF_REG(5,1:mpciter)); 
+    legend('q2R','q2R{ref}');
+    subplot(3,3,6);
+    plot(t,x_traj(6,:)); title('q1L');
+    hold on; plot(t(1:mpciter),X_REF_REG(6,1:mpciter)); 
+    legend('q1L','q1L_{ref}');
+    subplot(3,3,7);
+    plot(t,x_traj(7,:)); title('q2L');
+    hold on; plot(t(1:mpciter),X_REF_REG(7,1:mpciter)); 
+    legend('q2L','q2L{ref}');
+    
+    figure
+    subplot(3,3,1);
+    plot(t,x_traj(8,:)); title('dx'); 
+    hold on; plot(t(1:mpciter),X_REF_REG(8,1:mpciter)); 
+    legend('dx','dx_{ref}');
+    subplot(3,3,2); 
+    plot(t,x_traj(9,:)); title('dz');
+    hold on; plot(t(1:mpciter),X_REF_REG(9,1:mpciter));
+    legend('dz','dz_{ref}');
+    
+    subplot(3,3,3);
+    plot(t,x_traj(10,:)); title('drotY');
+    hold on; plot(t(1:mpciter),X_REF_REG(10,1:mpciter));
+    legend('drotY','drotY{ref}');
+    
+    subplot(3,3,4);
+    plot(t,x_traj(11,:)); title('dq1R');
+    hold on; plot(t(1:mpciter),X_REF_REG(11,1:mpciter)); 
+    legend('dq1R','dq1R_{ref}');
+    
+    subplot(3,3,5);
+    plot(t,x_traj(12,:)); title('dq2R');
+    hold on; plot(t(1:mpciter),X_REF_REG(12,1:mpciter)); 
+    legend('dq2R','dq2R{ref}');
+    
+    subplot(3,3,6);
+    plot(t,x_traj(13,:)); title('dq1L');
+    hold on; plot(t(1:mpciter),X_REF_REG(13,1:mpciter)); 
+    legend('dq1L','dq1L_{ref}');
+    
+    subplot(3,3,7);
+    plot(t,x_traj(14,:)); title('dq2L');
+    hold on; plot(t(1:mpciter),X_REF_REG(14,1:mpciter)); 
+    legend('dq2L','dq2L{ref}');
+    
+    figure 
+    subplot(2,2,1);
+    plot(t(1:end-1),u_cl(:,1)); title('u_q1R');
+    hold on; plot(t(1:mpciter),U_REF_REG(1,1:mpciter)); 
+    legend('u_q1R','u_q1R_{ref}');
+    subplot(2,2,2);
+    plot(t(1:end-1),u_cl(:,2)); title('u_q2R');
+    hold on; plot(t(1:mpciter),U_REF_REG(2,1:mpciter)); 
+    legend('u_q2R','u_q2R_{ref}');
+    subplot(2,2,3);
+    plot(t(1:end-1),u_cl(:,3)); title('u_q1L');
+    hold on; plot(t(1:mpciter),U_REF_REG(3,1:mpciter)); 
+    legend('u_q1L','u_q1L_{ref}');
+    subplot(2,2,4);
+    plot(t(1:end-1),u_cl(:,4)); title('u_q2L');
+    hold on; plot(t(1:mpciter),U_REF_REG(4,1:mpciter)); 
+    legend('u_q2L','u_q2L_{ref}');
+    
+end
+
+
+
+%% Animation
+addpath('../rabbit_stepUp/');
+addpath('../rabbit_stepUp/gen/kinematics');
+
+% Reference Trajectory
+if false
+    anim = Animator.FiveLinkAnimator(t(1:end), X_REF(1:7,1:end));
+    anim.pov = Animator.AnimatorPointOfView.West;
+    anim.Animate(true);
+    anim.isLooping = false;
+    anim.updateWorldPosition = true;
+    % anim.endTime = 20;
+    conGUI = Animator.AnimatorControls();
+    conGUI.anim = anim;
+end
+
+% Actual Trajectory
+if true
+    anim2 = Animator.FiveLinkAnimator(t, x_traj(1:7,:));
+    anim2.pov = Animator.AnimatorPointOfView.West;
+    anim2.Animate(true);
+    anim2.isLooping = false;
+    anim2.updateWorldPosition = true;
+    % anim.endTime = 20;
+    conGUI = Animator.AnimatorControls();
+    conGUI.anim = anim2;
+end
+
+
+
+
+
