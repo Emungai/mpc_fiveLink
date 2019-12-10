@@ -6,7 +6,7 @@ cur = pwd;
 addpath(genpath(cur));
 
 export_path = fullfile(cur, 'gen');
-export_anim_path = fullfile(export_path, 'kinematics');
+export_anim_path = fullfile(export_path, 'kinematics\');
 export_opt_path = fullfile(export_path, 'stepUp');
 utilities.init_path(export_path);
 % if load_path is empty, it will not load any expression.
@@ -25,7 +25,7 @@ args={};
 % args.y_step=0.15;
 % args.x_del=args.x_step+0.5*args.x_step;
 % args.r_buff=0.1*args.x_step;
-COMPILE=0;
+COMPILE=1;
 %% load model
 % Load model
 rabbit = RABBIT('urdf/five_link_walker.urdf');

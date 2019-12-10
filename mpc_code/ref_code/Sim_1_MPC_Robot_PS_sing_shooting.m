@@ -4,7 +4,7 @@ close all
 clc
 
 % CasADi v3.4.5
-addpath('C:\Users\mehre\OneDrive\Desktop\CasADi\casadi-windows-matlabR2016a-v3.4.5')
+addpath('C:\Users\mungam\Documents\School\softwareTools\casadiFiles')
 import casadi.*
 
 T = 0.2; % sampling time [s]

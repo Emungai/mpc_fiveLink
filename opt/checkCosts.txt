@@ -13,7 +13,7 @@ Checking cost value of RightStance:
 **************************************************
         Cost 	        Value
 Cost: torques_DoubleSupportConstHeight 
-torques_DoubleSupportConstHeight 	 1.91688841E-01
+torques_DoubleSupportConstHeight 	 2.98113876E-01
 **************************************************
 **************************************************
 Checking cost value of leftLand:
@@ -25,7 +25,7 @@ Checking cost value of LeftStance:
 **************************************************
         Cost 	        Value
 Cost: torques_RightStance 
-torques_RightStance 	 1.59648603E-01
+torques_RightStance 	 1.98960883E-01
 **************************************************
 **************************************************
 Checking cost value of rightLand:
