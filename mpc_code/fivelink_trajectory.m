@@ -1,10 +1,11 @@
 %% Cartpole Regulator + Multiple shooting
 clear; close all; clc
 import casadi.*
-
+addpath('../../casadi-windows-matlabR2014b-3.5.1');
+addpath('dynamics/');
 %% System Setup
 DT = 0.005; %[s]
-N = 1; % prediction horizon
+N = 10; % prediction horizon
 
 %% Load Reference Trajectory
 cur = pwd;
@@ -52,11 +53,54 @@ n_c = length(u_ctrl);
 Mmat = Mmat_notorso(x,z,rotY,q1R,q2R,q1L,q2L); % 7x7
 G = GravityVector_notorso(x,z,rotY,q1R,q2R,q1L,q2L); %7x1
 B = 50*[zeros(3,4); eye(4)];    % Multiply by 50 b/c of gear reduction
+Jac = Jacobian_notorso(x,z,rotY,q1R,q2R,q1L,q2L);
+dJac = JacobianDot_notorso(x,z,rotY,q1R,q2R,q1L,q2L,dx,dz,drotY,dq1R,dq2R,dq1L,dq2L);
 
-tic
-rhs = [dq; Mmat\(B*u_ctrl-G)]; % system r.h.s
-toc
+Fv = G;
+Gv_u = B*u_ctrl;
+Gv = Gv_u;
+X_inv = Jac*(Mmat\Jac');
+lambda = -X_inv \ (dJac*dq + Jac*(Mmat\(Fv + Gv)));
+Gv_c = Jac'*lambda;
+Gv = Gv + Gv_c;
+
+rhs = [dq; Mmat\(Fv + Gv)]; % system r.h.s
+
 f = Function('f',{states,u_ctrl},{rhs});  % nonlinear mapping function f(x,u)
+M_Func = Function('M_func',{states},{Mmat});
+G_Func = Function('G_func',{states},{G});
+J_Func = Function('J_func',{states},{Jac});
+dJ_Func = Function('dJ_func',{states},{dJac});
+Lambda_Func = Function('Lambda_Func',{states,u_ctrl},{lambda});
+% Dynamics check
+% xcheck = ones(14,1);
+xcheck = [ -0.4411
+    0.6369
+    0.1461
+    2.1372
+    0.5050
+    3.0630
+    0.7034
+    1.3407
+    0.9220
+   -0.3917
+    2.4647
+    0.0547
+   -1.7130
+    2.2426];
+ucheck = [0.0543
+   -0.1570
+   -0.1899
+   -0.1876];
+% M_Func(xcheck)
+% G_Func(xcheck)
+% J_Func(xcheck)
+% dJ_Func(xcheck)
+% Lambda_Func(xcheck,ucheck)
+% f(xcheck,ucheck)
+
+
+
 U = SX.sym('U',n_c,N);                      % Decision variables (controls)
 P = SX.sym('P',n_s + N*(n_s+n_c));          
 % P = [xinit | x_0ref | u_0ref | x_1ref | u_1ref | ... | x_N-1ref | u_N-1ref]
@@ -231,6 +275,11 @@ while( (norm((x_traj(:,end)-X_REF(:,mpciter+1)),2) > 3e-2 || mpciter < 300)  && 
         mpciter
     end
     mpciter = mpciter + 1;
+    
+    %% Shift X_REF and U_REF
+    X_REF = [X_REF(:,2:end)];
+    U_REF = [U_REF(:,2:end)];
+    
 end
 main_loop_time = toc(main_loop);
 ss_error = norm((x_traj(:,end)-X_REF(:,mpciter+1)),2)
