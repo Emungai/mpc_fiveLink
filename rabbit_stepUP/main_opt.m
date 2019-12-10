@@ -4,6 +4,7 @@ cur = pwd;
 addpath(genpath(cur));
 
 addpath('../../');
+addpath('C:\Users\mungam\Documents\GitHub\frost-dev')
 frost_addpath;
 export_path = fullfile(cur, 'gen/');
 % if load_path is empty, it will not load any expression.
@@ -12,6 +13,8 @@ export_path = fullfile(cur, 'gen/');
 load_path = [];%fullfile(cur, 'gen/sym');
 delay_set = false;
 COMPILE = false;
+SAVE_SOLUTION=1;
+
 
 % Load model
 rabbit = RABBIT('urdf/five_link_walker.urdf');
@@ -54,7 +57,7 @@ num_grid.RightStance = 10;
 num_grid.LeftStance = 10;
 nlp = HybridTrajectoryOptimization('Rabbit_1step',rabbit_1step,num_grid,[],'EqualityConstraintBoundary',1e-4);
 
-% Configure bounds 
+% Configure bounds
 setBounds;
 
 % load some optimization related expressions here
@@ -64,14 +67,14 @@ else
     nlp.configure(bounds);
 end
 
- 
+
 % Add costs
 addRunningCost(nlp.Phase(getPhaseIndex(nlp,'RightStance')),u2r_fun,'u');
 
 % Changing Periodicity
 
 
-    
+
 % the configuration only depends on the relabeling matrix
 removeConstraint(nlp.Phase(2), 'xPlusCont');
 removeConstraint(nlp.Phase(2), 'dxPlusCont');
@@ -134,15 +137,11 @@ end
 %%
 % param=load(fullfile('C:\Users\mungam\Documents\GitHub\mpc_fiveLink\trajectories\walking\walkingRabbitGait_11-Nov-2019-19-57-37-0500_Rabbit.mat'));
 
-%% Create Ipopt solver 
+%% Create Ipopt solver
 addpath(genpath(export_path));
 nlp.update;
 solver = IpoptApplication(nlp);
-solver.Options.ipopt.max_iter = 5000; 
-% solver.Options.ipopt.tol = 5e-1;
-% solver.Options.ipopt.compl_inf_tol = 5e+4;
-% solver.Options.ipopt.constr_viol_tol = 5e-4;
-% solver.Options.ipopt.dual_inf_tol = 1e+4 ;
+solver.Options.ipopt.max_iter = 500;
 % Run Optimization
 tic
 % old = load('x0');
@@ -156,6 +155,30 @@ gait = struct(...
     'states',states,...
     'inputs',inputs,...
     'params',params);
+%%
+CHARACTER_NAME = 'one_sec_traj';
+
+if SAVE_SOLUTION
+    data_name = char(datetime('now','TimeZone','local','Format','d-MMM-y-HH-mm-ssZ'));%'local/longer_double_support_wider_step_dummy';
+    
+    name_save = [CHARACTER_NAME, '_', data_name];
+    
+    save_dir=fullfile(cur,'trajectories\stepUp\singleDomain');
+    if ~exist(save_dir,'dir'), mkdir(save_dir); end
+    
+    if info.status ~= -1
+        file_name = [name_save, '.mat'];
+        fprintf('Saving gait %s\n', file_name);
+        save(fullfile(save_dir, file_name), 'gait', 'sol', 'info', 'bounds');
+        
+    else
+        file_name = [name_save, '_failed.mat'];
+        fprintf('Saving (failed) gait %s\n', file_name);
+    end
+    
+end
+
+
 %%
 checkConstraints(nlp, sol, 1e-3, 'constraintCheck.txt');
 checkVariables(nlp, sol, 1e-1, 'variableCheck.txt');
