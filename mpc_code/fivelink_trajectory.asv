@@ -68,14 +68,15 @@ X = SX.sym('X',n_s,(N+1));
 obj = 0; % Objective function
 g = [];  % constraints vector
 
-Qx= diag([1 1 1 1 1 1 1]);
+Q = eye(n_s);
+Qx= diag([1 1 1 10 10 10 10]);
 Qdx= 0.01*eye(n_s/2);
 
 Q=blkdiag(Qx,Qdx);
-% Q_terminal = [   -0.7584    0.8656   -7.8374    1.9785    0.4227   -2.6156   -1.7504   -5.1162    2.8324  -13.3248   -0.5759   -1.3113   -3.4692   -1.1094;
-%     0.7587    2.2676   -4.4204   -0.0621    4.8910   -1.8552   -0.6727    2.1244    8.0445   -7.3401   -2.1954    2.5135   -2.3070   -0.6239;
-%     2.2751   -1.5590    5.5302    1.2138    0.0344    6.2101    0.3768    7.8621   -4.9991    3.5811    0.6693    0.2589    4.0505    0.2063;
-%     1.9165    1.2955    8.9236    1.7760    0.7191    2.2826    6.6817   11.3470    5.3480   21.5484    6.5641    2.4089    5.5172    5.1351];
+Q_terminal = [   -0.7584    0.8656   -7.8374    1.9785    0.4227   -2.6156   -1.7504   -5.1162    2.8324  -13.3248   -0.5759   -1.3113   -3.4692   -1.1094;
+    0.7587    2.2676   -4.4204   -0.0621    4.8910   -1.8552   -0.6727    2.1244    8.0445   -7.3401   -2.1954    2.5135   -2.3070   -0.6239;
+    2.2751   -1.5590    5.5302    1.2138    0.0344    6.2101    0.3768    7.8621   -4.9991    3.5811    0.6693    0.2589    4.0505    0.2063;
+    1.9165    1.2955    8.9236    1.7760    0.7191    2.2826    6.6817   11.3470    5.3480   21.5484    6.5641    2.4089    5.5172    5.1351];
 % Q_terminal from lqr
 
 R = diag([0.1 0.1 0.1 0.1]); % weighing matrices (controls)
@@ -87,12 +88,12 @@ g = [g;st-P(1:n_s)]; % initial condition constraints
 for k = 1:N
     st = X(:,k);  ctrl = U(:,k);
     
-%     if k < N
+    if k < N
     % Running stage cost (stop before last state/control to impose terminal
     % cost
     obj = obj + (st-P((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s)))'*Q*(st-P((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s))) + ...
         (ctrl-P((k-1)*(n_s+n_c)+(n_s+n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s+n_c)))'*R*(ctrl-P((k-1)*(n_s+n_c)+(n_s+n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s+n_c)));
-%     end
+    end
     
     st_next = X(:,k+1);
     f_value = f(st,ctrl);
@@ -181,7 +182,8 @@ t(1) = t0;
 
 U_DEC = zeros(N,n_c);
 
-X_DEC = repmat(x0,1,N+1)'; % initialization of the states decision variables
+X0 = repmat(x0,1,N+1)'; % initialization of the states decision variables
+% X_DEC = X_REF(:,1:N+1)';
 
 sim_tim = 0.47; % Maximum simulation time
 
@@ -205,7 +207,7 @@ while( (norm((x_traj(:,end)-X_REF(:,mpciter+1)),2) > 3e-2 || mpciter < 300)  && 
             U_REF(:,k);
     end
     
-    args.x0  = [reshape(X_DEC',n_s*(N+1),1);reshape(U_DEC',n_c*N,1)];
+    args.x0  = [reshape(X0',n_s*(N+1),1);reshape(U_DEC',n_c*N,1)];
     
     %% Solve MPC with CasADi NLP solver
     sol = solver('x0', args.x0, 'lbx', args.lbx, 'ubx', args.ubx,...
@@ -220,10 +222,10 @@ while( (norm((x_traj(:,end)-X_REF(:,mpciter+1)),2) > 3e-2 || mpciter < 300)  && 
     %% Apply the control and guess next solution by shifting
     [t0, x0, U_DEC] = shift(DT, t0, x0, u,f);
     x_traj(:,mpciter+2) = x0;
-    X_DEC = reshape(full(sol.x(1:n_s*(N+1)))',n_s,N+1)'; % get solution TRAJECTORY
+    X0 = reshape(full(sol.x(1:n_s*(N+1)))',n_s,N+1)'; % get solution TRAJECTORY
     
     % Shift trajectory to initialize the next step
-    X_DEC = [X_DEC(2:end,:);X_DEC(end,:)];   % initialize with next step and add on last state twice
+    X0 = [X0(2:end,:);X0(end,:)];   % initialize with next step and add on last state twice
     
 %     mpciter
     if mod(mpciter,1) == 0
