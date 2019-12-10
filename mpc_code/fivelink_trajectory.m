@@ -116,8 +116,8 @@ X = SX.sym('X',n_s,(N+1));
 obj = 0; % Objective function
 g = [];  % constraints vector
 
-Qx= diag([0.5 0.5 0.5 1 1 1 1]);
-Qdx= 0.1*eye(n_s/2);
+Qx= diag([0.1 0.1 0.1 1 1 1 1]);
+Qdx= 0.01*eye(n_s/2);
 
 Q=blkdiag(Qx,Qdx);
 % Q_terminal = [   -0.7584    0.8656   -7.8374    1.9785    0.4227   -2.6156   -1.7504   -5.1162    2.8324  -13.3248   -0.5759   -1.3113   -3.4692   -1.1094;
@@ -397,7 +397,7 @@ if true
 end
 
 %% Regulator plots
-if true
+if false
     figure
     subplot(3,3,1);
     plot(t,x_traj(1,:)); title('x'); 
