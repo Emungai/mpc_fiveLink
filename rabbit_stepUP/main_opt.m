@@ -19,7 +19,8 @@ SAVE_SOLUTION=1;
 % Load model
 rabbit = RABBIT('urdf/five_link_walker.urdf');
 if isempty(load_path)
-    rabbit.configureDynamics('DelayCoriolisSet',delay_set);
+    rabbit.configureDynamics('DelayCoriolisSet',delay_set, 'OmitCoriolisSet', true);
+%     rabbit.configureDynamics('DelayCoriolisSet',delay_set);
 else
     % load symbolic expression for the dynamics equations
     rabbit.loadDynamics(load_path, delay_set);
@@ -155,8 +156,8 @@ gait = struct(...
     'states',states,...
     'inputs',inputs,...
     'params',params);
-%%
-CHARACTER_NAME = 'one_sec_traj';
+%% SAVE
+CHARACTER_NAME = 'one_sec_nocoriolis';
 
 if SAVE_SOLUTION
     data_name = char(datetime('now','TimeZone','local','Format','d-MMM-y-HH-mm-ssZ'));%'local/longer_double_support_wider_step_dummy';

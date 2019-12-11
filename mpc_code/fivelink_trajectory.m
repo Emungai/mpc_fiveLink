@@ -1,17 +1,24 @@
 %% Cartpole Regulator + Multiple shooting
-clear; close all; clc
+clear; clc
 import casadi.*
-
+addpath('../../casadi-windows-matlabR2014b-3.5.1');
+addpath('dynamics/');
 %% System Setup
 DT = 0.005; %[s]
-N = 95; % prediction horizon
+N = 10; % prediction horizon
 
 %% Load Reference Trajectory
-param=load(fullfile('C:\Users\gibso\Box Sync\Box Sync\Courses\Github\mpc_fiveLink\opt\trajectories\stepUp\singleDomain\opt_traj_3-Dec-2019-18-07-22-0500_Rabbit.mat'));
-addpath('C:\Users\gibso\Box Sync\Box Sync\Courses\Github\mpc_fiveLink\opt');
+cur = pwd;
+% trajName = 'one_sec_traj_9-Dec-2019-21-39-45-0500.mat';
+trajName = 'one_sec_nocoriolis_9-Dec-2019-22-23-15-0500.mat';
+param=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\',trajName]);
+addpath('..\rabbit_stepUp');
 trajRef=calculations.referenceTrajBez(param.gait,DT);
-X_REF = [trajRef.x; trajRef.dx];
-U_REF = trajRef.u;
+X_REF_Original = [trajRef.x; trajRef.dx];
+U_REF_Original = trajRef.u;
+
+X_REF = X_REF_Original;
+U_REF = U_REF_Original;
 
 
 %% CasADi symbolic setup
@@ -49,11 +56,52 @@ n_c = length(u_ctrl);
 Mmat = Mmat_notorso(x,z,rotY,q1R,q2R,q1L,q2L); % 7x7
 G = GravityVector_notorso(x,z,rotY,q1R,q2R,q1L,q2L); %7x1
 B = 50*[zeros(3,4); eye(4)];    % Multiply by 50 b/c of gear reduction
+Jac = Jacobian_notorso(x,z,rotY,q1R,q2R,q1L,q2L);
+dJac = JacobianDot_notorso(x,z,rotY,q1R,q2R,q1L,q2L,dx,dz,drotY,dq1R,dq2R,dq1L,dq2L);
 
-tic
-rhs = [dq; Mmat\(B*u_ctrl-G)]; % system r.h.s
-toc
+Fv = G;
+Gv_u = B*u_ctrl;
+Gv = Gv_u;
+X_inv = Jac*(Mmat\Jac');
+lambda = -X_inv \ (dJac*dq + Jac*(Mmat\(Fv + Gv)));
+Gv_c = Jac'*lambda;
+Gv = Gv + Gv_c;
+
+rhs = [dq; Mmat\(Fv + Gv)]; % system r.h.s
+
 f = Function('f',{states,u_ctrl},{rhs});  % nonlinear mapping function f(x,u)
+M_Func = Function('M_func',{states},{Mmat});
+G_Func = Function('G_func',{states},{G});
+J_Func = Function('J_func',{states},{Jac});
+dJ_Func = Function('dJ_func',{states},{dJac});
+Lambda_Func = Function('Lambda_Func',{states,u_ctrl},{lambda});
+% Dynamics check
+% xcheck = ones(14,1);
+xcheck = [ -0.4411
+    0.6369
+    0.1461
+    2.1372
+    0.5050
+    3.0630
+    0.7034
+    1.3407
+    0.9220
+   -0.3917
+    2.4647
+    0.0547
+   -1.7130
+    2.2426];
+ucheck = [0.0543
+   -0.1570
+   -0.1899
+   -0.1876];
+% M_Func(xcheck)
+% G_Func(xcheck)
+% J_Func(xcheck)
+% dJ_Func(xcheck)
+% Lambda_Func(xcheck,ucheck)
+% f(xcheck,ucheck)
+
 U = SX.sym('U',n_c,N);                      % Decision variables (controls)
 P = SX.sym('P',n_s + N*(n_s+n_c));          
 % P = [xinit | x_0ref | u_0ref | x_1ref | u_1ref | ... | x_N-1ref | u_N-1ref]
@@ -66,18 +114,17 @@ X = SX.sym('X',n_s,(N+1));
 obj = 0; % Objective function
 g = [];  % constraints vector
 
-Q = eye(n_s);
 Qx= diag([1 1 1 10 10 10 10]);
-Qdx= 0.01*eye(n_s/2);
+Qdx= 0.1*eye(n_s/2);
 
 Q=blkdiag(Qx,Qdx);
-Q_terminal = [   -0.7584    0.8656   -7.8374    1.9785    0.4227   -2.6156   -1.7504   -5.1162    2.8324  -13.3248   -0.5759   -1.3113   -3.4692   -1.1094;
-    0.7587    2.2676   -4.4204   -0.0621    4.8910   -1.8552   -0.6727    2.1244    8.0445   -7.3401   -2.1954    2.5135   -2.3070   -0.6239;
-    2.2751   -1.5590    5.5302    1.2138    0.0344    6.2101    0.3768    7.8621   -4.9991    3.5811    0.6693    0.2589    4.0505    0.2063;
-    1.9165    1.2955    8.9236    1.7760    0.7191    2.2826    6.6817   11.3470    5.3480   21.5484    6.5641    2.4089    5.5172    5.1351];
+% Q_terminal = [   -0.7584    0.8656   -7.8374    1.9785    0.4227   -2.6156   -1.7504   -5.1162    2.8324  -13.3248   -0.5759   -1.3113   -3.4692   -1.1094;
+%     0.7587    2.2676   -4.4204   -0.0621    4.8910   -1.8552   -0.6727    2.1244    8.0445   -7.3401   -2.1954    2.5135   -2.3070   -0.6239;
+%     2.2751   -1.5590    5.5302    1.2138    0.0344    6.2101    0.3768    7.8621   -4.9991    3.5811    0.6693    0.2589    4.0505    0.2063;
+%     1.9165    1.2955    8.9236    1.7760    0.7191    2.2826    6.6817   11.3470    5.3480   21.5484    6.5641    2.4089    5.5172    5.1351];
 % Q_terminal from lqr
 
-R = diag([0.1 0.1 0.1 0.1]); % weighing matrices (controls)
+R = 0*eye(n_c); % weighing matrices (controls)
 
 st  = X(:,1);        % initial state
 g = [g;st-P(1:n_s)]; % initial condition constraints
@@ -86,12 +133,12 @@ g = [g;st-P(1:n_s)]; % initial condition constraints
 for k = 1:N
     st = X(:,k);  ctrl = U(:,k);
     
-    if k < N
+%     if k < N
     % Running stage cost (stop before last state/control to impose terminal
     % cost
     obj = obj + (st-P((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s)))'*Q*(st-P((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s))) + ...
         (ctrl-P((k-1)*(n_s+n_c)+(n_s+n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s+n_c)))'*R*(ctrl-P((k-1)*(n_s+n_c)+(n_s+n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s+n_c)));
-    end
+%     end
     
     st_next = X(:,k+1);
     f_value = f(st,ctrl);
@@ -176,14 +223,13 @@ t0 = 0;
 x0 = [param.gait(1).states.x(:,1); param.gait(1).states.dx(:,1)];    % initial condition. 14X1
 
 x_traj(:,1) = x0; % xx contains the history of states
-t(1) = t0;
+Time(1) = t0;
 
 U_DEC = zeros(N,n_c);
 
-X0 = repmat(x0,1,N+1)'; % initialization of the states decision variables
-% X_DEC = X_REF(:,1:N+1)';
+X_DEC = repmat(x0,1,N+1)'; % initialization of the states decision variables
 
-sim_tim = 0.47; % Maximum simulation time
+sim_time = 1; % Maximum simulation time
 
 % Start MPC
 mpciter = 0;
@@ -193,8 +239,16 @@ u_cl=[];
 % the main simulaton loop... it works as long as the error is greater
 % than 10^-6 and the number of mpc steps is less than its maximum
 % value.
+
+x_ref_reg = X_REF(:,floor(10));
+u_ref_reg = U_REF(:,floor(10));
+X_REF_REG = repmat(x_ref_reg,1,ceil(sim_time+1)*size(X_REF,2));
+U_REF_REG = repmat(u_ref_reg,1,ceil(sim_time+1)*size(U_REF,2));
+
 main_loop = tic;
-while( (norm((x_traj(:,end)-X_REF(:,mpciter+1)),2) > 3e-2 || mpciter < 300)  && mpciter < sim_tim / DT)
+% while( (norm((x_traj(:,end)-X_REF(:,mpciter+1)),2) > 3e-2 || mpciter < 300)  && mpciter < sim_time / DT)
+while(mpciter < sim_time / DT)
+    
     %% Set Parameter vector and Decision Variables    
     args.p(1:n_s) = x0; % initial condition of the robot posture
     for k = 1:N %new - set the reference to track             
@@ -203,9 +257,16 @@ while( (norm((x_traj(:,end)-X_REF(:,mpciter+1)),2) > 3e-2 || mpciter < 300)  && 
         
         args.p((k-1)*(n_s+n_c)+(n_s+n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s+n_c)) =...
             U_REF(:,k);
+
+%         args.p((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s)) = ...
+%             X_REF_REG(:,k);
+%         
+%         args.p((k-1)*(n_s+n_c)+(n_s+n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s+n_c)) =...
+%             U_REF_REG(:,k);
+        
     end
     
-    args.x0  = [reshape(X0',n_s*(N+1),1);reshape(U_DEC',n_c*N,1)];
+    args.x0  = [reshape(X_DEC',n_s*(N+1),1);reshape(U_DEC',n_c*N,1)];
     
     %% Solve MPC with CasADi NLP solver
     sol = solver('x0', args.x0, 'lbx', args.lbx, 'ubx', args.ubx,...
@@ -215,203 +276,249 @@ while( (norm((x_traj(:,end)-X_REF(:,mpciter+1)),2) > 3e-2 || mpciter < 300)  && 
     u = reshape(full(sol.x(n_s*(N+1)+1:end))',n_c,N)'; % get controls only from the solution
     xx1(:,1:n_s,mpciter+1)= reshape(full(sol.x(1:n_s*(N+1)))',n_s,N+1)'; % get solution TRAJECTORY
     u_cl= [u_cl ; u(1,:)];              % only use first control value
-    t(mpciter+1) = t0;
+    Time(mpciter+1) = t0;
     
     %% Apply the control and guess next solution by shifting
     [t0, x0, U_DEC] = shift(DT, t0, x0, u,f);
     x_traj(:,mpciter+2) = x0;
-    X0 = reshape(full(sol.x(1:n_s*(N+1)))',n_s,N+1)'; % get solution TRAJECTORY
+    X_DEC = reshape(full(sol.x(1:n_s*(N+1)))',n_s,N+1)'; % get solution TRAJECTORY
     
     % Shift trajectory to initialize the next step
-    X0 = [X0(2:end,:);X0(end,:)];   % initialize with next step and add on last state twice
+    X_DEC = [X_DEC(2:end,:);X_DEC(end,:)];   % initialize with next step and add on last state twice
     
 %     mpciter
     if mod(mpciter,1) == 0
         mpciter
     end
     mpciter = mpciter + 1;
+    %% Shift X_REF and U_REF
+    X_REF = [X_REF(:,2:end),X_REF(:,end)];
+    U_REF = [U_REF(:,2:end),U_REF(:,end)];
+    
+    
+    
+%     if (norm((x_traj(:,end)-X_REF(:,mpciter+1)),2) < 1e-3)
+%         X_REF = [X_REF(:,2:end),X_REF(:,end)];
+%         U_REF = [U_REF(:,2:end),U_REF(:,end)];
+%     end
+    
 end
 main_loop_time = toc(main_loop);
-ss_error = norm((x_traj(:,end)-X_REF(:,mpciter+1)),2)
+% ss_error = norm((x_traj(:,end)-X_REF(:,end)),2)
+if false
+    traj_total_error = norm(x_traj - X_REF_Original);
+    traj_pos_error = norm(x_traj(1:7,:) - X_REF_Original(1:7,:));
+    traj_vel_error = norm(x_traj(8:end,:) - X_REF_Original(8:end,:));
+end
 average_mpc_time = main_loop_time/(mpciter+1)
-t(end+1) = t(end) + DT;
+Time(end+1) = Time(end) + DT;
 
 %% Plot results
-if true
+if (true)
+    figure
+    subplot(3,3,1);
+    plot(Time,x_traj(1,:)); title('x'); 
+    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(1,1:size(X_REF_Original,2))); 
+    legend('x','x_{ref}','location','best');
+    subplot(3,3,2); 
+    plot(Time,x_traj(2,:)); title('z');
+    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(2,1:size(X_REF_Original,2)));
+    legend('z','z_{ref}','location','best');
+    subplot(3,3,3);
+    plot(Time,x_traj(3,:)); title('rotY');
+    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(3,1:size(X_REF_Original,2)));
+    legend('rotY','rotY{ref}','location','best');
+    subplot(3,3,4);
+    plot(Time,x_traj(4,:)); title('q1R');
+    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(4,1:size(X_REF_Original,2))); 
+    legend('q1R','q1R_{ref}','location','best');
+    subplot(3,3,5);
+    plot(Time,x_traj(5,:)); title('q2R');
+    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(5,1:size(X_REF_Original,2))); 
+    legend('q2R','q2R{ref}','location','best');
+    subplot(3,3,6);
+    plot(Time,x_traj(6,:)); title('q1L');
+    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(6,1:size(X_REF_Original,2))); 
+    legend('q1L','q1L_{ref}','location','best');
+    subplot(3,3,7);
+    plot(Time,x_traj(7,:)); title('q2L');
+    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(7,1:size(X_REF_Original,2))); 
+    legend('q2L','q2L{ref}','location','best');
+    
+    figure
+    subplot(3,3,1);
+    plot(Time,x_traj(8,:)); title('dx'); 
+    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(8,1:size(X_REF_Original,2))); 
+    legend('dx','dx_{ref}','location','best');
+    subplot(3,3,2); 
+    plot(Time,x_traj(9,:)); title('dz');
+    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(9,1:size(X_REF_Original,2)));
+    legend('dz','dz_{ref}','location','best');
+    
+    subplot(3,3,3);
+    plot(Time,x_traj(10,:)); title('drotY');
+    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(10,1:size(X_REF_Original,2)));
+    legend('drotY','drotY{ref}','location','best');
+    
+    subplot(3,3,4);
+    plot(Time,x_traj(11,:)); title('dq1R');
+    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(11,1:size(X_REF_Original,2))); 
+    legend('dq1R','dq1R_{ref}','location','best');
+    
+    subplot(3,3,5);
+    plot(Time,x_traj(12,:)); title('dq2R');
+    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(12,1:size(X_REF_Original,2))); 
+    legend('dq2R','dq2R{ref}','location','best');
+    
+    subplot(3,3,6);
+    plot(Time,x_traj(13,:)); title('dq1L');
+    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(13,1:size(X_REF_Original,2))); 
+    legend('dq1L','dq1L_{ref}','location','best');
+    
+    subplot(3,3,7);
+    plot(Time,x_traj(14,:)); title('dq2L');
+    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(14,1:size(X_REF_Original,2))); 
+    legend('dq2L','dq2L{ref}','location','best');
+    
+    figure 
+    subplot(2,2,1);
+    plot(Time(1:end-1),u_cl(:,1)); title('u_q1R');
+    hold on; plot(Time(1:size(U_REF_Original,2)),U_REF_Original(1,1:size(U_REF_Original,2))); 
+    legend('u_q1R','u_q1R_{ref}','location','best');
+    subplot(2,2,2);
+    plot(Time(1:end-1),u_cl(:,2)); title('u_q2R');
+    hold on; plot(Time(1:size(U_REF_Original,2)),U_REF_Original(2,1:size(U_REF_Original,2))); 
+    legend('u_q2R','u_q2R_{ref}','location','best');
+    subplot(2,2,3);
+    plot(Time(1:end-1),u_cl(:,3)); title('u_q1L');
+    hold on; plot(Time(1:size(U_REF_Original,2)),U_REF_Original(3,1:size(U_REF_Original,2))); 
+    legend('u_q1L','u_q1L_{ref}','location','best');
+    subplot(2,2,4);
+    plot(Time(1:end-1),u_cl(:,4)); title('u_q2L');
+    hold on; plot(Time(1:size(U_REF_Original,2)),U_REF_Original(4,1:size(U_REF_Original,2))); 
+    legend('u_q2L','u_q2L_{ref}','location','best');
+    
+    
+end
+
+%% Regulator plots
+if false
     figure
     subplot(3,3,1);
     plot(t,x_traj(1,:)); title('x'); 
-    hold on; plot(t(1:mpciter),X_REF(1,1:mpciter)); 
+    hold on; plot(t(1:mpciter),X_REF_REG(1,1:mpciter)); 
     legend('x','x_{ref}');
     subplot(3,3,2); 
     plot(t,x_traj(2,:)); title('z');
-    hold on; plot(t(1:mpciter),X_REF(2,1:mpciter));
+    hold on; plot(t(1:mpciter),X_REF_REG(2,1:mpciter));
     legend('z','z_{ref}');
     subplot(3,3,3);
     plot(t,x_traj(3,:)); title('rotY');
-    hold on; plot(t(1:mpciter),X_REF(3,1:mpciter));
+    hold on; plot(t(1:mpciter),X_REF_REG(3,1:mpciter));
     legend('rotY','rotY{ref}');
     subplot(3,3,4);
     plot(t,x_traj(4,:)); title('q1R');
-    hold on; plot(t(1:mpciter),X_REF(4,1:mpciter)); 
+    hold on; plot(t(1:mpciter),X_REF_REG(4,1:mpciter)); 
     legend('q1R','q1R_{ref}');
     subplot(3,3,5);
     plot(t,x_traj(5,:)); title('q2R');
-    hold on; plot(t(1:mpciter),X_REF(5,1:mpciter)); 
+    hold on; plot(t(1:mpciter),X_REF_REG(5,1:mpciter)); 
     legend('q2R','q2R{ref}');
     subplot(3,3,6);
     plot(t,x_traj(6,:)); title('q1L');
-    hold on; plot(t(1:mpciter),X_REF(6,1:mpciter)); 
+    hold on; plot(t(1:mpciter),X_REF_REG(6,1:mpciter)); 
     legend('q1L','q1L_{ref}');
     subplot(3,3,7);
     plot(t,x_traj(7,:)); title('q2L');
-    hold on; plot(t(1:mpciter),X_REF(7,1:mpciter)); 
+    hold on; plot(t(1:mpciter),X_REF_REG(7,1:mpciter)); 
     legend('q2L','q2L{ref}');
     
     figure
     subplot(3,3,1);
     plot(t,x_traj(8,:)); title('dx'); 
-    hold on; plot(t(1:mpciter),X_REF(8,1:mpciter)); 
+    hold on; plot(t(1:mpciter),X_REF_REG(8,1:mpciter)); 
     legend('dx','dx_{ref}');
     subplot(3,3,2); 
     plot(t,x_traj(9,:)); title('dz');
-    hold on; plot(t(1:mpciter),X_REF(9,1:mpciter));
+    hold on; plot(t(1:mpciter),X_REF_REG(9,1:mpciter));
     legend('dz','dz_{ref}');
     
     subplot(3,3,3);
     plot(t,x_traj(10,:)); title('drotY');
-    hold on; plot(t(1:mpciter),X_REF(10,1:mpciter));
+    hold on; plot(t(1:mpciter),X_REF_REG(10,1:mpciter));
     legend('drotY','drotY{ref}');
     
     subplot(3,3,4);
     plot(t,x_traj(11,:)); title('dq1R');
-    hold on; plot(t(1:mpciter),X_REF(11,1:mpciter)); 
+    hold on; plot(t(1:mpciter),X_REF_REG(11,1:mpciter)); 
     legend('dq1R','dq1R_{ref}');
     
     subplot(3,3,5);
     plot(t,x_traj(12,:)); title('dq2R');
-    hold on; plot(t(1:mpciter),X_REF(12,1:mpciter)); 
+    hold on; plot(t(1:mpciter),X_REF_REG(12,1:mpciter)); 
     legend('dq2R','dq2R{ref}');
     
     subplot(3,3,6);
     plot(t,x_traj(13,:)); title('dq1L');
-    hold on; plot(t(1:mpciter),X_REF(13,1:mpciter)); 
+    hold on; plot(t(1:mpciter),X_REF_REG(13,1:mpciter)); 
     legend('dq1L','dq1L_{ref}');
     
     subplot(3,3,7);
     plot(t,x_traj(14,:)); title('dq2L');
-    hold on; plot(t(1:mpciter),X_REF(14,1:mpciter)); 
+    hold on; plot(t(1:mpciter),X_REF_REG(14,1:mpciter)); 
     legend('dq2L','dq2L{ref}');
     
     figure 
     subplot(2,2,1);
     plot(t(1:end-1),u_cl(:,1)); title('u_q1R');
-    hold on; plot(t(1:mpciter),U_REF(1,1:mpciter)); 
+    hold on; plot(t(1:mpciter),U_REF_REG(1,1:mpciter)); 
     legend('u_q1R','u_q1R_{ref}');
     subplot(2,2,2);
     plot(t(1:end-1),u_cl(:,2)); title('u_q2R');
-    hold on; plot(t(1:mpciter),U_REF(2,1:mpciter)); 
+    hold on; plot(t(1:mpciter),U_REF_REG(2,1:mpciter)); 
     legend('u_q2R','u_q2R_{ref}');
     subplot(2,2,3);
     plot(t(1:end-1),u_cl(:,3)); title('u_q1L');
-    hold on; plot(t(1:mpciter),U_REF(3,1:mpciter)); 
+    hold on; plot(t(1:mpciter),U_REF_REG(3,1:mpciter)); 
     legend('u_q1L','u_q1L_{ref}');
     subplot(2,2,4);
     plot(t(1:end-1),u_cl(:,4)); title('u_q2L');
-    hold on; plot(t(1:mpciter),U_REF(4,1:mpciter)); 
+    hold on; plot(t(1:mpciter),U_REF_REG(4,1:mpciter)); 
     legend('u_q2L','u_q2L_{ref}');
-    
     
 end
 
-%% Plotting during simulation
+
+
+%% Animation
+addpath('../rabbit_stepUp/');
+addpath('../rabbit_stepUp/gen/kinematics');
+
+% Reference Trajectory
 if false
-    figure
-    subplot(3,3,1);
-    plot(t,x_traj(1,1:end-1)); title('x'); 
-    hold on; plot(t(1:mpciter),X_REF(1,1:mpciter)); 
-    legend('x','x_{ref}');
-    subplot(3,3,2); 
-    plot(t,x_traj(2,1:end-1)); title('z');
-    hold on; plot(t(1:mpciter),X_REF(2,1:mpciter));
-    legend('z','z_{ref}');
-    subplot(3,3,3);
-    plot(t,x_traj(3,1:end-1)); title('rotY');
-    hold on; plot(t(1:mpciter),X_REF(3,1:mpciter));
-    legend('rotY','rotY{ref}');
-    subplot(3,3,4);
-    plot(t,x_traj(4,1:end-1)); title('q1R');
-    hold on; plot(t(1:mpciter),X_REF(4,1:mpciter)); 
-    legend('q1R','q1R_{ref}');
-    subplot(3,3,5);
-    plot(t,x_traj(5,1:end-1)); title('q2R');
-    hold on; plot(t(1:mpciter),X_REF(5,1:mpciter)); 
-    legend('q2R','q2R{ref}');
-    subplot(3,3,6);
-    plot(t,x_traj(6,1:end-1)); title('q1L');
-    hold on; plot(t(1:mpciter),X_REF(6,1:mpciter)); 
-    legend('q1L','q1L_{ref}');
-    subplot(3,3,7);
-    plot(t,x_traj(7,1:end-1)); title('q2L');
-    hold on; plot(t(1:mpciter),X_REF(7,1:mpciter)); 
-    legend('q2L','q2L{ref}');
-    
-    figure
-    subplot(3,3,1);
-    plot(t,x_traj(8,1:end-1)); title('dx'); 
-    hold on; plot(t(1:mpciter),X_REF(8,1:mpciter)); 
-    legend('dx','dx_{ref}');
-    subplot(3,3,2); 
-    plot(t,x_traj(9,1:end-1)); title('dz');
-    hold on; plot(t(1:mpciter),X_REF(9,1:mpciter));
-    legend('dz','dz_{ref}');
-    
-    subplot(3,3,3);
-    plot(t,x_traj(10,1:end-1)); title('drotY');
-    hold on; plot(t(1:mpciter),X_REF(10,1:mpciter));
-    legend('drotY','drotY{ref}');
-    
-    subplot(3,3,4);
-    plot(t,x_traj(11,1:end-1)); title('dq1R');
-    hold on; plot(t(1:mpciter),X_REF(11,1:mpciter)); 
-    legend('dq1R','dq1R_{ref}');
-    
-    subplot(3,3,5);
-    plot(t,x_traj(12,1:end-1)); title('dq2R');
-    hold on; plot(t(1:mpciter),X_REF(12,1:mpciter)); 
-    legend('dq2R','dq2R{ref}');
-    
-    subplot(3,3,6);
-    plot(t,x_traj(13,1:end-1)); title('dq1L');
-    hold on; plot(t(1:mpciter),X_REF(13,1:mpciter)); 
-    legend('dq1L','dq1L_{ref}');
-    
-    subplot(3,3,7);
-    plot(t,x_traj(14,1:end-1)); title('dq2L');
-    hold on; plot(t(1:mpciter),X_REF(14,1:mpciter)); 
-    legend('dq2L','dq2L{ref}');
+    anim = Animator.FiveLinkAnimator(t(1:end), X_REF(1:7,1:end));
+    anim.pov = Animator.AnimatorPointOfView.West;
+    anim.Animate(true);
+    anim.isLooping = false;
+    anim.updateWorldPosition = true;
+    % anim.endTime = 20;
+    conGUI = Animator.AnimatorControls();
+    conGUI.anim = anim;
 end
-    %%
+
+% Actual Trajectory
 if false
-    figure 
-    subplot(2,2,1);
-    plot(t(1:end-1),u_cl(:,1)); title('u_q1R');
-    hold on; plot(t(1:mpciter),U_REF(1,1:mpciter)); 
-    legend('u_q1R','u_q1R_{ref}');
-    subplot(2,2,2);
-    plot(t(1:end-1),u_cl(:,2)); title('u_q2R');
-    hold on; plot(t(1:mpciter),U_REF(2,1:mpciter)); 
-    legend('u_q2R','u_q2R_{ref}');
-    subplot(2,2,3);
-    plot(t(1:end-1),u_cl(:,3)); title('u_q1L');
-    hold on; plot(t(1:mpciter),U_REF(3,1:mpciter)); 
-    legend('u_q1L','u_q1L_{ref}');
-    subplot(2,2,4);
-    plot(t(1:end-1),u_cl(:,4)); title('u_q2L');
-    hold on; plot(t(1:mpciter),U_REF(4,1:mpciter)); 
-    legend('u_q2L','u_q2L_{ref}');
-    
-    
+    anim2 = Animator.FiveLinkAnimator(Time, x_traj(1:7,:));
+    anim2.pov = Animator.AnimatorPointOfView.West;
+    anim2.Animate(true);
+    anim2.isLooping = false;
+    anim2.updateWorldPosition = true;
+    % anim.endTime = 20;
+    conGUI = Animator.AnimatorControls();
+    conGUI.anim = anim2;
 end
+
+
+
 
 
