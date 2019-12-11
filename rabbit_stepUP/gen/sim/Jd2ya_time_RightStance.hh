@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Mon 9 Dec 2019 23:19:40 GMT-05:00
+ * Tue 10 Dec 2019 22:13:04 GMT-05:00
  */
 
 #ifndef JD2YA_TIME_RIGHTSTANCE_HH

@@ -4,7 +4,7 @@ cur = pwd;
 addpath(genpath(cur));
 
 addpath('../../');
-addpath('C:\Users\mungam\Documents\GitHub\frost-dev')
+addpath('../frost-dev-local');
 frost_addpath;
 
 % if load_path is empty, it will not load any expression.
@@ -16,7 +16,7 @@ COMPILE = false;
 SAVE_SOLUTION=1;
 
 
-% Load model 
+% Load model
 rabbit = RABBIT('urdf/five_link_walker.urdf');
 if isempty(load_path)
     rabbit.configureDynamics('DelayCoriolisSet',delay_set, 'OmitCoriolisSet', true);
@@ -28,11 +28,18 @@ end
 
 export_path = fullfile(cur, 'gen/sim/');
 
+%% loading the trajectory
+cur=pwd;
+trajName='one_sec_nocoriolis_9-Dec-2019-22-23-15-0500.mat';
+trajName='opt_traj_3-Dec-2019-18-07-22-0500_Rabbit.mat';
+param=load(fullfile(cur,'trajectories\stepUp\singleDomain',trajName));
+gait=param.gait;
+gait(1).params.ptime(1)=gait(1).tspan(end);
 %%
 % Define domains
-r_stance = RightStance(rabbit, load_path);
+r_stance = RightStance_sim(rabbit, load_path);
 % l_stance = LeftStance(rabbit, load_path);
-r_impact = RightImpact(r_stance, load_path);
+r_impact = RightImpact_sim(r_stance, load_path);
 % l_impact = LeftImpact(l_stance, load_path);
 
 % Define hybrid system
@@ -43,6 +50,9 @@ params.atime=gait(1).params.atime;
 params.ptime=gait(1).params.ptime;
 params.pRightToe=gait(1).params.pRightToe;
 params.ktime=[100,20];
+
+r_stance.PreProcess=@sim.resetTau;
+
 rabbit_1step = addVertex(rabbit_1step, 'RightStance', 'Domain', r_stance,'Control', io_control);
 rabbit_1step = setVertexProperties(rabbit_1step,'RightStance','Param',params);
 
@@ -54,101 +64,35 @@ rabbit_1step = addEdge(rabbit_1step, srcs, tars);
 rabbit_1step = setEdgeProperties(rabbit_1step, srcs, tars, ...
     'Guard', {r_impact});
 %%
-rabbit_1step.compile(export_path);
-%%
-logger=rabbit_1step.simulate(0,[gait(1).states.x(:,1);gait(1).states.dx(:,1)],3, [],'NumCycle',2);
-
-%% Define User Constraints
-r_stance.UserNlpConstraint = str2func('right_stance_constraints');
-r_impact.UserNlpConstraint = str2func('right_impact_constraints');
-
-%% Define User Costs
-u = r_stance.Inputs.Control.u;
-u2r = tovector(norm(u).^2);
-u2r_fun = SymFunction(['torque_' r_stance.Name],u2r,{u});
-
-%% Create optimization problem
-num_grid.RightStance = 10;
-num_grid.LeftStance = 10;
-nlp = HybridTrajectoryOptimization('Rabbit_1step',rabbit_1step,num_grid,[],'EqualityConstraintBoundary',1e-4);
-
-% Configure bounds
-setBounds;
-
-% load some optimization related expressions here
-if ~isempty(load_path)
-    nlp.configure(bounds, 'LoadPath',load_path);
-else
-    nlp.configure(bounds);
-end
-
-
-% Add costs
-addRunningCost(nlp.Phase(getPhaseIndex(nlp,'RightStance')),u2r_fun,'u');
-
-% Changing Periodicity
-
-
-
-% the configuration only depends on the relabeling matrix
-removeConstraint(nlp.Phase(2), 'xPlusCont');
-removeConstraint(nlp.Phase(2), 'dxPlusCont');
-
-R = eye(7);
-R([4, 5, 6, 7], :) = R([6, 7, 4, 5], :);
-x = nlp.Phase(2).Plant.States.x;
-xn = nlp.Phase(2).Plant.States.xn;
-x_diff = R*x-xn;
-
-symFunc = SymFunction(['xPlusCont', nlp.Phase(2).Name], x_diff(3:end), {x, xn});
-nlpFunc = NlpFunction('Name', symFunc.Name, ...
-    'Dimension', 5, ...
-    'lb', 0,...
-    'ub', 0,...
-    'Type', 'Nonlinear', ...
-    'SymFun', symFunc, ...
-    'DepVariables', [nlp.Phase(2).OptVarTable.xn(1); nlp.Phase(1).OptVarTable.x(1)]);
-addConstraint(nlp.Phase(2), nlpFunc(1).Name, 'first', nlpFunc);
-
-symFunc = SymFunction(['dxPlusCont', nlp.Phase(2).Name], x_diff(3:end), {x, xn});
-nlpFunc = NlpFunction('Name', symFunc.Name, ...
-    'Dimension', 5, ...
-    'lb', 0,...
-    'ub', 0,...
-    'Type', 'Nonlinear', ...
-    'SymFun', symFunc, ...
-    'DepVariables', [nlp.Phase(2).OptVarTable.dxn(1); nlp.Phase(1).OptVarTable.dx(1)]);
-addConstraint(nlp.Phase(2), nlpFunc(1).Name, 'first', nlpFunc);
-
-% Update
-nlp.update;
-
-for i = 1:(nlp.Phase(1).NumNode-1)
-    nlp.Phase(1).ConstrTable.u_leftFootHeight_RightStance(i).setBoundary(-0.1, Inf);
-end
-nlp.Phase(1).ConstrTable.u_leftFootHeight_RightStance(end).setBoundary(0.05, 0.05);
-
-nlp.update;
-
-% save expressions after you run the optimization. It will save all required
-% expressions
-% do not need to save expressions if the model configuration is not
-% changed. Adding custom constraints does not require saving any
-% expressions.
-% load_path = fullfile(cur, 'gen/sym');
-% rabbit_1step.saveExpression(load_path);
-%% Compile
 if COMPILE
-    if ~exist([export_path, 'opt/'])
-        mkdir([export_path, 'opt/'])
-    end
-    rabbit.ExportKinematics([export_path,'kinematics/']);
-    compileConstraint(nlp,[],[],[export_path, 'opt/']);
-    compileObjective(nlp,[],[],[export_path, 'opt/']);
+    rabbit_1step.compile(export_path);
+    rabbit_1step.ExportKinematics([export_path,'kinematics/']);
+    rightToepos=getCartesianPosition(r_stance, r_stance.ContactPoints.RightToe);
+    export(rightToepos, 'Vars',r_stance.States.x, 'File', [export_path,'stanceFootPos']);
+    
+    
 end
+%%
+logger=rabbit_1step.simulate(0,[gait(1).states.x(:,1);gait(1).states.dx(:,1)],3, [],'NumCycle',5);
 
-% Example constraint removal
-% removeConstraint(nlp.Phase(1),'u_friction_cone_RightToe');
+
+%% animate
+q_log=[];
+t_log=[];
+for i=1:length(logger)
+q_log=[q_log,logger(i).flow.states.x];
+t_log=[t_log,logger(i).flow.t];
+end
+anim = Animator.FiveLinkAnimator(t_log, q_log);
+anim.pov = Animator.AnimatorPointOfView.West;
+anim.Animate(true);
+anim.isLooping = false;
+anim.updateWorldPosition = true;
+% anim.endTime = 20;
+conGUI = Animator.AnimatorControls();
+conGUI.anim = anim;
+
+
 %%
 
 

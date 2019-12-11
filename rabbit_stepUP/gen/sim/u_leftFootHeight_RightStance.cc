@@ -1,11 +1,12 @@
 /*
  * Automatically Generated from Mathematica.
- * Mon 9 Dec 2019 23:19:52 GMT-05:00
+ * Tue 10 Dec 2019 21:07:32 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
 #include <stdexcept>
 #include <cmath>
+#include<math.h>
 /**
  * Copied from Wolfram Mathematica C Definitions file mdefs.hpp
  * Changed marcos to inline functions (Eric Cousineau)
@@ -37,6 +38,8 @@ const double E	= 2.71828182845904523536029;
 const double Pi = 3.14159265358979323846264;
 const double Degree = 0.01745329251994329576924;
 
+inline double Sec(double x) { return 1/cos(x); }
+inline double Csc(double x) { return 1/sin(x); }
 
 #endif
 
@@ -45,31 +48,31 @@ const double Degree = 0.01745329251994329576924;
  */
 static void output1(double *p_output1,const double *var1)
 {
-  double t643;
-  double t647;
-  double t642;
-  double t648;
-  double t633;
-  double t646;
-  double t651;
-  double t652;
-  double t654;
-  double t655;
-  double t656;
   double t657;
-  t643 = Cos(var1[5]);
-  t647 = Sin(var1[2]);
-  t642 = Cos(var1[2]);
-  t648 = Sin(var1[5]);
-  t633 = Cos(var1[6]);
-  t646 = t642*t643;
-  t651 = -1.*t647*t648;
-  t652 = t646 + t651;
-  t654 = -1.*t643*t647;
-  t655 = -1.*t642*t648;
-  t656 = t654 + t655;
-  t657 = Sin(var1[6]);
-  p_output1[0]=0.4*(1. - 1.*t633)*t652 - 0.4*t656*t657 + 0.8*(t633*t652 + t656*t657) + var1[1];
+  double t661;
+  double t656;
+  double t662;
+  double t647;
+  double t660;
+  double t665;
+  double t666;
+  double t668;
+  double t669;
+  double t670;
+  double t671;
+  t657 = Cos(var1[5]);
+  t661 = Sin(var1[2]);
+  t656 = Cos(var1[2]);
+  t662 = Sin(var1[5]);
+  t647 = Cos(var1[6]);
+  t660 = t656*t657;
+  t665 = -1.*t661*t662;
+  t666 = t660 + t665;
+  t668 = -1.*t657*t661;
+  t669 = -1.*t656*t662;
+  t670 = t668 + t669;
+  t671 = Sin(var1[6]);
+  p_output1[0]=-0.05 + 0.4*(1. - 1.*t647)*t666 - 0.4*t670*t671 + 0.8*(t647*t666 + t670*t671) + var1[1];
 }
 
 
