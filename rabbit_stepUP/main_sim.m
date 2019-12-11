@@ -66,7 +66,7 @@ rabbit_1step = setEdgeProperties(rabbit_1step, srcs, tars, ...
 %%
 if COMPILE
     rabbit_1step.compile(export_path);
-    rabbit_1step.ExportKinematics([export_path,'kinematics/']);
+    rabbit.ExportKinematics([export_path,'kinematics/']);
     rightToepos=getCartesianPosition(r_stance, r_stance.ContactPoints.RightToe);
     export(rightToepos, 'Vars',r_stance.States.x, 'File', [export_path,'stanceFootPos']);
     

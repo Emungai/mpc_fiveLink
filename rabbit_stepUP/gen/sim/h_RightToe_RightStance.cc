@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 10 Dec 2019 22:12:57 GMT-05:00
+ * Wed 11 Dec 2019 12:20:45 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -48,43 +48,43 @@ inline double Csc(double x) { return 1/sin(x); }
  */
 static void output1(double *p_output1,const double *var1,const double *var2)
 {
-  double t817;
-  double t814;
-  double t815;
-  double t818;
-  double t811;
-  double t816;
-  double t819;
-  double t820;
-  double t822;
-  double t823;
-  double t824;
-  double t825;
-  double t812;
-  double t813;
-  double t835;
-  double t836;
-  double t837;
-  t817 = Cos(var1[2]);
-  t814 = Cos(var1[3]);
-  t815 = Sin(var1[2]);
-  t818 = Sin(var1[3]);
-  t811 = Cos(var1[4]);
-  t816 = t814*t815;
-  t819 = t817*t818;
-  t820 = t816 + t819;
-  t822 = t817*t814;
-  t823 = -1.*t815*t818;
-  t824 = t822 + t823;
-  t825 = Sin(var1[4]);
-  t812 = -1.*t811;
-  t813 = 1. + t812;
-  t835 = -1.*t814*t815;
-  t836 = -1.*t817*t818;
-  t837 = t835 + t836;
-  p_output1[0]=0.4*t813*t820 - 0.4*t824*t825 + 0.8*(t811*t820 + t824*t825) + var1[0] - 1.*var2[0];
+  double t100;
+  double t60;
+  double t63;
+  double t124;
+  double t32;
+  double t71;
+  double t142;
+  double t148;
+  double t152;
+  double t154;
+  double t159;
+  double t171;
+  double t40;
+  double t48;
+  double t187;
+  double t188;
+  double t189;
+  t100 = Cos(var1[2]);
+  t60 = Cos(var1[3]);
+  t63 = Sin(var1[2]);
+  t124 = Sin(var1[3]);
+  t32 = Cos(var1[4]);
+  t71 = t60*t63;
+  t142 = t100*t124;
+  t148 = t71 + t142;
+  t152 = t100*t60;
+  t154 = -1.*t63*t124;
+  t159 = t152 + t154;
+  t171 = Sin(var1[4]);
+  t40 = -1.*t32;
+  t48 = 1. + t40;
+  t187 = -1.*t60*t63;
+  t188 = -1.*t100*t124;
+  t189 = t187 + t188;
+  p_output1[0]=-0.4*t159*t171 + 0.8*(t159*t171 + t148*t32) + 0.4*t148*t48 + var1[0] - 1.*var2[0];
   p_output1[1]=-1.*var2[1];
-  p_output1[2]=0.4*t813*t824 - 0.4*t825*t837 + 0.8*(t811*t824 + t825*t837) + var1[1] - 1.*var2[2];
+  p_output1[2]=-0.4*t171*t189 + 0.8*(t171*t189 + t159*t32) + 0.4*t159*t48 + var1[1] - 1.*var2[2];
 }
 
 
