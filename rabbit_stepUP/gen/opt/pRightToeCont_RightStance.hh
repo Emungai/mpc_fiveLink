@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 3 Dec 2019 15:20:54 GMT-05:00
+ * Wed 11 Dec 2019 12:56:12 GMT-05:00
  */
 
 #ifndef PRIGHTTOECONT_RIGHTSTANCE_HH

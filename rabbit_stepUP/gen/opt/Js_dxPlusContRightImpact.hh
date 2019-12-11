@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 3 Dec 2019 15:41:53 GMT-05:00
+ * Wed 11 Dec 2019 12:58:35 GMT-05:00
  */
 
 #ifndef JS_DXPLUSCONTRIGHTIMPACT_HH

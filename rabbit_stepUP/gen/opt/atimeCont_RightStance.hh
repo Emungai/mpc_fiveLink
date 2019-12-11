@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 3 Dec 2019 15:20:58 GMT-05:00
+ * Wed 11 Dec 2019 12:56:17 GMT-05:00
  */
 
 #ifndef ATIMECONT_RIGHTSTANCE_HH

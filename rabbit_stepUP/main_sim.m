@@ -32,9 +32,10 @@ export_path = fullfile(cur, 'gen/sim/');
 cur=pwd;
 trajName='one_sec_nocoriolis_9-Dec-2019-22-23-15-0500.mat';
 trajName='opt_traj_3-Dec-2019-18-07-22-0500_Rabbit.mat';
+trajName='0.5493_sec_nocoriolis_rabbitOrig_11-Dec-2019-13-35-49-0500.mat';
 param=load(fullfile(cur,'trajectories\stepUp\singleDomain',trajName));
 gait=param.gait;
-gait(1).params.ptime(1)=gait(1).tspan(end);
+% gait(1).params.ptime(1)=gait(1).tspan(end);
 %%
 % Define domains
 r_stance = RightStance_sim(rabbit, load_path);

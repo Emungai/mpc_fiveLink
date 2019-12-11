@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 3 Dec 2019 15:23:24 GMT-05:00
+ * Wed 11 Dec 2019 12:57:20 GMT-05:00
  */
 
 #ifdef MATLAB_MEX_FILE
@@ -45,58 +45,58 @@ const double Degree = 0.01745329251994329576924;
  */
 static void output1(double *p_output1,const double *var1,const double *var2,const double *var3,const double *var4,const double *var5,const double *var6)
 {
-  double t8866;
-  double t8867;
-  double t8869;
-  double t8875;
-  double t8876;
-  double t8877;
-  double t8878;
-  double t8879;
-  double t8880;
-  double t8885;
-  double t8886;
-  double t8887;
-  double t8868;
-  double t8881;
-  double t8883;
-  double t8884;
-  double t8893;
-  double t8894;
-  double t8895;
-  double t8931;
-  double t8932;
-  double t8933;
-  double t8935;
-  double t8937;
-  t8866 = -1.*var4[1];
-  t8867 = var4[0] + t8866;
-  t8869 = -1. + var5[0];
-  t8875 = -1. + var6[0];
-  t8876 = 1/t8875;
-  t8877 = -1.*var1[0];
-  t8878 = t8877 + var1[1];
-  t8879 = t8869*t8876*t8878;
-  t8880 = t8866 + var1[0] + t8879;
-  t8885 = 1/t8867;
-  t8886 = -1.*t8885*t8880;
-  t8887 = 1. + t8886;
-  t8868 = Power(t8867,-5);
-  t8881 = Power(t8880,5);
-  t8883 = Power(t8867,-4);
-  t8884 = Power(t8880,4);
-  t8893 = Power(t8867,-3);
-  t8894 = Power(t8880,3);
-  t8895 = Power(t8887,2);
-  t8931 = Power(t8867,-2);
-  t8932 = Power(t8880,2);
-  t8933 = Power(t8887,3);
-  t8935 = Power(t8887,4);
-  t8937 = Power(t8887,5);
-  p_output1[0]=var2[3] - 1.*t8937*var3[0] - 5.*t8880*t8885*t8935*var3[4] - 10.*t8931*t8932*t8933*var3[8] - 10.*t8893*t8894*t8895*var3[12] - 5.*t8883*t8884*t8887*var3[16] - 1.*t8868*t8881*var3[20];
-  p_output1[1]=var2[4] - 1.*t8937*var3[1] - 5.*t8880*t8885*t8935*var3[5] - 10.*t8931*t8932*t8933*var3[9] - 10.*t8893*t8894*t8895*var3[13] - 5.*t8883*t8884*t8887*var3[17] - 1.*t8868*t8881*var3[21];
-  p_output1[2]=var2[5] - 1.*t8937*var3[2] - 5.*t8880*t8885*t8935*var3[6] - 10.*t8931*t8932*t8933*var3[10] - 10.*t8893*t8894*t8895*var3[14] - 5.*t8883*t8884*t8887*var3[18] - 1.*t8868*t8881*var3[22];
-  p_output1[3]=var2[6] - 1.*t8937*var3[3] - 5.*t8880*t8885*t8935*var3[7] - 10.*t8931*t8932*t8933*var3[11] - 10.*t8893*t8894*t8895*var3[15] - 5.*t8883*t8884*t8887*var3[19] - 1.*t8868*t8881*var3[23];
+  double t1089;
+  double t1090;
+  double t1097;
+  double t1098;
+  double t1099;
+  double t1100;
+  double t1101;
+  double t1102;
+  double t1103;
+  double t1108;
+  double t1113;
+  double t1114;
+  double t1096;
+  double t1104;
+  double t1106;
+  double t1107;
+  double t1116;
+  double t1118;
+  double t1152;
+  double t1154;
+  double t1155;
+  double t1156;
+  double t1158;
+  double t1160;
+  t1089 = -1.*var4[1];
+  t1090 = var4[0] + t1089;
+  t1097 = -1. + var5[0];
+  t1098 = -1. + var6[0];
+  t1099 = 1/t1098;
+  t1100 = -1.*var1[0];
+  t1101 = t1100 + var1[1];
+  t1102 = t1097*t1099*t1101;
+  t1103 = t1089 + var1[0] + t1102;
+  t1108 = 1/t1090;
+  t1113 = -1.*t1108*t1103;
+  t1114 = 1. + t1113;
+  t1096 = Power(t1090,-5);
+  t1104 = Power(t1103,5);
+  t1106 = Power(t1090,-4);
+  t1107 = Power(t1103,4);
+  t1116 = Power(t1090,-3);
+  t1118 = Power(t1103,3);
+  t1152 = Power(t1114,2);
+  t1154 = Power(t1090,-2);
+  t1155 = Power(t1103,2);
+  t1156 = Power(t1114,3);
+  t1158 = Power(t1114,4);
+  t1160 = Power(t1114,5);
+  p_output1[0]=var2[3] - 1.*t1160*var3[0] - 5.*t1103*t1108*t1158*var3[4] - 10.*t1154*t1155*t1156*var3[8] - 10.*t1116*t1118*t1152*var3[12] - 5.*t1106*t1107*t1114*var3[16] - 1.*t1096*t1104*var3[20];
+  p_output1[1]=var2[4] - 1.*t1160*var3[1] - 5.*t1103*t1108*t1158*var3[5] - 10.*t1154*t1155*t1156*var3[9] - 10.*t1116*t1118*t1152*var3[13] - 5.*t1106*t1107*t1114*var3[17] - 1.*t1096*t1104*var3[21];
+  p_output1[2]=var2[5] - 1.*t1160*var3[2] - 5.*t1103*t1108*t1158*var3[6] - 10.*t1154*t1155*t1156*var3[10] - 10.*t1116*t1118*t1152*var3[14] - 5.*t1106*t1107*t1114*var3[18] - 1.*t1096*t1104*var3[22];
+  p_output1[3]=var2[6] - 1.*t1160*var3[3] - 5.*t1103*t1108*t1158*var3[7] - 10.*t1154*t1155*t1156*var3[11] - 10.*t1116*t1118*t1152*var3[15] - 5.*t1106*t1107*t1114*var3[19] - 1.*t1096*t1104*var3[23];
 }
 
 

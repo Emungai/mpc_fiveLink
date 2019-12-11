@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 3 Dec 2019 15:21:06 GMT-05:00
+ * Wed 11 Dec 2019 12:56:26 GMT-05:00
  */
 
 #ifndef JS_PTIMECONT_RIGHTSTANCE_HH

@@ -1,6 +1,6 @@
 /*
  * Automatically Generated from Mathematica.
- * Tue 3 Dec 2019 15:23:41 GMT-05:00
+ * Wed 11 Dec 2019 12:57:39 GMT-05:00
  */
 
 #ifndef JS_TAU_0_RIGHTSTANCE_HH
