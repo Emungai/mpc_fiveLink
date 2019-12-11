@@ -1,5 +1,5 @@
 %% Cartpole Regulator + Multiple shooting
-clear; close all; clc
+clear; clc
 import casadi.*
 addpath('../../casadi-windows-matlabR2014b-3.5.1');
 addpath('dynamics/');
@@ -115,7 +115,7 @@ obj = 0; % Objective function
 g = [];  % constraints vector
 
 Qx= diag([1 1 1 10 10 10 10]);
-Qdx= 0*eye(n_s/2);
+Qdx= 0.1*eye(n_s/2);
 
 Q=blkdiag(Qx,Qdx);
 % Q_terminal = [   -0.7584    0.8656   -7.8374    1.9785    0.4227   -2.6156   -1.7504   -5.1162    2.8324  -13.3248   -0.5759   -1.3113   -3.4692   -1.1094;
@@ -229,7 +229,7 @@ U_DEC = zeros(N,n_c);
 
 X_DEC = repmat(x0,1,N+1)'; % initialization of the states decision variables
 
-sim_time = 0.9; % Maximum simulation time
+sim_time = 1; % Maximum simulation time
 
 % Start MPC
 mpciter = 0;
@@ -314,7 +314,7 @@ average_mpc_time = main_loop_time/(mpciter+1)
 Time(end+1) = Time(end) + DT;
 
 %% Plot results
-if (true && Time(end)>= 1)
+if (true)
     figure
     subplot(3,3,1);
     plot(Time,x_traj(1,:)); title('x'); 
