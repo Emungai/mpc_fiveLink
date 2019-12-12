@@ -207,7 +207,7 @@ args.ubx(14:n_s:n_s*(N+1),1) = inf;
 
 % Control inequalities
 % torque_max =param.bounds.RightStance.inputs.Control.u.ub ; torque_min =param.bounds.RightStance.inputs.Control.u.lb;
-torque_max = 10; torque_min = -10;
+torque_max = inf; torque_min = -torque_max;
 
 args.lbx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*(N+1),1) = torque_min;    % u_q1R lower bound
 args.ubx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*(N+1),1) = torque_max;   
@@ -226,10 +226,29 @@ args.ubx(n_s*(N+1)+4:n_c:n_s*(N+1)+n_c*(N+1),1) = torque_max;
 t0 = 0;
 Time(1) = t0;
 t_final = DT * (size(X_REF_Original,2)-1);
-x0 = [param.gait(1).states.x(:,1); param.gait(1).states.dx(:,1)] + ...
-     [0; 0; 0; 0; 0; 0; 0;
-      0; 0; 0; 0; 0; 0; 0];    % initial condition. 14X1
+% x0 = [param.gait(1).states.x(:,1); param.gait(1).states.dx(:,1)] + ...
+%      [0; 0; 0; 0; 0; 0; 0;
+%       0; 0; 0; 0; 0; 0; 0];    % initial condition. 14X1
+  
+  
+% x0 = [param.gait(1).states.x(:,1); zeros(7,1)] + ...
+%      [0; 0; 0; 0; 0; 0; 0;
+%       0; 0; 0; 0; 0; 0; 0];    % initial condition. 14X1
+  
+% x0 = [X_REF_Original(1:7,floor(end*0.46)); zeros(7,1)] + ...
+%      [0; 0; 0; 0; 0; 0; 0;
+%       0; 0; 0; 0; 0; 0; 0];    % initial condition. 14X1
 
+x0 = [-0.0548
+    0.7729
+    0.2542
+    2.5673
+    0.5003
+    2.5633
+    0.5016
+    zeros(7,1)]; 
+    
+    
 x_traj(:,1) = x0; % xx contains the history of states
 
 
@@ -237,10 +256,12 @@ U_DEC = zeros(N+1,n_c);
 
 X_DEC = repmat(x0,1,N+1)'; % initialization of the states decision variables
 
-sim_time = 1; % Maximum simulation time
+sim_time = 3; % Maximum simulation time
+t_final = sim_time;  % Only use if you want sim_time to be more than 1 second
 
 % Start MPC
 mpciter = 0;
+solMPC={};
 xx1 = [];
 u_cl=[];
 
@@ -248,10 +269,11 @@ u_cl=[];
 % than 10^-6 and the number of mpc steps is less than its maximum
 % value.
 
-x_ref_reg = X_REF(:,floor(10));
-u_ref_reg = U_REF(:,floor(10));
-X_REF_REG = repmat(x_ref_reg,1,ceil(sim_time+1)*size(X_REF,2));
-U_REF_REG = repmat(u_ref_reg,1,ceil(sim_time+1)*size(U_REF,2));
+% x_ref_reg = [X_REF(1:7,floor(end*0.46)); zeros(7,1)];
+x_ref_reg = x0;
+u_ref_reg = zeros(4,1);
+X_REF_REG = repmat(x_ref_reg,1,size(X_REF,2));
+U_REF_REG = repmat(u_ref_reg,1,size(U_REF,2));
 
 main_loop = tic;
 % while( (norm((x_traj(:,end)-X_REF(:,mpciter+1)),2) > 3e-2 || mpciter < 300)  && mpciter < sim_time / DT)
@@ -264,37 +286,38 @@ while(mpciter < sim_time / DT)
         % modify lbx/ubx and lbg/ubg size when pred_horizon decreases
         lbg_temp = args.lbg(1:n_s*(N_new + 1));
         ubg_temp = args.ubg(1:n_s*(N_new + 1));
-        lbx_temp = [args.lbx(1:(N_new+1)*n_s); args.lbx(n_s*(N+1)+1:n_s*(N+1)+n_c*(N_new))];
-        ubx_temp = [args.ubx(1:(N_new+1)*n_s); args.ubx(n_s*(N+1)+1:n_s*(N+1)+n_c*(N_new))];    
+        lbx_temp = [args.lbx(1:(N_new+1)*n_s); args.lbx(n_s*(N+1)+1:n_s*(N+1)+n_c*(N_new+1))];
+        ubx_temp = [args.ubx(1:(N_new+1)*n_s); args.ubx(n_s*(N+1)+1:n_s*(N+1)+n_c*(N_new+1))];    
         args.lbg = lbg_temp;
         args.ubg = ubg_temp;
         args.lbx = lbx_temp;
         args.ubx = ubx_temp;   
 
-        P(end-(N-N_new)*(n_s+n_c):end) = [];
+        
         % Update new prediction horizon
         N = N_new;
       
         obj = sum(objVector(1:N+1));
         OPT_variables = [reshape(X(:,1:N+1),n_s*(N+1),1);reshape(U(:,1:N+1),n_c*(N+1),1)];
         g = g(1:n_s*(N+1));
-
+        P = P(1: (N+2)*n_s + (N+1)*n_c);
         nlp_prob = struct('f', obj, 'x', OPT_variables, 'g', g, 'p', P);
         solver = nlpsol('solver', 'ipopt', nlp_prob,opts);
     end
     
+    args.p=[];
     args.p(1:n_s) = x0; % initial condition of the robot posture
     
     for k = 1:N+1 %new - set the reference to track             
         args.p((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s)) = ...
-            X_REF(:,k);
+            X_REF_REG(:,k);
         
         args.p((k-1)*(n_s+n_c)+(n_s+n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s+n_c)) =...
-            U_REF(:,k);        
+            U_REF_REG(:,k);        
     end
     
     % warm start
-    args.x0  = [reshape(X_DEC',n_s*(N+1),1);reshape(U_DEC',n_c*(N+1),1)];
+    args.x0  = [reshape(X_DEC(1:N+1,:)',n_s*(N+1),1);reshape(U_DEC(1:N+1,:)',n_c*(N+1),1)];
     
     %% Solve MPC with CasADi NLP solver
     sol = solver('x0', args.x0, 'lbx', args.lbx, 'ubx', args.ubx,...
@@ -302,7 +325,7 @@ while(mpciter < sim_time / DT)
     
     %% Extract solutions
     u = reshape(full(sol.x(n_s*(N+1)+1:end))',n_c,N+1)'; % get controls only from the solution
-    xx1(:,1:n_s,mpciter+1)= reshape(full(sol.x(1:n_s*(N+1)))',n_s,N+1)'; % get solution TRAJECTORY
+%     solMPC.xx1(:,1:n_s,mpciter+1)= reshape(full(sol.x(1:n_s*(N+1)))',n_s,N+1)'; % get solution TRAJECTORY
     u_cl= [u_cl ; u(1,:)];              % only use first control value
     Time(mpciter+1) = t0;
     
@@ -320,15 +343,15 @@ while(mpciter < sim_time / DT)
     end
     mpciter = mpciter + 1;
     %% Shift X_REF and U_REF
-    X_REF = [X_REF(:,2:end),X_REF(:,end)];
-    U_REF = [U_REF(:,2:end),U_REF(:,end)];
+    X_REF_REG = [X_REF_REG(:,2:end),X_REF_REG(:,end)];
+    U_REF_REG = [U_REF_REG(:,2:end),U_REF_REG(:,end)];
     
 end
 main_loop_time = toc(main_loop);
 if false
-    traj_total_error = norm(x_traj - X_REF_Original);
-    traj_pos_error = norm(x_traj(1:7,:) - X_REF_Original(1:7,:));
-    traj_vel_error = norm(x_traj(8:end,:) - X_REF_Original(8:end,:));
+    traj_total_error = norm(x_traj - X_REF_REG);
+    traj_pos_error = norm(x_traj(1:7,:) - X_REF_REG(1:7,:));
+    traj_vel_error = norm(x_traj(8:end,:) - X_REF_REG(8:end,:));
 end
 average_mpc_time = main_loop_time/(mpciter+1);
 disp("Average MPC Time = " + average_mpc_time);
@@ -339,14 +362,14 @@ plot_q = true;
 plot_dq = true;
 plot_u = true;
 if (true)
-    Plot_MPC_Traj(Time,x_traj,X_REF_Original,u_cl,U_REF_Original,plot_q,plot_dq,plot_u); 
+    Plot_MPC_Traj(Time,x_traj,X_REF_REG,u_cl,U_REF_REG,plot_q,plot_dq,plot_u); 
 end
 
 %% Animation
-animateTraj = false;
+animateTraj = true;
 animateRef = false;
 if true
-   Animate_MPC_Traj(Time,X_REF_Original,x_traj,animateTraj,animateRef) 
+   Animate_MPC_Traj(Time,X_REF_REG,x_traj,animateTraj,animateRef) 
 end
 
 

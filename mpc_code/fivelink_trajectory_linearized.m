@@ -75,8 +75,13 @@ Gv_c = Jac'*lambda;
 Gv = Gv + Gv_c;
 
 rhs = [dq; Mmat\(Fv + Gv)]; % system r.h.s
+A = jacobian(rhs,states);
+B = jacobian(rhs,u_ctrl);
 
-f = Function('f',{states,u_ctrl},{rhs});  % nonlinear mapping function f(x,u)
+
+
+f_nonlinear = Function('f_nonlinear',{states,u_ctrl},{rhs});  % nonlinear mapping function f(x,u)
+f = Function('f',{states,u_ctrl},{A*states + B*u_ctrl});  % nonlinear mapping function f(x,u)
 M_Func = Function('M_func',{states},{Mmat});
 G_Func = Function('G_func',{states},{G});
 J_Func = Function('J_func',{states},{Jac});
@@ -84,30 +89,34 @@ dJ_Func = Function('dJ_func',{states},{dJac});
 Lambda_Func = Function('Lambda_Func',{states,u_ctrl},{lambda});
 % Dynamics check
 % xcheck = ones(14,1);
-% xcheck = [ -0.4411
-%     0.6369
-%     0.1461
-%     2.1372
-%     0.5050
-%     3.0630
-%     0.7034
-%     1.3407
-%     0.9220
-%    -0.3917
-%     2.4647
-%     0.0547
-%    -1.7130
-%     2.2426];
-% ucheck = [0.0543
-%    -0.1570
-%    -0.1899
-%    -0.1876];
+xcheck = [ -0.4411
+    0.6369
+    0.1461
+    2.1372
+    0.5050
+    3.0630
+    0.7034
+    1.3407
+    0.9220
+   -0.3917
+    2.4647
+    0.0547
+   -1.7130
+    2.2426];
+ucheck = [0.0543
+   -0.1570
+   -0.1899
+   -0.1876];
 % M_Func(xcheck)
 % G_Func(xcheck)
 % J_Func(xcheck)
 % dJ_Func(xcheck)
 % Lambda_Func(xcheck,ucheck)
-% f(xcheck,ucheck)
+f(xcheck,ucheck)
+f_nonlinear(xcheck,ucheck)
+
+f(zeros(14,1),zeros(4,1))
+f_nonlinear(zeros(14,1),zeros(4,1))
 
 U = SX.sym('U',n_c,N+1);                      % Decision variables (controls)
 P = SX.sym('P',n_s + (N+1)*(n_s+n_c));          
@@ -341,11 +350,11 @@ plot_q = true;
 plot_dq = true;
 plot_u = true;
 if (true)
-    Plot_MPC_Traj(Time,x_traj,X_REF_Original,u_cl,U_REF_Original,plot_q,plot_dq,plot_u); 
+    Plot_MPC_Traj_linear(Time,x_traj,X_REF_Original,u_cl,U_REF_Original,plot_q,plot_dq,plot_u); 
 end
 
 %% Animation
-animateTraj = false;
+animateTraj = true;
 animateRef = false;
 if true
    Animate_MPC_Traj(Time,X_REF_Original,x_traj,animateTraj,animateRef) 
