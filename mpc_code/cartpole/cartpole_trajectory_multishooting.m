@@ -1,5 +1,10 @@
 %% Cartpole Regulator + Multiple shooting
 clear; close all; clc
+if isunix
+    addpath('../../casadi-linux-matlabR2014b-v3.5.1');
+else
+    addpath('../../casadi-windows-matlabR2014b-3.5.1');
+end
 import casadi.*
 
 %% Cartpole parameters
