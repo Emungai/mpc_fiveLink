@@ -15,7 +15,7 @@ g = 9.81;
 
 %% System Setup
 DT = 0.005; %[s]
-N = 400; % prediction horizon
+N = 200; % prediction horizon
 
 % Symbolic variables
 x = SX.sym('x'); theta = SX.sym('theta');
@@ -48,9 +48,8 @@ obj_new = 0;
 
 g = [];  % constraints vector
 
-Q = diag([10 10 0.01 0.01]);
-Q_terminal = 100*diag([10 10 1 1]);
-R = diag([0.1]); % weighing matrices (controls)
+Q = diag([1 1 0.1 0.1]);
+R = 0; % weighing matrices (controls)
 
 st  = X(:,1);        % initial state
 g = [g;st-P(1:n_s)]; % initial condition constraints
@@ -58,20 +57,17 @@ g = [g;st-P(1:n_s)]; % initial condition constraints
 %% Build Objective Function and Equality(Dynamics) Constraints
 for k = 1:N
     st = X(:,k);  ctrl = U(:,k);
-    
-    if k < N
+  
     % Running stage cost
     obj = obj + (st-P((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s)))'*Q*(st-P((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s))) + ...
         (ctrl-P((k-1)*(n_s+n_c)+(n_s+n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s+n_c)))'*R*(ctrl-P((k-1)*(n_s+n_c)+(n_s+n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s+n_c)));
-    end
     
     st_next = X(:,k+1);
     f_value = f(st,ctrl);
     st_next_euler = st+ (DT*f_value);
     g = [g;st_next-st_next_euler]; % compute constraints
 end
-% Terminal Stage Cost
-obj = obj + (st-P((N-1)*(n_s+n_c)+(n_s+1):(N-1)*(n_s+n_c)+(n_s+n_s)))'*Q_terminal*(st-P((N-1)*(n_s+n_c)+(n_s+1):(N-1)*(n_s+n_c)+(n_s+n_s)));
+
 %% NLP Settings
 % make the decision variable one column  vector
 OPT_variables = [reshape(X,n_s*(N+1),1);reshape(U,n_c*N,1)];
@@ -94,19 +90,29 @@ args.ubg(1:n_s*(N+1)) = 0; % Equality constraints
 
 args.lbx(1:n_s:n_s*(N+1),1) = -inf;             %state x lower bound
 args.ubx(1:n_s:n_s*(N+1),1) = inf;              %state x upper bound
-args.lbx(2:n_s:n_s*(N+1),1) = pi/2;             %state theta lower bound
-args.ubx(2:n_s:n_s*(N+1),1) = 3*pi/2;           %state theta upper bound
-args.lbx(3:n_s:n_s*(N+1),1) = -inf;             %state dx lower bound
-args.ubx(3:n_s:n_s*(N+1),1) = inf;              %state dx upper bound
-args.lbx(4:n_s:n_s*(N+1),1) = -inf;             %state dtheta lower bound
-args.ubx(4:n_s:n_s*(N+1),1) = inf;              %state dtheta upper bound
+args.lbx(2:n_s:n_s*(N+1),1) = 3*pi/4;             %state theta lower bound
+args.ubx(2:n_s:n_s*(N+1),1) = 5*pi/4;           %state theta upper bound
+args.lbx(3:n_s:n_s*(N+1),1) = -2;             %state dx lower bound
+args.ubx(3:n_s:n_s*(N+1),1) = 2;              %state dx upper bound
+args.lbx(4:n_s:n_s*(N+1),1) = -0.5;             %state dtheta lower bound
+args.ubx(4:n_s:n_s*(N+1),1) = 0.5;              %state dtheta upper bound
 
-force_max = 25; force_min = -force_max;
-args.lbx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*N,1) = force_min;    % force lower bound
-args.ubx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*N,1) = force_max;    % force upper bound
+u_max = 10; u_min = -u_max;
+args.lbx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*N,1) = u_min;    % u lower bound
+args.ubx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*N,1) = u_max;    % u upper bound
 
 %% Load Reference Trajectory
-load('cartpole_reference_trajectory1.mat');
+% load('cartpole_reference_trajectory1.mat');
+ex1 = false;
+if ex1
+    load('cartpole_reference_trajectory_ex1.mat','X_REF','U_REF');
+    X_REF_Original = X_REF;
+    U_REF_Original = U_REF;
+else
+    load('cartpole_reference_trajectory_ex2.mat','X_REF','U_REF');
+    X_REF_Original = X_REF;
+    U_REF_Original = U_REF;
+end
 
 %% ----------------------------------------------
 % ALL OF THE ABOVE IS JUST A PROBLEM SET UP
@@ -115,7 +121,13 @@ load('cartpole_reference_trajectory1.mat');
 % THE SIMULATION LOOP SHOULD START FROM HERE
 %-------------------------------------------
 t0 = 0;
-x0 = [0.1 ; pi; 0; 0];    % initial condition.
+if ex1
+    x0 = [0 ; pi; 0; 0] +...
+         [0.2; 0; 0.3; -0.1];    % initial condition.
+else
+    x0 = [0.5 ; pi+0.4; 0.2; -0.1]+...
+         [-0.2; -0.2; -0.2; 0.1];
+end
 
 x_traj(:,1) = x0; % xx contains the history of states
 t(1) = t0;
@@ -126,7 +138,7 @@ u0 = U_REF(1:N);
 % X0 = repmat(x0,1,N+1)'; % initialization of the states decision variables
 X0 = X_REF(:,1:N+1)';
 
-sim_tim = 10; % Maximum simulation time
+sim_time = 10; % Maximum simulation time
 
 % Start MPC
 mpciter = 0;
@@ -137,7 +149,9 @@ u_cl=[];
 % than 10^-6 and the number of mpc steps is less than its maximum
 % value.
 main_loop = tic;
-while( (norm((x_traj(:,end)-X_REF(:,mpciter+1)),2) > 3e-2 || mpciter < 300)  && mpciter < sim_tim / DT)
+% while( (norm((x_traj(:,end)-X_REF(:,mpciter+1)),2) > 3e-2 || mpciter < 300)  && mpciter < sim_tim / DT)
+while(mpciter < sim_time / DT)
+
     %% Set Parameter vector and Decision Variables    
     args.p(1:n_s) = x0; % initial condition of the robot posture
     for k = 1:N %new - set the reference to track           
@@ -168,6 +182,10 @@ while( (norm((x_traj(:,end)-X_REF(:,mpciter+1)),2) > 3e-2 || mpciter < 300)  && 
     % Shift trajectory to initialize the next step
     X0 = [X0(2:end,:);X0(end,:)];   % initialize with next step and add on last state twice
     
+    %% Shift X_REF and U_REF
+    X_REF = [X_REF(:,2:end),X_REF(:,end)];
+    U_REF = [U_REF(:,2:end),U_REF(:,end)];
+    
 %     mpciter
     if mod(mpciter,50) == 0
         mpciter
@@ -179,36 +197,64 @@ ss_error = norm((x_traj(:,end)-X_REF(:,mpciter+1)),2)
 average_mpc_time = main_loop_time/(mpciter+1)
 t(end+1) = t(end) + DT;
 
+%% SAVE Trajectory Tracking Results
+
+if ex1
+    save('cartpole_trajtrack_ex1'); 
+else
+    save('cartpole_trajtrack_ex2');
+end
+
+
 %%
 close alL
 
 if false
     animate_traj(t,X_REF,x_traj,l);
 end
+
 if true
+    sz = 15;
     figure
-    subplot(2,2,1);
-    plot(t,x_traj(1,:)); title('x'); 
-    hold on; plot(t(1:mpciter),X_REF(1,1:mpciter)); 
-    legend('x','x_{ref}');
-    subplot(2,2,2); 
-    plot(t,x_traj(2,:)); title('\theta');
-    hold on; plot(t(1:mpciter),X_REF(2,1:mpciter));
-    legend('\theta','\theta_{ref}');
-    subplot(2,2,3);
-    plot(t,x_traj(3,:)); title('dx');
-    hold on; plot(t(1:mpciter),X_REF(3,1:mpciter));
-    legend('dx','dx_{ref}');
-    subplot(2,2,4);
-    plot(t,x_traj(4,:)); title('d \theta');
-    hold on; plot(t(1:mpciter),X_REF(4,1:mpciter)); 
-    legend('d \theta','d \theta_{ref}');
+    subplot(2,3,1);
+    plot(t,x_traj(1,:),'LineWidth',2); title('$\mathbf{x}$','interpreter','latex','FontSize',sz); grid on;
+    hold on; plot(t(1:mpciter),X_REF_Original(1,1:mpciter),'LineStyle','-','color','m','LineWidth',1); xlim([0 sim_time]);
+    hold on; line([0 sim_time],[args.lbx(1) args.lbx(1)],'LineStyle','--','color','r','LineWidth',1);
+    hold on; line([0 sim_time],[args.ubx(1) args.ubx(1)],'LineStyle','--','color','r','LineWidth',1);
+    xlabel('Time [sec]'); ylabel('$x\ [m]$','interpreter','latex');
+    set(gca,'FontSize',sz)
     
-    figure 
-    plot(t(1:end-1),u_cl); title('Force');
-    hold on; plot(t(1:mpciter),U_REF(1,1:mpciter)); 
-    legend('F','F_{ref}');
+    subplot(2,3,2);
+    plot(t,x_traj(2,:),'LineWidth',2); title('$\mathbf{\theta}$','interpreter','latex','FontSize',sz); grid on;
+    hold on; plot(t(1:mpciter),X_REF_Original(2,1:mpciter),'LineStyle','-','color','m','LineWidth',1); xlim([0 sim_time]);
+    hold on; line([0 sim_time],[args.lbx(2) args.lbx(2)],'LineStyle','--','color','r','LineWidth',1)
+    hold on; line([0 sim_time],[args.ubx(2) args.ubx(2)],'LineStyle','--','color','r','LineWidth',1)
+    xlabel('Time [sec]');ylabel('$\theta\ [rad]$','interpreter','latex');
+    set(gca,'FontSize',sz)
+    
+    subplot(2,3,4);
+    plot(t,x_traj(3,:),'LineWidth',2); title('$\mathbf{\dot{x}}$','interpreter','latex','FontSize',sz); grid on;
+    hold on; plot(t(1:mpciter),X_REF_Original(3,1:mpciter),'LineStyle','-','color','m','LineWidth',1); xlim([0 sim_time]);
+    hold on; line([0 sim_time],[args.lbx(3) args.lbx(3)],'LineStyle','--','color','r','LineWidth',1)
+    hold on; line([0 sim_time],[args.ubx(3) args.ubx(3)],'LineStyle','--','color','r','LineWidth',1)
+    xlabel('Time [sec]'); ylabel('$\dot{x}\ [m/s]$','interpreter','latex');
+    set(gca,'FontSize',sz)
+    
+    subplot(2,3,5);
+    plot(t,x_traj(4,:),'LineWidth',2); title('$\mathbf{\dot{\theta}}$','interpreter','latex','FontSize',sz); grid on;
+    hold on; plot(t(1:mpciter),X_REF_Original(4,1:mpciter),'LineStyle','-','color','m','LineWidth',1); xlim([0 sim_time]);
+    hold on; line([0 sim_time],[args.lbx(4) args.lbx(4)],'LineStyle','--','color','r','LineWidth',1)
+    hold on; line([0 sim_time],[args.ubx(4) args.ubx(4)],'LineStyle','--','color','r','LineWidth',1)
+    xlabel('Time [sec]'); ylabel('$\dot{\theta}\ [rad/s]$','interpreter','latex');
+    set(gca,'FontSize',sz);
+    
+    subplot(2,3,3);
+    stairs(t(1:end-1),u_cl,'LineWidth',2); title('$\mathbf{u}$','interpreter','latex','FontSize',sz); grid on;
+    hold on; plot(t(1:mpciter),U_REF_Original(1,1:mpciter),'LineStyle','-','color','m','LineWidth',1)
+    hold on; line([0 sim_time],[args.ubx(5) args.ubx(5)],'LineStyle','--','color','r','LineWidth',1)
+    xlabel('Time [sec]'); ylabel('$u\ [Nm]$','interpreter','latex');
+    set(gca,'FontSize',sz)
+    set(gcf,'color','w');
+
+%     sgtitle('Cart-pole Regulator Example 1');
 end
-
-
-

@@ -15,7 +15,7 @@ g = 9.81;
 
 %% System Setup
 DT = 0.005; %[s]
-N = 400; % prediction horizon
+N = 200; % prediction horizon
 
 % Symbolic variables
 x = SX.sym('x'); theta = SX.sym('theta');
@@ -79,14 +79,14 @@ args.ubg(1:n_s*(N+1)) = 0; % Equality constraints
 
 args.lbx(1:n_s:n_s*(N+1),1) = -inf;             %state x lower bound
 args.ubx(1:n_s:n_s*(N+1),1) = inf;              %state x upper bound
-args.lbx(2:n_s:n_s*(N+1),1) = pi/2;             %state theta lower bound
-args.ubx(2:n_s:n_s*(N+1),1) = 3*pi/2;           %state theta upper bound
-args.lbx(3:n_s:n_s*(N+1),1) = -inf;             %state dx lower bound
-args.ubx(3:n_s:n_s*(N+1),1) = inf;              %state dx upper bound
-args.lbx(4:n_s:n_s*(N+1),1) = -inf;             %state dtheta lower bound
-args.ubx(4:n_s:n_s*(N+1),1) = inf;              %state dtheta upper bound
+args.lbx(2:n_s:n_s*(N+1),1) = 3*pi/4;             %state theta lower bound
+args.ubx(2:n_s:n_s*(N+1),1) = 5*pi/4;           %state theta upper bound
+args.lbx(3:n_s:n_s*(N+1),1) = -2;             %state dx lower bound
+args.ubx(3:n_s:n_s*(N+1),1) = 2;              %state dx upper bound
+args.lbx(4:n_s:n_s*(N+1),1) = -0.5;             %state dtheta lower bound
+args.ubx(4:n_s:n_s*(N+1),1) = 0.5;              %state dtheta upper bound
 
-u_max = inf; u_min = -u_max;
+u_max = 10; u_min = -u_max;
 args.lbx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*N,1) = u_min;    % u lower bound
 args.ubx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*N,1) = u_max;    % u upper bound
 
@@ -97,8 +97,16 @@ args.ubx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*N,1) = u_max;    % u upper bound
 % THE SIMULATION LOOP SHOULD START FROM HERE
 %-------------------------------------------
 t0 = 0;
-x0 = [0.1 ; pi; 0; 0];    % initial condition.
-xs = [2 ; pi; 0; 0];         % Reference posture.
+ex1 = false;
+if ex1
+    % example 1 conditions
+    x0 = [0 ; pi; 0; 0];       % initial condition.
+    xs = [2 ; pi; 0; 0];         % Reference posture.
+else
+    % example 2 conditions
+    x0 = [0.5 ; pi+0.4; 0.2; -0.1];         % Reference posture.
+    xs = [0 ; pi; 0; 0];       % initial condition.
+end
 
 x_traj(:,1) = x0; % xx contains the history of states
 t(1) = t0;
@@ -106,7 +114,7 @@ t(1) = t0;
 u0 = zeros(N,n_c);      % two control inputs for each robot
 X0 = repmat(x0,1,N+1)'; % initialization of the states decision variables
 
-sim_tim = 10; % Maximum simulation time
+sim_time = 10; % Maximum simulation time
 
 % Start MPC
 mpciter = 0;
@@ -118,7 +126,7 @@ u_cl=[];
 % value.
 main_loop = tic;
 % while(norm((x0-xs),2) > 1e-2 && mpciter < sim_tim / DT)
-while(mpciter < sim_tim / DT)
+while(mpciter < sim_time / DT)
     %% Set Parameter vector and Decision Variables
     args.p   = [x0;xs]; % set the values of the parameters vector
     % initial value of the decision variables
@@ -157,27 +165,61 @@ t(end+1) = t(end) + DT;
 X_REF = x_traj;
 U_REF = u_cl';
 
-save('cartpole_reference_trajectory1','X_REF','U_REF');
+if ex1
+    save('cartpole_reference_trajectory_ex1');
+else
+    save('cartpole_reference_trajectory_ex2');
+end
 
 
 %% Animations and Plots
 close all
-
-if true
-    figure(10)
+sz = 15;
+if false
+    figure
     animate(t,x_traj,l)
 end
 if true
     figure
-    subplot(2,2,1);
-    plot(t,x_traj(1,:)); title('x')
-    subplot(2,2,2);
-    plot(t,x_traj(2,:)); title('\theta');
-    subplot(2,2,3);
-    plot(t,x_traj(3,:)); title('dx');
-    subplot(2,2,4);
-    plot(t,x_traj(4,:)); title('dtheta');
+    subplot(2,3,1);
+    plot(t,x_traj(1,:),'LineWidth',2); title('$\mathbf{x}$','interpreter','latex','FontSize',sz); grid on;
+    hold on; line([0 sim_time],[xs(1) xs(1)],'LineStyle','--','color','m','LineWidth',1); xlim([0 sim_time]);
+    hold on; line([0 sim_time],[args.lbx(1) args.lbx(1)],'LineStyle','--','color','r','LineWidth',1);
+    hold on; line([0 sim_time],[args.ubx(1) args.ubx(1)],'LineStyle','--','color','r','LineWidth',1);
+    xlabel('Time [sec]'); ylabel('$x\ [m]$','interpreter','latex');
+    set(gca,'FontSize',sz)
+    
+    subplot(2,3,2);
+    plot(t,x_traj(2,:),'LineWidth',2); title('$\mathbf{\theta}$','interpreter','latex','FontSize',sz); grid on;
+    hold on; line([0 sim_time],[xs(2) xs(2)],'LineStyle','--','color','m','LineWidth',1); xlim([0 sim_time]);
+    hold on; line([0 sim_time],[args.lbx(2) args.lbx(2)],'LineStyle','--','color','r','LineWidth',1)
+    hold on; line([0 sim_time],[args.ubx(2) args.ubx(2)],'LineStyle','--','color','r','LineWidth',1)
+    xlabel('Time [sec]');ylabel('$\theta\ [rad]$','interpreter','latex');
+    set(gca,'FontSize',sz)
+    
+    subplot(2,3,4);
+    plot(t,x_traj(3,:),'LineWidth',2); title('$\mathbf{\dot{x}}$','interpreter','latex','FontSize',sz); grid on;
+    hold on; line([0 sim_time],[xs(3) xs(3)],'LineStyle','--','color','m','LineWidth',1); xlim([0 sim_time]);
+    hold on; line([0 sim_time],[args.lbx(3) args.lbx(3)],'LineStyle','--','color','r','LineWidth',1)
+    hold on; line([0 sim_time],[args.ubx(3) args.ubx(3)],'LineStyle','--','color','r','LineWidth',1)
+    xlabel('Time [sec]'); ylabel('$\dot{x}\ [m/s]$','interpreter','latex');
+    set(gca,'FontSize',sz)
+    
+    subplot(2,3,5);
+    plot(t,x_traj(4,:),'LineWidth',2); title('$\mathbf{\dot{\theta}}$','interpreter','latex','FontSize',sz); grid on;
+    hold on; line([0 sim_time],[xs(4) xs(4)],'LineStyle','--','color','m','LineWidth',1); xlim([0 sim_time]);
+    hold on; line([0 sim_time],[args.lbx(4) args.lbx(4)],'LineStyle','--','color','r','LineWidth',1)
+    hold on; line([0 sim_time],[args.ubx(4) args.ubx(4)],'LineStyle','--','color','r','LineWidth',1)
+    xlabel('Time [sec]'); ylabel('$\dot{\theta}\ [rad/s]$','interpreter','latex');
+    set(gca,'FontSize',sz);
+    
+    subplot(2,3,3);
+    stairs(t(1:end-1),u_cl,'LineWidth',2); title('$\mathbf{u}$','interpreter','latex','FontSize',sz); grid on;
+    hold on; line([0 sim_time],[args.lbx(5) args.lbx(5)],'LineStyle','--','color','r','LineWidth',1)
+    hold on; line([0 sim_time],[args.ubx(5) args.ubx(5)],'LineStyle','--','color','r','LineWidth',1)
+    xlabel('Time [sec]'); ylabel('$u\ [Nm]$','interpreter','latex');
+    set(gca,'FontSize',sz)
+    set(gcf,'color','w');
 
-    figure 
-    plot(t(1:end-1),u_cl); title('u');
+%     sgtitle('Cart-pole Regulator Example 1');
 end
