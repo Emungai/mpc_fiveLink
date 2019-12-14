@@ -13,26 +13,26 @@ addpath('../rabbit_stepUp/gen/kinematics');
 %% System Setup
 DT = 0.005; %[s]
 N = 10; % prediction horizon
+t_start=0.5;
 
 %% Load Reference Trajectory
 cur = pwd;
 % load first trajectory
-% trajName1 = '0.05_ascend.mat';
-% param1=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend/',trajName1]);
-trajName1 = '0.05_descend.mat';
-param1=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsDescend/',trajName1]);
+trajName1 = '0.1_ascend.mat';
+param1=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend/',trajName1]);
 addpath('..\rabbit_stepUp');
 trajRef1=calculations.referenceTrajBez(param1.gait,DT);
 X_REF1_Original = [trajRef1.x; trajRef1.dx];
 U_REF1_Original = trajRef1.u;
+%starting at a later point in the traj
+X_REF1_Original = X_REF1_Original(:,t_start/DT:end);
+U_REF1_Original = U_REF1_Original(:,t_start/DT:end);
 X_REF1 = X_REF1_Original;
 U_REF1 = U_REF1_Original;
 
 % load second trajectory
-% trajName2 = '0.04_ascend.mat';
-% param2=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend/',trajName2]);
-trajName2 = '0.04_descend.mat';
-param2=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsDescend/',trajName2]);
+trajName2 = '0.2_ascend.mat';
+param2=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend/',trajName2]);
 addpath('..\rabbit_stepUp');
 trajRef2=calculations.referenceTrajBez(param2.gait,DT);
 X_REF2_Original = [trajRef2.x; trajRef2.dx];
@@ -137,7 +137,7 @@ X = SX.sym('X',n_s,(N+1));
 
 g = [];  % constraints vector
 
-Qx= diag([10 10 10 1 1 1 1]);
+Qx= diag([1 1 1 10 10 10 10]);
 Qdx= 0.1*eye(n_s/2);
 Q=blkdiag(Qx,Qdx);
 
@@ -191,6 +191,21 @@ args.lbg(1:n_s*(N+1)) = 0;
 args.ubg(1:n_s*(N+1)) = 0; 
 
 % State inequalities
+% args.lbx(1:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.lb(1);             %state x lower bound
+% args.ubx(1:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.ub(1);              %state x upper bound
+% args.lbx(2:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.lb(2);                %state z lower bound
+% args.ubx(2:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.ub(2);              %state z upper bound
+% args.lbx(3:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.lb(3);              %state roty lower bound
+% args.ubx(3:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.ub(3);               %state roty upper bound
+% args.lbx(4:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.lb(4);             %state q1R lower bound
+% args.ubx(4:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.ub(4);              %state q1R upper bound
+% args.lbx(5:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.lb(5);             %state q2R lower bound
+% args.ubx(5:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.ub(5);              %state q2R upper bound
+% args.lbx(6:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.lb(6);             %state q1L lower bound
+% args.ubx(6:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.ub(6);              %state q1L upper bound
+% args.lbx(7:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.lb(7);             %state q2L lower bound
+% args.ubx(7:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.ub(7);   
+
 param1.bounds.RightStance.states.x.lb = -inf*ones(7,1);
 param1.bounds.RightStance.states.x.ub = inf*ones(7,1);
 
@@ -258,7 +273,7 @@ U_DEC = zeros(N+1,n_c);
 
 X_DEC = repmat(x0,1,N+1)'; % initialization of the states decision variables
 
-sim_time = 1; % Maximum simulation time
+sim_time = 1 - t_start; % Maximum simulation time
 
 % Start MPC
 mpciter = 0;
@@ -341,16 +356,20 @@ while(mpciter < sim_time / DT)
     X_REF2 = [X_REF2(:,2:end),X_REF2(:,end)];
     U_REF2 = [U_REF2(:,2:end),U_REF2(:,end)];
     
-    if t0 < t_switch
-        X_REF = X_REF1;
-        U_REF = U_REF1;
-    else
-        X_REF = X_REF2;
-        U_REF = U_REF2;
-    end
-    X_REF_MPC(:,mpciter)= X_REF(:,1);
-    U_REF_MPC(:,mpciter) = U_REF(:,1);
+%     if t0 < t_switch
+%         X_REF = X_REF1;
+%         U_REF = U_REF1;
+%     else
+%         X_REF = X_REF2;
+%         U_REF = U_REF2;
+%     end
+%     X_REF_MPC(:,mpciter)= X_REF(:,1);
+%     U_REF_MPC(:,mpciter) = U_REF(:,1);
 
+    X_REF = X_REF1;
+    U_REF = U_REF1;
+    X_REF_MPC(:,mpciter)= X_REF1(:,1);
+    U_REF_MPC(:,mpciter) = U_REF1(:,1);
 end
 main_loop_time = toc(main_loop);
 if false
@@ -366,9 +385,9 @@ Time(end+1) = Time(end) + DT;
 plot_q = true;
 plot_dq = true;
 plot_u = true;
-if (true)
-    Plot_MPC_RefPrev(Time,x_traj,X_REF1_Original,X_REF_MPC,...
-    u_cl,U_REF1_Original,U_REF_MPC,...
+if (false)
+    Plot_MPC_RefPrev(Time,x_traj,X_REF1_Original,X_REF2_Original,...
+    u_cl,U_REF1_Original,U_REF2_Original,...
     plot_q,plot_dq,plot_u);
 
 else

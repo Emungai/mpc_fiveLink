@@ -4,7 +4,7 @@ cur = pwd;
 addpath(genpath(cur));
 
 addpath('../../');
-addpath('C:\Users\mungam\Documents\GitHub\frost-dev')
+addpath('../frost-dev-local');
 frost_addpath;
 export_path = fullfile(cur, 'gen/');
 % if load_path is empty, it will not load any expression.
@@ -112,7 +112,7 @@ nlp.update;
 for i = 1:(nlp.Phase(1).NumNode-1)
     nlp.Phase(1).ConstrTable.u_leftFootHeight_RightStance(i).setBoundary(-0.1, Inf);
 end
-nlp.Phase(1).ConstrTable.u_leftFootHeight_RightStance(end).setBoundary(0.05, 0.05);
+nlp.Phase(1).ConstrTable.u_leftFootHeight_RightStance(end).setBoundary(-0.05, -0.05);
 
 nlp.update;
 
@@ -157,14 +157,14 @@ gait = struct(...
     'inputs',inputs,...
     'params',params);
 %% SAVE
-CHARACTER_NAME = '0.4814_sec_nocoriolis_rabbitOrig';
+CHARACTER_NAME = '0.05_descend';
 
 if SAVE_SOLUTION
     data_name = char(datetime('now','TimeZone','local','Format','d-MMM-y-HH-mm-ssZ'));%'local/longer_double_support_wider_step_dummy';
     
     name_save = [CHARACTER_NAME, '_', data_name];
     
-    save_dir=fullfile(cur,'trajectories\stepUp\singleDomain');
+    save_dir=fullfile(cur,'trajectories\stepUp\singleDomain\variousStepHeightsDescend');
     if ~exist(save_dir,'dir'), mkdir(save_dir); end
     
     if info.status ~= -1
