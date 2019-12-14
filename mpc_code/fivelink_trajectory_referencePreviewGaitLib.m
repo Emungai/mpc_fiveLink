@@ -17,10 +17,10 @@ N = 10; % prediction horizon
 %% Load Reference Trajectory
 cur = pwd;
 % load first trajectory
-% trajName1 = '0.05_ascend.mat';
-% param1=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend/',trajName1]);
-trajName1 = '0.05_descend.mat';
-param1=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsDescend/',trajName1]);
+trajName1 = '0.05_ascend.mat';
+param1=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend/',trajName1]);
+% trajName1 = '0.05_descend.mat';
+% param1=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsDescend/',trajName1]);
 addpath('..\rabbit_stepUp');
 trajRef1=calculations.referenceTrajBez(param1.gait,DT);
 X_REF1_Original = [trajRef1.x; trajRef1.dx];
@@ -29,10 +29,10 @@ X_REF1 = X_REF1_Original;
 U_REF1 = U_REF1_Original;
 
 % load second trajectory
-% trajName2 = '0.04_ascend.mat';
-% param2=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend/',trajName2]);
-trajName2 = '0.04_descend.mat';
-param2=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsDescend/',trajName2]);
+trajName2 = '0.05_ascend.mat';
+param2=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend/',trajName2]);
+% trajName2 = '0.05_descend.mat';
+% param2=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsDescend/',trajName2]);
 addpath('..\rabbit_stepUp');
 trajRef2=calculations.referenceTrajBez(param2.gait,DT);
 X_REF2_Original = [trajRef2.x; trajRef2.dx];

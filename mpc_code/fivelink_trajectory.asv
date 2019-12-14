@@ -1,5 +1,5 @@
 %% Five-Link Trajectory Tracking + Multiple shooting
-clear; clc; close all;
+clear; clc; 
 if isunix
     addpath('../casadi-linux-matlabR2014b-v3.5.1');
 else
@@ -17,8 +17,10 @@ N = 10; % prediction horizon
 %% Load Reference Trajectory
 cur = pwd;
 % trajName = 'one_sec_traj_9-Dec-2019-21-39-45-0500.mat';
-trajName = 'one_sec_nocoriolis_9-Dec-2019-22-23-15-0500.mat';
-param=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\',trajName]);
+% param=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\',trajName]);
+
+trajName = '0.1_ascend.mat';
+param=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend\',trajName]);
 addpath('..\rabbit_stepUp');
 trajRef=calculations.referenceTrajBez(param.gait,DT);
 X_REF_Original = [trajRef.x; trajRef.dx];
@@ -82,33 +84,6 @@ G_Func = Function('G_func',{states},{G});
 J_Func = Function('J_func',{states},{Jac});
 dJ_Func = Function('dJ_func',{states},{dJac});
 Lambda_Func = Function('Lambda_Func',{states,u_ctrl},{lambda});
-% Dynamics check
-% xcheck = ones(14,1);
-% xcheck = [ -0.4411
-%     0.6369
-%     0.1461
-%     2.1372
-%     0.5050
-%     3.0630
-%     0.7034
-%     1.3407
-%     0.9220
-%    -0.3917
-%     2.4647
-%     0.0547
-%    -1.7130
-%     2.2426];
-% ucheck = [0.0543
-%    -0.1570
-%    -0.1899
-%    -0.1876];
-% M_Func(xcheck)
-% G_Func(xcheck)
-% J_Func(xcheck)
-% dJ_Func(xcheck)
-% Lambda_Func(xcheck,ucheck)
-% f(xcheck,ucheck)
-
 U = SX.sym('U',n_c,N+1);                      % Decision variables (controls)
 P = SX.sym('P',n_s + (N+1)*(n_s+n_c));          
 % P = [xinit | x_0ref | u_0ref | x_1ref | u_1ref | ... | x_Nref | u_Nref]
@@ -120,11 +95,12 @@ X = SX.sym('X',n_s,(N+1));
 
 g = [];  % constraints vector
 
-Qx= diag([1 1 1 10 10 10 10]);
-Qdx= 0.1*eye(n_s/2);
+Qx= diag([1 1 1 1 1 1 1]);
+Qdx= 1*diag([1 1 1 1 1 1 1]);
 Q=blkdiag(Qx,Qdx);
-
-R = 0*eye(n_c); % weighing matrices (controls)
+Q_terminal = Q;
+% Q_terminal = 1000*blkdiag(eye(7), zeros(7,7));
+R = 1*eye(n_c); % weighing matrices (controls)
 
 st  = X(:,1);        % initial state
 g = [g;st-P(1:n_s)]; % initial condition constraints
@@ -136,11 +112,10 @@ for k = 1:N+1
     
     % Running stage cost (stop before last state/control to impose terminal
     % cost
-  
+    if k < N+1
     objVector(k,1) = (st - P((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s)) )'*Q*(st-P((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s))) + ...
         (ctrl - P((k-1)*(n_s+n_c)+(n_s+n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s+n_c)) )'*R*(ctrl-P((k-1)*(n_s+n_c)+(n_s+n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s+n_c)));
-
-    if k < N+1
+    
         st_next = X(:,k+1);
         f_value = f(st,ctrl);
         st_next_euler = st+ (DT*f_value);
@@ -149,6 +124,9 @@ for k = 1:N+1
         continue;
     end
 end
+% Terminal cost
+objVector(k,1) = (st - P((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s)) )'*Q_terminal*(st-P((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s)));
+
 % Sum objective function -> scalar
 obj = sum(objVector); 
 
@@ -226,7 +204,10 @@ args.ubx(n_s*(N+1)+4:n_c:n_s*(N+1)+n_c*(N+1),1) = torque_max;
 t0 = 0;
 Time(1) = t0;
 t_final = DT * (size(X_REF_Original,2)-1);
-x0 = [param.gait(1).states.x(:,1); param.gait(1).states.dx(:,1)] + ...
+
+trajName2 = '0.05_ascend.mat';
+param2=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend\',trajName2]);
+x0 = [param2.gait(1).states.x(:,1); param2.gait(1).states.dx(:,1)] + ...
      [0; 0; 0; 0; 0; 0; 0;
       0; 0; 0; 0; 0; 0; 0];    % initial condition. 14X1
 
@@ -336,16 +317,30 @@ average_mpc_time = main_loop_time/(mpciter+1);
 disp("Average MPC Time = " + average_mpc_time);
 Time(end+1) = Time(end) + DT;
 
+%% Error and toe pos
+X_error = x_traj - X_REF_Original;
+U_error = u_cl - U_REF_Original(:,1:end-1)';
+
+swingPosEnd = leftToePos(x_traj(1:7,end));
+disp("End position of swing foot: ")
+disp(swingPosEnd);
+
+
+
 %% Plot results
 plot_q = true;
-plot_dq = true;
-plot_u = true;
-if (true)
+plot_dq = false;
+plot_u = false;
+if (false)
     Plot_MPC_Traj(Time,x_traj,X_REF_Original,u_cl,U_REF_Original,plot_q,plot_dq,plot_u); 
 end
 
+% plot error
+    Plot_MPC_Traj(Time,X_error,X_error,U_error,U_error,plot_q,plot_dq,plot_u); 
+
+
 %% Animation
-animateTraj = false;
+animateTraj = true;
 animateRef = false;
 if true
    Animate_MPC_Traj(Time,X_REF_Original,x_traj,animateTraj,animateRef) 
