@@ -19,7 +19,7 @@ cur = pwd;
 % trajName = 'one_sec_traj_9-Dec-2019-21-39-45-0500.mat';
 % param=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\',trajName]);
 
-trajName = '0.1_ascend.mat';
+trajName = '0.05_ascend.mat';
 param=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend\',trajName]);
 addpath('..\rabbit_stepUp');
 trajRef=calculations.referenceTrajBez(param.gait,DT);
@@ -102,33 +102,35 @@ Q_terminal = Q;
 % Q_terminal = 1000*blkdiag(eye(7), zeros(7,7));
 R = 1*eye(n_c); % weighing matrices (controls)
 
-st  = X(:,1);        % initial state
-g = [g;st-P(1:n_s)]; % initial condition constraints
-
 %% Build Objective Function and Equality(Dynamics) Constraints
+st  = X(:,1);        % initial state
 objVector = SX.sym('objVector',N+1,1);
 for k = 1:N+1
     st = X(:,k);  ctrl = U(:,k);
-    
     % Running stage cost (stop before last state/control to impose terminal
     % cost
     if k < N+1
-    objVector(k,1) = (st - P((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s)) )'*Q*(st-P((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s))) + ...
-        (ctrl - P((k-1)*(n_s+n_c)+(n_s+n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s+n_c)) )'*R*(ctrl-P((k-1)*(n_s+n_c)+(n_s+n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s+n_c)));
-    
-        st_next = X(:,k+1);
-        f_value = f(st,ctrl);
-        st_next_euler = st+ (DT*f_value);
-        g = [g;st_next-st_next_euler]; % compute constraints
-    else
-        continue;
+        objVector(k,1) = (st - P((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s)) )'*Q*(st-P((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s))) + ...
+            (ctrl - P((k-1)*(n_s+n_c)+(n_s+n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s+n_c)) )'*R*(ctrl-P((k-1)*(n_s+n_c)+(n_s+n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s+n_c)));
     end
 end
 % Terminal cost
 objVector(k,1) = (st - P((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s)) )'*Q_terminal*(st-P((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s)));
-
 % Sum objective function -> scalar
 obj = sum(objVector); 
+
+%% Build Equality Constraints (G)
+st  = X(:,1);        % initial state
+g = [g;st-P(1:n_s)]; % initial condition constraints
+for k = 1:N+1
+    st = X(:,k);  ctrl = U(:,k);
+    if k < N+1
+        st_next = X(:,k+1);
+        f_value = f(st,ctrl);
+        st_next_euler = st+ (DT*f_value);
+        g = [g;st_next-st_next_euler]; % compute constraints
+    end
+end
 
 %% NLP Settings
 % make the decision variable one column  vector
@@ -168,20 +170,20 @@ args.lbx(7:n_s:n_s*(N+1),1) = param.bounds.RightStance.states.x.lb(7);          
 args.ubx(7:n_s:n_s*(N+1),1) = param.bounds.RightStance.states.x.ub(7);   
 
 %velocity bounds
-args.lbx(8:n_s:n_s*(N+1),1) = -inf;             
-args.ubx(8:n_s:n_s*(N+1),1) = inf;              
-args.lbx(9:n_s:n_s*(N+1),1) = -inf;               
-args.ubx(9:n_s:n_s*(N+1),1) = inf;              
-args.lbx(10:n_s:n_s*(N+1),1) = -inf;             
-args.ubx(10:n_s:n_s*(N+1),1) = inf;             
-args.lbx(11:n_s:n_s*(N+1),1) = -inf;           
-args.ubx(11:n_s:n_s*(N+1),1) = inf;              
-args.lbx(12:n_s:n_s*(N+1),1) = -inf;             
-args.ubx(12:n_s:n_s*(N+1),1) = inf;             
-args.lbx(13:n_s:n_s*(N+1),1) = -inf;          
-args.ubx(13:n_s:n_s*(N+1),1) = inf;              
-args.lbx(14:n_s:n_s*(N+1),1) = -inf;             
-args.ubx(14:n_s:n_s*(N+1),1) = inf;  
+args.lbx(8:n_s:n_s*(N+1),1) = -20;             
+args.ubx(8:n_s:n_s*(N+1),1) = 20;              
+args.lbx(9:n_s:n_s*(N+1),1) = -20;               
+args.ubx(9:n_s:n_s*(N+1),1) = 20;              
+args.lbx(10:n_s:n_s*(N+1),1) = -20;             
+args.ubx(10:n_s:n_s*(N+1),1) = 20;             
+args.lbx(11:n_s:n_s*(N+1),1) = -20;           
+args.ubx(11:n_s:n_s*(N+1),1) = 20;              
+args.lbx(12:n_s:n_s*(N+1),1) = -20;             
+args.ubx(12:n_s:n_s*(N+1),1) = 20;             
+args.lbx(13:n_s:n_s*(N+1),1) = -20;          
+args.ubx(13:n_s:n_s*(N+1),1) = 20;              
+args.lbx(14:n_s:n_s*(N+1),1) = -20;             
+args.ubx(14:n_s:n_s*(N+1),1) = 20;  
 
 % Control inequalities
 % torque_max =param.bounds.RightStance.inputs.Control.u.ub ; torque_min =param.bounds.RightStance.inputs.Control.u.lb;
@@ -205,11 +207,14 @@ t0 = 0;
 Time(1) = t0;
 t_final = DT * (size(X_REF_Original,2)-1);
 
-trajName2 = '0.05_ascend.mat';
-param2=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend\',trajName2]);
-x0 = [param2.gait(1).states.x(:,1); param2.gait(1).states.dx(:,1)] + ...
-     [0; 0; 0; 0; 0; 0; 0;
-      0; 0; 0; 0; 0; 0; 0];    % initial condition. 14X1
+% trajName2 = '0.05_ascend.mat';
+% param2=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend\',trajName2]);
+% x0 = [param2.gait(1).states.x(:,1); param2.gait(1).states.dx(:,1)] + ...
+%      [0; 0; 0; 0; 0; 0; 0;
+%       0; 0; 0; 0; 0; 0; 0];    % initial condition. 14X1
+x0 = [param.gait(1).states.x(:,1); param.gait(1).states.dx(:,1)] + ...
+ [0; 0; 0; 0; 0; 0; 0;
+  0; 0; 0; 0; 0; 0; 0];    % initial condition. 14X1
 
 x_traj(:,1) = x0; % xx contains the history of states
 
@@ -238,7 +243,7 @@ U_REF_REG = repmat(u_ref_reg,1,ceil(sim_time+1)*size(U_REF,2));
 main_loop = tic;
 % while( (norm((x_traj(:,end)-X_REF(:,mpciter+1)),2) > 3e-2 || mpciter < 300)  && mpciter < sim_time / DT)
 while(mpciter < sim_time / DT) 
-    %% Set Parameter vector and Decision Variables
+    %% Shrinking Horizon Check
     if round(Time(end) + DT * N,3) > t_final
         % Shrink horizon
         N_new = round( (t_final - Time(end)) / DT );
@@ -265,9 +270,9 @@ while(mpciter < sim_time / DT)
         solver = nlpsol('solver', 'ipopt', nlp_prob,opts);
     end
     
+    %% Update parameters with correct reference
     args.p=[];
     args.p(1:n_s) = x0; % initial condition of the robot posture
-    
     for k = 1:N+1 %new - set the reference to track             
         args.p((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s)) = ...
             X_REF(:,k);
@@ -297,7 +302,6 @@ while(mpciter < sim_time / DT)
     % Shift trajectory to initialize the next step
     X_DEC = [X_DEC(2:end,:);X_DEC(end,:)];   % initialize with next step and add on last state twice
     
-%     mpciter
     if mod(mpciter,10) == 0
         disp("mpciter = " + mpciter)
     end

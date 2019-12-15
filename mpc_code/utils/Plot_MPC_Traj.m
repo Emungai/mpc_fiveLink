@@ -1,4 +1,4 @@
-function [] = Plot_MPC_Traj(Time,x_traj,X_REF_Original,u_cl,U_REF_Original,plot_q,plot_dq,plot_u)
+function [] = Plot_MPC_Traj(Time,x_traj,X_REF_Original,u_cl,U_REF_Original,plot_q,plot_dq,plot_u,plot_title)
 
 if plot_q
     figure % plot q
@@ -30,6 +30,7 @@ if plot_q
     plot(Time,x_traj(7,:)); title('q2L');
     hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(7,1:size(X_REF_Original,2))); 
     legend('q2L','q2L{ref}','location','best');
+    sgtitle(plot_title);
 end
 
 if plot_dq 

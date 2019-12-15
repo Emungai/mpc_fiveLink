@@ -137,11 +137,10 @@ X = SX.sym('X',n_s,(N+1));
 
 g = [];  % constraints vector
 
-Qx= diag([10 10 10 1 1 1 1]);
-Qdx= 0.1*eye(n_s/2);
-Q=blkdiag(Qx,Qdx);
-
-R = 0*eye(n_c); % weighing matrices (controls)
+Qx= diag([1 1 1 1 1 1 1]);
+Qdx= 1*diag([1 1 1 1 1 1 1]);
+Q=blkdiag(Qx,Qdx);  
+R = 1*eye(n_c); % weighing matrices (controls)
 
 st  = X(:,1);        % initial state
 g = [g;st-P(1:n_s)]; % initial condition constraints
@@ -167,7 +166,7 @@ for k = 1:N+1
     end
 end
 % Sum objective function -> scalar
-obj = sum(objVector); 
+obj = sum(objVector);   % No terminal matrix
 
 %% NLP Settings
 % make the decision variable one column  vector
@@ -252,7 +251,7 @@ x0 = X_REF1(:,1) + ...
       0; 0; 0; 0; 0; 0; 0];    % initial condition. 14X1
 
 x_traj(:,1) = x0; % xx contains the history of states
-
+X_REF_MPC(:,1) = X_REF1_Original(:,1);
 
 U_DEC = zeros(N+1,n_c);
 
@@ -348,8 +347,8 @@ while(mpciter < sim_time / DT)
         X_REF = X_REF2;
         U_REF = U_REF2;
     end
-    X_REF_MPC(:,mpciter)= X_REF(:,1);
-    U_REF_MPC(:,mpciter) = U_REF(:,1);
+    X_REF_MPC(:,mpciter+1)= X_REF(:,1);
+    U_REF_MPC(:,mpciter+1) = U_REF(:,1);
 
 end
 main_loop_time = toc(main_loop);
@@ -362,10 +361,18 @@ average_mpc_time = main_loop_time/(mpciter+1);
 disp("Average MPC Time = " + average_mpc_time);
 Time(end+1) = Time(end) + DT;
 
+%% Error and toe pos
+X_error = x_traj - X_REF_MPC;
+U_error = u_cl - U_REF_MPC(:,1:end-1)';
+
+swingPosEnd = leftToePos(x_traj(1:7,end));
+disp("End position of swing foot: ")
+disp(swingPosEnd);
+
 %% Plot results
 plot_q = true;
-plot_dq = true;
-plot_u = true;
+plot_dq = false;
+plot_u = false;
 if (true)
     Plot_MPC_RefPrev(Time,x_traj,X_REF1_Original,X_REF_MPC,...
     u_cl,U_REF1_Original,U_REF_MPC,...
@@ -376,7 +383,7 @@ else
 end
 
 %% Animation
-animateTraj = true;
+animateTraj = false;
 animateRef = false;
 if true
    Animate_MPC_Traj(Time,X_REF1_Original,x_traj,animateTraj,animateRef) 

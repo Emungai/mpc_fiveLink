@@ -1,5 +1,5 @@
 %% Five-Link Trajectory Tracking + Multiple shooting
-clear; clc; close all;
+clear; clc; 
 if isunix
     addpath('../casadi-linux-matlabR2014b-v3.5.1');
 else
@@ -10,40 +10,45 @@ addpath('dynamics/');
 addpath('utils/');
 addpath('../rabbit_stepUp/');   % for animations
 addpath('../rabbit_stepUp/gen/kinematics');
+
 %% System Setup
 DT = 0.005; %[s]
 N = 10; % prediction horizon
-t_start=0.5;
+t_switch = 0.1;
+indx_switch = (t_switch / DT) + 1 % right continuous index point
 
 %% Load Reference Trajectory
 cur = pwd;
-% load first trajectory
-trajName1 = '0.1_ascend.mat';
-param1=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend/',trajName1]);
-addpath('..\rabbit_stepUp');
-trajRef1=calculations.referenceTrajBez(param1.gait,DT);
-X_REF1_Original = [trajRef1.x; trajRef1.dx];
-U_REF1_Original = trajRef1.u;
-%starting at a later point in the traj
-X_REF1_Original = X_REF1_Original(:,t_start/DT:end);
-U_REF1_Original = U_REF1_Original(:,t_start/DT:end);
-X_REF1 = X_REF1_Original;
-U_REF1 = U_REF1_Original;
+% first traj
+trajName1 = '0.06_ascend.mat';
+param1 = load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend\',trajName1]);
+trajRef1 = calculations.referenceTrajBez(param1.gait,DT);
+X_REF_Original_1 = [trajRef1.x; trajRef1.dx];
+U_REF_Original_1 = trajRef1.u;
 
-% load second trajectory
-trajName2 = '0.2_ascend.mat';
-param2=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend/',trajName2]);
-addpath('..\rabbit_stepUp');
-trajRef2=calculations.referenceTrajBez(param2.gait,DT);
-X_REF2_Original = [trajRef2.x; trajRef2.dx];
-U_REF2_Original = trajRef2.u;
-X_REF2 = X_REF2_Original;
-U_REF2 = U_REF2_Original;
+% second traj
+trajName2 = '0.04_ascend.mat';
+param2 = load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend\',trajName2]);
+trajRef2 = calculations.referenceTrajBez(param2.gait,DT);
+X_REF_Original_2 = [trajRef2.x; trajRef2.dx];
+U_REF_Original_2 = trajRef2.u;
 
-% choose which trajectory to start with
-X_REF = X_REF1;
-U_REF = U_REF1;
+% set initial reference traj
+X_REF_Original = [X_REF_Original_1(:,1:indx_switch-1), X_REF_Original_2(:,indx_switch:end)];
+U_REF_Original = [U_REF_Original_1(:,1:indx_switch-1), U_REF_Original_2(:,indx_switch:end)];
 
+X_REF = X_REF_Original;
+U_REF = U_REF_Original;
+
+% delta reference traj
+delta_X_REF = X_REF_Original_2 - X_REF_Original_1;
+delta_U_REF = U_REF_Original_2 - U_REF_Original_1;
+
+% figure
+% plot(X_REF_Original_1(1,:),'--'); hold on; 
+% plot(X_REF_Original_2(1,:),'.'); hold on; 
+% plot(X_REF(1,:));
+% legend('1','2','final');
 
 %% CasADi symbolic setup
 % Symbolic state variables [x,z,roty,q1R,q2R,q1L,q2L]
@@ -99,33 +104,6 @@ G_Func = Function('G_func',{states},{G});
 J_Func = Function('J_func',{states},{Jac});
 dJ_Func = Function('dJ_func',{states},{dJac});
 Lambda_Func = Function('Lambda_Func',{states,u_ctrl},{lambda});
-% Dynamics check
-% xcheck = ones(14,1);
-% xcheck = [ -0.4411
-%     0.6369
-%     0.1461
-%     2.1372
-%     0.5050
-%     3.0630
-%     0.7034
-%     1.3407
-%     0.9220
-%    -0.3917
-%     2.4647
-%     0.0547
-%    -1.7130
-%     2.2426];
-% ucheck = [0.0543
-%    -0.1570
-%    -0.1899
-%    -0.1876];
-% M_Func(xcheck)
-% G_Func(xcheck)
-% J_Func(xcheck)
-% dJ_Func(xcheck)
-% Lambda_Func(xcheck,ucheck)
-% f(xcheck,ucheck)
-
 U = SX.sym('U',n_c,N+1);                      % Decision variables (controls)
 P = SX.sym('P',n_s + (N+1)*(n_s+n_c));          
 % P = [xinit | x_0ref | u_0ref | x_1ref | u_1ref | ... | x_Nref | u_Nref]
@@ -135,40 +113,50 @@ P = SX.sym('P',n_s + (N+1)*(n_s+n_c));
 X = SX.sym('X',n_s,(N+1));                  
 % A vector that represents the states over the optimization problem.
 
-g = [];  % constraints vector
-
-Qx= diag([1 1 1 10 10 10 10]);
-Qdx= 0.1*eye(n_s/2);
+Qx= diag([1 1 1 1 1 1 1]);
+Qdx= 1*diag([1 1 1 1 1 1 1]);
 Q=blkdiag(Qx,Qdx);
-
-R = 0*eye(n_c); % weighing matrices (controls)
-
-st  = X(:,1);        % initial state
-g = [g;st-P(1:n_s)]; % initial condition constraints
+Q_terminal = 1e6*Q;
+% Q_terminal = 1000*blkdiag(eye(7), zeros(7,7));
+R = 1*eye(n_c); % weighing matrices (controls)
 
 %% Build Objective Function and Equality(Dynamics) Constraints
+st  = X(:,1);        % initial state
 objVector = SX.sym('objVector',N+1,1);
 for k = 1:N+1
     st = X(:,k);  ctrl = U(:,k);
-    
     % Running stage cost (stop before last state/control to impose terminal
     % cost
-  
-    objVector(k,1) = (st - P((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s)) )'*Q*(st-P((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s))) + ...
-        (ctrl - P((k-1)*(n_s+n_c)+(n_s+n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s+n_c)) )'*R*(ctrl-P((k-1)*(n_s+n_c)+(n_s+n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s+n_c)));
-
     if k < N+1
-        st_next = X(:,k+1);
-        f_value = f(st,ctrl);
-        st_next_euler = st+ (DT*f_value);
-        g = [g;st_next-st_next_euler]; % compute constraints
-    else
-        continue;
+        objVector(k,1) = (st - P((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s)) )'*Q*(st-P((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s))) + ...
+            (ctrl - P((k-1)*(n_s+n_c)+(n_s+n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s+n_c)) )'*R*(ctrl-P((k-1)*(n_s+n_c)+(n_s+n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s+n_c)));
     end
 end
+% Terminal cost
+objVector(k,1) = (st - P((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s)) )'*Q_terminal*(st-P((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s)));
 % Sum objective function -> scalar
 obj = sum(objVector); 
 
+%% Build Equality Constraints (G)
+g_cell = {};  % constraints vector
+st  = X(:,1);        % initial state
+g_cell{1} = st-P(1:n_s); % initial condition constraints
+for k = 1:N+1
+    st = X(:,k);  ctrl = U(:,k);
+    if k < N+1
+        st_next = X(:,k+1);
+        f_value = f(st,ctrl);
+        st_next_euler = st + (DT*f_value);
+        g_cell{k+1} = st_next - st_next_euler; % compute constraints
+    end
+end
+
+g = [];
+for i = 1:length(g_cell)
+    g = [g; g_cell{i}];
+end
+    
+    
 %% NLP Settings
 % make the decision variable one column  vector
 OPT_variables = [reshape(X,n_s*(N+1),1);reshape(U,n_c*(N+1),1)];
@@ -191,24 +179,6 @@ args.lbg(1:n_s*(N+1)) = 0;
 args.ubg(1:n_s*(N+1)) = 0; 
 
 % State inequalities
-% args.lbx(1:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.lb(1);             %state x lower bound
-% args.ubx(1:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.ub(1);              %state x upper bound
-% args.lbx(2:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.lb(2);                %state z lower bound
-% args.ubx(2:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.ub(2);              %state z upper bound
-% args.lbx(3:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.lb(3);              %state roty lower bound
-% args.ubx(3:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.ub(3);               %state roty upper bound
-% args.lbx(4:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.lb(4);             %state q1R lower bound
-% args.ubx(4:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.ub(4);              %state q1R upper bound
-% args.lbx(5:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.lb(5);             %state q2R lower bound
-% args.ubx(5:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.ub(5);              %state q2R upper bound
-% args.lbx(6:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.lb(6);             %state q1L lower bound
-% args.ubx(6:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.ub(6);              %state q1L upper bound
-% args.lbx(7:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.lb(7);             %state q2L lower bound
-% args.ubx(7:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.ub(7);   
-
-param1.bounds.RightStance.states.x.lb = -inf*ones(7,1);
-param1.bounds.RightStance.states.x.ub = inf*ones(7,1);
-
 args.lbx(1:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.lb(1);             %state x lower bound
 args.ubx(1:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.ub(1);              %state x upper bound
 args.lbx(2:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.lb(2);                %state z lower bound
@@ -222,27 +192,27 @@ args.ubx(5:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.ub(5);         
 args.lbx(6:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.lb(6);             %state q1L lower bound
 args.ubx(6:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.ub(6);              %state q1L upper bound
 args.lbx(7:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.lb(7);             %state q2L lower bound
-args.ubx(7:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.ub(7); 
+args.ubx(7:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.ub(7);   
 
 %velocity bounds
-args.lbx(8:n_s:n_s*(N+1),1) = -inf;             
-args.ubx(8:n_s:n_s*(N+1),1) = inf;              
-args.lbx(9:n_s:n_s*(N+1),1) = -inf;               
-args.ubx(9:n_s:n_s*(N+1),1) = inf;              
-args.lbx(10:n_s:n_s*(N+1),1) = -inf;             
-args.ubx(10:n_s:n_s*(N+1),1) = inf;             
-args.lbx(11:n_s:n_s*(N+1),1) = -inf;           
-args.ubx(11:n_s:n_s*(N+1),1) = inf;              
-args.lbx(12:n_s:n_s*(N+1),1) = -inf;             
-args.ubx(12:n_s:n_s*(N+1),1) = inf;             
-args.lbx(13:n_s:n_s*(N+1),1) = -inf;          
-args.ubx(13:n_s:n_s*(N+1),1) = inf;              
-args.lbx(14:n_s:n_s*(N+1),1) = -inf;             
-args.ubx(14:n_s:n_s*(N+1),1) = inf;  
+args.lbx(8:n_s:n_s*(N+1),1) = -20;             
+args.ubx(8:n_s:n_s*(N+1),1) = 20;              
+args.lbx(9:n_s:n_s*(N+1),1) = -20;               
+args.ubx(9:n_s:n_s*(N+1),1) = 20;              
+args.lbx(10:n_s:n_s*(N+1),1) = -20;             
+args.ubx(10:n_s:n_s*(N+1),1) = 20;             
+args.lbx(11:n_s:n_s*(N+1),1) = -20;           
+args.ubx(11:n_s:n_s*(N+1),1) = 20;              
+args.lbx(12:n_s:n_s*(N+1),1) = -20;             
+args.ubx(12:n_s:n_s*(N+1),1) = 20;             
+args.lbx(13:n_s:n_s*(N+1),1) = -20;          
+args.ubx(13:n_s:n_s*(N+1),1) = 20;              
+args.lbx(14:n_s:n_s*(N+1),1) = -20;             
+args.ubx(14:n_s:n_s*(N+1),1) = 20;
 
 % Control inequalities
 % torque_max =param.bounds.RightStance.inputs.Control.u.ub ; torque_min =param.bounds.RightStance.inputs.Control.u.lb;
-torque_max = inf; torque_min = -torque_max;
+torque_max = 10; torque_min = -10;
 
 args.lbx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*(N+1),1) = torque_min;    % u_q1R lower bound
 args.ubx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*(N+1),1) = torque_max;   
@@ -259,21 +229,19 @@ args.ubx(n_s*(N+1)+4:n_c:n_s*(N+1)+n_c*(N+1),1) = torque_max;
 
 %% MPC Calculation
 t0 = 0;
-t_switch = 0.05;
 Time(1) = t0;
-t_final = 1;
-x0 = X_REF1(:,1) + ...
-     [0; 0; 0; 0; 0; 0; 0;
-      0; 0; 0; 0; 0; 0; 0];    % initial condition. 14X1
+t_final = DT * (size(X_REF_Original_1,2)-1);
+x0 = [param1.gait(1).states.x(:,1); param1.gait(1).states.dx(:,1)] + ...
+ [0; 0; 0; 0; 0; 0; 0;
+  0; 0; 0; 0; 0; 0; 0];    % initial condition. 14X1
 
 x_traj(:,1) = x0; % xx contains the history of states
-
 
 U_DEC = zeros(N+1,n_c);
 
 X_DEC = repmat(x0,1,N+1)'; % initialization of the states decision variables
 
-sim_time = 1 - t_start; % Maximum simulation time
+sim_time = 1; % Maximum simulation time
 
 % Start MPC
 mpciter = 0;
@@ -288,7 +256,7 @@ u_cl=[];
 main_loop = tic;
 % while( (norm((x_traj(:,end)-X_REF(:,mpciter+1)),2) > 3e-2 || mpciter < 300)  && mpciter < sim_time / DT)
 while(mpciter < sim_time / DT) 
-    %% Set Parameter vector and Decision Variables
+    %% Shrinking Horizon
     if round(Time(end) + DT * N,3) > t_final
         % Shrink horizon
         N_new = round( (t_final - Time(end)) / DT );
@@ -301,8 +269,8 @@ while(mpciter < sim_time / DT)
         args.lbg = lbg_temp;
         args.ubg = ubg_temp;
         args.lbx = lbx_temp;
-        args.ubx = ubx_temp;   
-
+        args.ubx = ubx_temp;
+        
         % Update new prediction horizon
         N = N_new;
         obj = sum(objVector(1:N+1));
@@ -312,10 +280,9 @@ while(mpciter < sim_time / DT)
         nlp_prob = struct('f', obj, 'x', OPT_variables, 'g', g, 'p', P);
         solver = nlpsol('solver', 'ipopt', nlp_prob,opts);
     end
-    
+    %% Update Parameters with reference
     args.p=[];
-    args.p(1:n_s) = x0; % initial condition of the robot posture
-    
+    args.p(1:n_s) = x0; % initial condition of the robot posture   
     for k = 1:N+1 %new - set the reference to track             
         args.p((k-1)*(n_s+n_c)+(n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s)) = ...
             X_REF(:,k);
@@ -323,10 +290,32 @@ while(mpciter < sim_time / DT)
         args.p((k-1)*(n_s+n_c)+(n_s+n_s+1):(k-1)*(n_s+n_c)+(n_s+n_s+n_c)) =...
             U_REF(:,k);        
     end
-    
     % warm start
     args.x0  = [reshape(X_DEC(1:N+1,:)',n_s*(N+1),1);reshape(U_DEC(1:N+1,:)',n_c*(N+1),1)];
     
+    %% Modify lbg/ubg to reflect discontinuity in reference trajectory
+    args.lbg(1:n_s*(N+1)) = 0;
+    args.ubg(1:n_s*(N+1)) = 0;
+    disturbance = delta_X_REF(:,indx_switch);
+    indx_curr = round(t0/DT) + 1;
+    if indx_switch >= indx_curr && indx_switch <= indx_curr + N
+        % example at t0 = 0. curr_index will equal 1
+        % curr_index + N is the 11th index and corresponds to x_N
+        % although the pred horizon is 10, we must check 11 values because
+        % the initial condition is included
+        disp("Current Time: " + t0);
+        disp("Current Index: " + indx_curr);
+        disp("Switch Time: " + t_switch);
+        disp("Switching Index: " + indx_switch);
+        n_switch = indx_switch - indx_curr + 1;
+        args.lbg(n_s*(n_switch-1)+1:n_s*(n_switch-1)+n_s) = disturbance;
+        args.ubg(n_s*(n_switch-1)+1:n_s*(n_switch-1)+n_s) = disturbance;
+        
+        % check where disturbance is
+        reshape(args.lbg,14,N+1)
+        reshape(args.ubg,14,N+1)
+    end
+        
     %% Solve MPC with CasADi NLP solver
     sol = solver('x0', args.x0, 'lbx', args.lbx, 'ubx', args.ubx,...
         'lbg', args.lbg, 'ubg', args.ubg,'p',args.p);
@@ -350,26 +339,11 @@ while(mpciter < sim_time / DT)
         disp("mpciter = " + mpciter)
     end
     mpciter = mpciter + 1;
-    %% Shift X_REF and U_REF
-    X_REF1 = [X_REF1(:,2:end),X_REF1(:,end)];
-    U_REF1 = [U_REF1(:,2:end),U_REF1(:,end)];
-    X_REF2 = [X_REF2(:,2:end),X_REF2(:,end)];
-    U_REF2 = [U_REF2(:,2:end),U_REF2(:,end)];
     
-%     if t0 < t_switch
-%         X_REF = X_REF1;
-%         U_REF = U_REF1;
-%     else
-%         X_REF = X_REF2;
-%         U_REF = U_REF2;
-%     end
-%     X_REF_MPC(:,mpciter)= X_REF(:,1);
-%     U_REF_MPC(:,mpciter) = U_REF(:,1);
-
-    X_REF = X_REF1;
-    U_REF = U_REF1;
-    X_REF_MPC(:,mpciter)= X_REF1(:,1);
-    U_REF_MPC(:,mpciter) = U_REF1(:,1);
+    %% Shift X_REF and U_REF
+    X_REF = [X_REF(:,2:end),X_REF(:,end)];
+    U_REF = [U_REF(:,2:end),U_REF(:,end)];
+    
 end
 main_loop_time = toc(main_loop);
 if false
@@ -381,24 +355,32 @@ average_mpc_time = main_loop_time/(mpciter+1);
 disp("Average MPC Time = " + average_mpc_time);
 Time(end+1) = Time(end) + DT;
 
+%% Error and toe pos
+X_error = x_traj - X_REF_Original;
+U_error = u_cl - U_REF_Original(:,1:end-1)';
+
+swingPosEnd = leftToePos(x_traj(1:7,end));
+disp("End position of swing foot: ")
+disp(swingPosEnd);
+
+
+
 %% Plot results
 plot_q = true;
 plot_dq = true;
 plot_u = true;
-if (false)
-    Plot_MPC_RefPrev(Time,x_traj,X_REF1_Original,X_REF2_Original,...
-    u_cl,U_REF1_Original,U_REF2_Original,...
-    plot_q,plot_dq,plot_u);
+% comparer traj's
+    Plot_MPC_Traj(Time,x_traj,X_REF_Original,u_cl,U_REF_Original,plot_q,plot_dq,plot_u,'states'); 
 
-else
-    Plot_MPC_Traj(Time,x_traj,X_REF_MPC,u_cl,U_REF_MPC,plot_q,plot_dq,plot_u)
-end
+% plot error
+    Plot_MPC_Traj(Time,X_error,X_error,U_error,U_error,plot_q,false,false,'error'); 
+
 
 %% Animation
 animateTraj = true;
 animateRef = false;
 if true
-   Animate_MPC_Traj(Time,X_REF1_Original,x_traj,animateTraj,animateRef) 
+   Animate_MPC_Traj(Time,X_REF_Original_1,x_traj,animateTraj,animateRef) 
 end
 
 
