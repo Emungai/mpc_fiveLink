@@ -14,7 +14,7 @@ addpath('../rabbit_stepUp/gen/kinematics');
 %% System Setup
 DT = 0.005; %[s]
 N = 10; % prediction horizon
-t_switch = 0.1;
+t_switch = 0.055;
 indx_switch = (t_switch / DT) + 1 % right continuous index point
 
 %% Load Reference Trajectory
@@ -116,7 +116,7 @@ X = SX.sym('X',n_s,(N+1));
 Qx= diag([1 1 1 1 1 1 1]);
 Qdx= 1*diag([1 1 1 1 1 1 1]);
 Q=blkdiag(Qx,Qdx);
-Q_terminal = 1e6*Q;
+Q_terminal = Q;
 % Q_terminal = 1000*blkdiag(eye(7), zeros(7,7));
 R = 1*eye(n_c); % weighing matrices (controls)
 
@@ -302,18 +302,18 @@ while(mpciter < sim_time / DT)
         % example at t0 = 0. curr_index will equal 1
         % curr_index + N is the 11th index and corresponds to x_N
         % although the pred horizon is 10, we must check 11 values because
-        % the initial condition is included
+        % the initial condition is included in g
         disp("Current Time: " + t0);
         disp("Current Index: " + indx_curr);
         disp("Switch Time: " + t_switch);
         disp("Switching Index: " + indx_switch);
-        n_switch = indx_switch - indx_curr + 1;
-        args.lbg(n_s*(n_switch-1)+1:n_s*(n_switch-1)+n_s) = disturbance;
-        args.ubg(n_s*(n_switch-1)+1:n_s*(n_switch-1)+n_s) = disturbance;
+        n_switch = indx_switch - indx_curr;
+        args.lbg(n_s*(n_switch)+1:n_s*(n_switch)+n_s) = disturbance;
+        args.ubg(n_s*(n_switch)+1:n_s*(n_switch)+n_s) = disturbance;
         
         % check where disturbance is
         reshape(args.lbg,14,N+1)
-        reshape(args.ubg,14,N+1)
+%         reshape(args.ubg,14,N+1)
     end
         
     %% Solve MPC with CasADi NLP solver

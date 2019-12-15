@@ -30,15 +30,10 @@ if plot_q
     plot(Time,x_traj(7,:)); title('q2L');
     hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(7,1:size(X_REF_Original,2))); 
     legend('q2L','q2L{ref}','location','best');
-    if isequal(plot_title,'error')
+    if plot_title = 'error'
         subplot(331); axis([0 1 -0.15 0.15]);
-        subplot(332); axis([0 1 -0.15 0.15]);
-        subplot(333); axis([0 1 -0.15 0.15]);
-        subplot(334); axis([0 1 -0.15 0.15]);
-        subplot(335); axis([0 1 -0.15 0.15]);
-        subplot(336); axis([0 1 -0.15 0.15]);
-        subplot(337); axis([0 1 -0.15 0.15]);
-    end
+        
+        
     sgtitle(plot_title);
     
 end

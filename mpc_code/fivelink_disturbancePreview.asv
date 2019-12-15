@@ -14,29 +14,31 @@ addpath('../rabbit_stepUp/gen/kinematics');
 %% System Setup
 DT = 0.005; %[s]
 N = 10; % prediction horizon
-t_switch = 0.01;
+t_switch = 0.055;
 indx_switch = (t_switch / DT) + 1 % right continuous index point
 
 %% Load Reference Trajectory
 cur = pwd;
 % first traj
-trajName1 = '0.05_ascend.mat';
+trajName1 = '0.06_ascend.mat';
 param1 = load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend\',trajName1]);
 trajRef1 = calculations.referenceTrajBez(param1.gait,DT);
 X_REF_Original_1 = [trajRef1.x; trajRef1.dx];
 U_REF_Original_1 = trajRef1.u;
 
 % second traj
-trajName2 = '0.06_ascend.mat';
+trajName2 = '0.04_ascend.mat';
 param2 = load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend\',trajName2]);
 trajRef2 = calculations.referenceTrajBez(param2.gait,DT);
 X_REF_Original_2 = [trajRef2.x; trajRef2.dx];
 U_REF_Original_2 = trajRef2.u;
 
 % set initial reference traj
-X_REF = [X_REF_Original_1(:,1:indx_switch-1), X_REF_Original_2(:,indx_switch:end)];
-U_REF = [U_REF_Original_1(:,1:indx_switch-1), U_REF_Original_2(:,indx_switch:end)];
+X_REF_Original = [X_REF_Original_1(:,1:indx_switch-1), X_REF_Original_2(:,indx_switch:end)];
+U_REF_Original = [U_REF_Original_1(:,1:indx_switch-1), U_REF_Original_2(:,indx_switch:end)];
 
+X_REF = X_REF_Original;
+U_REF = U_REF_Original;
 
 % delta reference traj
 delta_X_REF = X_REF_Original_2 - X_REF_Original_1;
@@ -114,7 +116,7 @@ X = SX.sym('X',n_s,(N+1));
 Qx= diag([1 1 1 1 1 1 1]);
 Qdx= 1*diag([1 1 1 1 1 1 1]);
 Q=blkdiag(Qx,Qdx);
-Q_terminal = Q;
+Q_terminal = 1e6*Q;
 % Q_terminal = 1000*blkdiag(eye(7), zeros(7,7));
 R = 1*eye(n_c); % weighing matrices (controls)
 
@@ -292,27 +294,28 @@ while(mpciter < sim_time / DT)
     args.x0  = [reshape(X_DEC(1:N+1,:)',n_s*(N+1),1);reshape(U_DEC(1:N+1,:)',n_c*(N+1),1)];
     
     %% Modify lbg/ubg to reflect discontinuity in reference trajectory
+    args.lbg(1:n_s*(N+1)) = 0;
+    args.ubg(1:n_s*(N+1)) = 0;
     disturbance = delta_X_REF(:,indx_switch);
-    curr_indx = t0/DT + 1;
-    if indx_switch >= curr_indx && indx_switch <= curr_indx + N
+    indx_curr = round(t0/DT) + 1;
+    if indx_switch >= indx_curr && indx_switch <= indx_curr + N
         % example at t0 = 0. curr_index will equal 1
         % curr_index + N is the 11th index and corresponds to x_N
         % although the pred horizon is 10, we must check 11 values because
-        % the initial condition is included
+        % the initial condition is included in g
+        disp("Current Time: " + t0);
+        disp("Current Index: " + indx_curr);
+        disp("Switch Time: " + t_switch);
+        disp("Switching Index: " + indx_switch);
+        n_switch = indx_switch - indx_curr;
+        args.lbg(n_s*(n_switch)+1:n_s*(n_switch)+n_s) = disturbance;
+        args.ubg(n_s*(n_switch)+1:n_s*(n_switch)+n_s) = disturbance;
         
-        n_switch = indx_switch - curr_indx + 1;
-        args.lbg(n_s*(n_switch-1)+1:n_s*(n_switch-1)+n_s) = disturbance;
-        args.ubg(n_s*(n_switch-1)+1:n_s*(n_switch-1)+n_s) = disturbance;
-        
-        reshape(args.lbg
+        % check where disturbance is
+        reshape(args.lbg,14,N+1)
+%         reshape(args.ubg,14,N+1)
     end
         
-        
-    
-    
-    
-    
-    
     %% Solve MPC with CasADi NLP solver
     sol = solver('x0', args.x0, 'lbx', args.lbx, 'ubx', args.ubx,...
         'lbg', args.lbg, 'ubg', args.ubg,'p',args.p);
@@ -353,8 +356,8 @@ disp("Average MPC Time = " + average_mpc_time);
 Time(end+1) = Time(end) + DT;
 
 %% Error and toe pos
-X_error = x_traj - X_REF_Original_1;
-U_error = u_cl - U_REF_Original_1(:,1:end-1)';
+X_error = x_traj - X_REF_Original;
+U_error = u_cl - U_REF_Original(:,1:end-1)';
 
 swingPosEnd = leftToePos(x_traj(1:7,end));
 disp("End position of swing foot: ")
@@ -364,14 +367,13 @@ disp(swingPosEnd);
 
 %% Plot results
 plot_q = true;
-plot_dq = false;
-plot_u = false;
-if (false)
-    Plot_MPC_Traj(Time,x_traj,X_REF_Original,u_cl,U_REF_Original,plot_q,plot_dq,plot_u); 
-end
+plot_dq = true;
+plot_u = true;
+% comparer traj's
+    Plot_MPC_Traj(Time,x_traj,X_REF_Original,u_cl,U_REF_Original,plot_q,plot_dq,plot_u,'states'); 
 
 % plot error
-    Plot_MPC_Traj(Time,X_error,X_error,U_error,U_error,plot_q,plot_dq,plot_u); 
+    Plot_MPC_Traj(Time,X_error,X_error,U_error,U_error,plot_q,false,false,'error'); 
 
 
 %% Animation

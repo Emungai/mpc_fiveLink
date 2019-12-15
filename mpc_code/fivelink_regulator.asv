@@ -123,12 +123,8 @@ g = [];  % constraints vector
 Qx= diag([1 1 1 10 10 10 10]);
 Qdx= 0.1*eye(n_s/2);
 Q=blkdiag(Qx,Qdx);
-R = 0*eye(n_c); % weighing matrices (controls)
 
-% Qx= 100*diag([1 1 1 1 0 0 0]);
-% Qdx= 0.1*Qx;
-% Q=blkdiag(Qx,Qdx);
-% R = 1*eye(n_c); % weighing matrices (controls)
+R = 0*eye(n_c); % weighing matrices (controls)
 
 % Qx= diag([1 1 1 1 1 1 1]);
 % Qdx= 1*diag([1 1 1 1 1 1 1]);
