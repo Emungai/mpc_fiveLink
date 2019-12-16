@@ -19,7 +19,7 @@ cur = pwd;
 % trajName = 'one_sec_traj_9-Dec-2019-21-39-45-0500.mat';
 % param=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\',trajName]);
 
-trajName = '0.05_ascend.mat';
+trajName = '0.04_ascend.mat';
 param=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend\',trajName]);
 addpath('..\rabbit_stepUp');
 trajRef=calculations.referenceTrajBez(param.gait,DT);
@@ -317,6 +317,7 @@ if false
     traj_pos_error = norm(x_traj(1:7,:) - X_REF_Original(1:7,:));
     traj_vel_error = norm(x_traj(8:end,:) - X_REF_Original(8:end,:));
 end
+traj_state_error = 
 average_mpc_time = main_loop_time/(mpciter+1);
 disp("Average MPC Time = " + average_mpc_time);
 Time(end+1) = Time(end) + DT;
