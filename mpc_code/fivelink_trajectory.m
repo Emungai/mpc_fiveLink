@@ -337,18 +337,19 @@ save(fullfile(pwd, 'Results/TrajectoryTracking/', file_name));
 
 %% Plot results
 plot_q = true;
-plot_dq = false;
-plot_u = false;
-if (false)
-    Plot_MPC_Traj(Time,x_traj,X_REF_Original,u_cl,U_REF_Original,plot_q,plot_dq,plot_u,[]); 
+plot_dq = true;
+plot_u = true;
+traj = string(stpheight)+'m '+dir;
+if (true)
+    Plot_MPC_Traj(Time,x_traj,X_REF_Original,u_cl,U_REF_Original,plot_q,plot_dq,plot_u,traj,args); 
 end
 
 if false
-    Plot_MPC_Traj(Time,X_error,X_error,U_error,U_error,plot_q,plot_dq,plot_u,'error'); 
+    Plot_MPC_Traj(Time,X_error,X_error,U_error,U_error,plot_q,plot_dq,plot_u,'error',args); 
 end
 
 %% Animation
-animateTraj = false;
+animateTraj = true;
 animateRef = false;
 if true
    Animate_MPC_Traj(Time,X_REF_Original,x_traj,animateTraj,animateRef) 

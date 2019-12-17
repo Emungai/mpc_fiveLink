@@ -1,35 +1,63 @@
-function [] = Plot_MPC_Traj(Time,x_traj,X_REF_Original,u_cl,U_REF_Original,plot_q,plot_dq,plot_u,plot_title)
-
+function [] = Plot_MPC_Traj(Time,x_traj,X_REF_Original,u_cl,U_REF_Original,plot_q,plot_dq,plot_u,plot_title,args)
+blue = [0, 0.4470, 0.7410];
+wdr = 2; 
+wd = 1.5;
+sz = 15;
+sim_time = 1;
 if plot_q
     figure % plot q
     subplot(3,3,1);
-    plot(Time,x_traj(1,:)); title('x'); 
-    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(1,1:size(X_REF_Original,2))); 
-    legend('x','x_{ref}','location','best');
+    plot(Time(1:size(X_REF_Original,2)),X_REF_Original(1,1:size(X_REF_Original,2)),'color','g','LineWidth',wdr,'LineStyle','--'); 
+    hold on; line([0 sim_time],[args.lbx(1) args.lbx(1)],'LineStyle','--','color','r','LineWidth',wdr);
+    hold on; line([0 sim_time],[args.ubx(1) args.ubx(1)],'LineStyle','--','color','r','LineWidth',wdr);
+    hold on; plot(Time,x_traj(1,:),'color',blue,'LineWidth',wd); title('$x$','interpreter','latex'); 
+    grid on; set(gca,'FontSize',sz)
+    
     subplot(3,3,2); 
-    plot(Time,x_traj(2,:)); title('z');
-    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(2,1:size(X_REF_Original,2)));
-    legend('z','z_{ref}','location','best');
+    plot(Time(1:size(X_REF_Original,2)),X_REF_Original(2,1:size(X_REF_Original,2)),'color','g','LineWidth',wdr,'LineStyle','--');
+    hold on; line([0 sim_time],[args.lbx(2) args.lbx(2)],'LineStyle','--','color','r','LineWidth',wdr);
+    hold on; line([0 sim_time],[args.ubx(2) args.ubx(2)],'LineStyle','--','color','r','LineWidth',wdr);
+    hold on; plot(Time,x_traj(2,:),'color',blue,'LineWidth',wd); title('$z$','interpreter','latex');
+    grid on; set(gca,'FontSize',sz)
+    
     subplot(3,3,3);
-    plot(Time,x_traj(3,:)); title('rotY');
-    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(3,1:size(X_REF_Original,2)));
-    legend('rotY','rotY{ref}','location','best');
+    plot(Time(1:size(X_REF_Original,2)),X_REF_Original(3,1:size(X_REF_Original,2)),'color','g','LineWidth',wdr,'LineStyle','--');
+    hold on; line([0 sim_time],[args.lbx(3) args.lbx(3)],'LineStyle','--','color','r','LineWidth',wdr);
+    hold on; line([0 sim_time],[args.ubx(3) args.ubx(3)],'LineStyle','--','color','r','LineWidth',wdr);
+    hold on; plot(Time,x_traj(3,:),'color',blue,'LineWidth',wd); title('$rot_Y$','interpreter','latex');
+    grid on; set(gca,'FontSize',sz)
+    
     subplot(3,3,4);
-    plot(Time,x_traj(4,:)); title('q1R');
-    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(4,1:size(X_REF_Original,2))); 
-    legend('q1R','q1R_{ref}','location','best');
+    plot(Time(1:size(X_REF_Original,2)),X_REF_Original(4,1:size(X_REF_Original,2)),'color','g','LineWidth',wdr,'LineStyle','--'); 
+    hold on; line([0 sim_time],[args.lbx(4) args.lbx(4)],'LineStyle','--','color','r','LineWidth',wdr);
+%     hold on; line([0 sim_time],[args.ubx(4) args.ubx(4)],'LineStyle','--','color','r','LineWidth',wdr);
+    hold on; plot(Time,x_traj(4,:),'color',blue,'LineWidth',wd); title('$q_{1R}$','interpreter','latex');
+    grid on; set(gca,'FontSize',sz)
+    
     subplot(3,3,5);
-    plot(Time,x_traj(5,:)); title('q2R');
-    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(5,1:size(X_REF_Original,2))); 
-    legend('q2R','q2R{ref}','location','best');
+    plot(Time(1:size(X_REF_Original,2)),X_REF_Original(5,1:size(X_REF_Original,2)),'color','g','LineWidth',wdr,'LineStyle','--'); 
+    hold on; line([0 sim_time],[args.lbx(5) args.lbx(5)],'LineStyle','--','color','r','LineWidth',wdr);
+%     hold on; line([0 sim_time],[args.ubx(5) args.ubx(5)],'LineStyle','--','color','r','LineWidth',wdr);
+    hold on; plot(Time,x_traj(5,:),'color',blue,'LineWidth',wd); title('$q_{2R}$','interpreter','latex');
+    grid on; set(gca,'FontSize',sz)
+    
     subplot(3,3,6);
-    plot(Time,x_traj(6,:)); title('q1L');
-    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(6,1:size(X_REF_Original,2))); 
-    legend('q1L','q1L_{ref}','location','best');
+    plot(Time(1:size(X_REF_Original,2)),X_REF_Original(6,1:size(X_REF_Original,2)),'color','g','LineWidth',wdr,'LineStyle','--'); 
+    hold on; line([0 sim_time],[args.lbx(6) args.lbx(6)],'LineStyle','--','color','r','LineWidth',wdr);
+%     hold on; line([0 sim_time],[args.ubx(6) args.ubx(6)],'LineStyle','--','color','r','LineWidth',wdr);
+    hold on; plot(Time,x_traj(6,:),'color',blue,'LineWidth',wd); title('$q_{1L}$','interpreter','latex');
+    grid on; set(gca,'FontSize',sz)
+    
     subplot(3,3,7);
-    plot(Time,x_traj(7,:)); title('q2L');
-    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(7,1:size(X_REF_Original,2))); 
-    legend('q2L','q2L{ref}','location','best');
+    plot(Time(1:size(X_REF_Original,2)),X_REF_Original(7,1:size(X_REF_Original,2)),'color','g','LineWidth',wdr,'LineStyle','--'); 
+    hold on; line([0 sim_time],[args.lbx(7) args.lbx(7)],'LineStyle','--','color','r','LineWidth',wdr);
+%     hold on; line([0 sim_time],[args.ubx(7) args.ubx(7)],'LineStyle','--','color','r','LineWidth',wdr);
+    hold on; plot(Time,x_traj(7,:),'color',blue,'LineWidth',wd); title('$q_{2L}$','interpreter','latex');
+    grid on; set(gca,'FontSize',sz)
+    legend('reference','constraints','NMPC trajectory');
+    set(legend,...
+        'Position',[0.409392268785169 0.188841051895204 0.16950092713185 0.105493865578861]);
+
     if isequal(plot_title,'error')
         subplot(331); axis([0 1 -0.15 0.15]);
         subplot(332); axis([0 1 -0.15 0.15]);
@@ -39,60 +67,93 @@ if plot_q
         subplot(336); axis([0 1 -0.15 0.15]);
         subplot(337); axis([0 1 -0.15 0.15]);
     end
-    sgtitle(plot_title);
-    
+    sgtitle(plot_title+" positions");
+    set(gcf,'color','w');
 end
 
 if plot_dq 
-    figure % plot dq
+    figure % plot q
     subplot(3,3,1);
-    plot(Time,x_traj(8,:)); title('dx'); 
-    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(8,1:size(X_REF_Original,2))); 
-    legend('dx','dx_{ref}','location','best');
+    plot(Time(1:size(X_REF_Original,2)),X_REF_Original(8,1:size(X_REF_Original,2)),'color','g','LineWidth',wdr,'LineStyle','--'); 
+%     hold on; line([0 sim_time],[args.lbx(8) args.lbx(8)],'LineStyle','--','color','r','LineWidth',wdr);
+%     hold on; line([0 sim_time],[args.ubx(8) args.ubx(8)],'LineStyle','--','color','r','LineWidth',wdr);
+    hold on; plot(Time,x_traj(8,:),'color',blue,'LineWidth',wd); title('$\dot{x}$','interpreter','latex'); 
+    grid on; set(gca,'FontSize',sz)
+    
     subplot(3,3,2); 
-    plot(Time,x_traj(9,:)); title('dz');
-    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(9,1:size(X_REF_Original,2)));
-    legend('dz','dz_{ref}','location','best');
+    plot(Time(1:size(X_REF_Original,2)),X_REF_Original(9,1:size(X_REF_Original,2)),'color','g','LineWidth',wdr,'LineStyle','--');
+%     hold on; line([0 sim_time],[args.lbx(9) args.lbx(9)],'LineStyle','--','color','r','LineWidth',wdr);
+%     hold on; line([0 sim_time],[args.ubx(9) args.ubx(9)],'LineStyle','--','color','r','LineWidth',wdr);
+    hold on; plot(Time,x_traj(9,:),'color',blue,'LineWidth',wd); title('$\dot{z}$','interpreter','latex');
+    grid on; set(gca,'FontSize',sz)
+    
     subplot(3,3,3);
-    plot(Time,x_traj(10,:)); title('drotY');
-    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(10,1:size(X_REF_Original,2)));
-    legend('drotY','drotY{ref}','location','best'); 
+    plot(Time(1:size(X_REF_Original,2)),X_REF_Original(10,1:size(X_REF_Original,2)),'color','g','LineWidth',wdr,'LineStyle','--');
+%     hold on; line([0 sim_time],[args.lbx(10) args.lbx(10)],'LineStyle','--','color','r','LineWidth',wdr);
+%     hold on; line([0 sim_time],[args.ubx(10) args.ubx(10)],'LineStyle','--','color','r','LineWidth',wdr);
+    hold on; plot(Time,x_traj(10,:),'color',blue,'LineWidth',wd); title('$\dot{rot}_Y$','interpreter','latex');
+    grid on; set(gca,'FontSize',sz)
+    
     subplot(3,3,4);
-    plot(Time,x_traj(11,:)); title('dq1R');
-    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(11,1:size(X_REF_Original,2))); 
-    legend('dq1R','dq1R_{ref}','location','best');  
+    plot(Time(1:size(X_REF_Original,2)),X_REF_Original(11,1:size(X_REF_Original,2)),'color','g','LineWidth',wdr,'LineStyle','--'); 
+%     hold on; line([0 sim_time],[args.lbx(11) args.lbx(11)],'LineStyle','--','color','r','LineWidth',wdr);
+%     hold on; line([0 sim_time],[args.ubx(11) args.ubx(11)],'LineStyle','--','color','r','LineWidth',wdr);
+    hold on; plot(Time,x_traj(11,:),'color',blue,'LineWidth',wd); title('$\dot{q}_{1R}$','interpreter','latex');
+    grid on; set(gca,'FontSize',sz)
+    
     subplot(3,3,5);
-    plot(Time,x_traj(12,:)); title('dq2R');
-    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(12,1:size(X_REF_Original,2))); 
-    legend('dq2R','dq2R{ref}','location','best');  
+    plot(Time(1:size(X_REF_Original,2)),X_REF_Original(12,1:size(X_REF_Original,2)),'color','g','LineWidth',wdr,'LineStyle','--'); 
+%     hold on; line([0 sim_time],[args.lbx(12) args.lbx(12)],'LineStyle','--','color','r','LineWidth',wdr);
+%     hold on; line([0 sim_time],[args.ubx(12) args.ubx(12)],'LineStyle','--','color','r','LineWidth',wdr);
+    hold on; plot(Time,x_traj(12,:),'color',blue,'LineWidth',wd); title('$\dot{q}_{2R}$','interpreter','latex');
+    grid on; set(gca,'FontSize',sz)
+    
     subplot(3,3,6);
-    plot(Time,x_traj(13,:)); title('dq1L');
-    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(13,1:size(X_REF_Original,2))); 
-    legend('dq1L','dq1L_{ref}','location','best');    
+    plot(Time(1:size(X_REF_Original,2)),X_REF_Original(13,1:size(X_REF_Original,2)),'color','g','LineWidth',wdr,'LineStyle','--'); 
+%     hold on; line([0 sim_time],[args.lbx(13) args.lbx(13)],'LineStyle','--','color','r','LineWidth',wdr);
+%     hold on; line([0 sim_time],[args.ubx(13) args.ubx(13)],'LineStyle','--','color','r','LineWidth',wdr);
+    hold on; plot(Time,x_traj(13,:),'color',blue,'LineWidth',wd); title('$\dot{q}_{1L}$','interpreter','latex');
+    grid on; set(gca,'FontSize',sz)
+    
     subplot(3,3,7);
-    plot(Time,x_traj(14,:)); title('dq2L');
-    hold on; plot(Time(1:size(X_REF_Original,2)),X_REF_Original(14,1:size(X_REF_Original,2))); 
-    legend('dq2L','dq2L{ref}','location','best');  
+    plot(Time(1:size(X_REF_Original,2)),X_REF_Original(14,1:size(X_REF_Original,2)),'color','g','LineWidth',wdr,'LineStyle','--'); 
+%     hold on; line([0 sim_time],[args.lbx(14) args.lbx(14)],'LineStyle','--','color','r','LineWidth',wdr);
+%     hold on; line([0 sim_time],[args.ubx(14) args.ubx(14)],'LineStyle','--','color','r','LineWidth',wdr);
+    hold on; plot(Time,x_traj(14,:),'color',blue,'LineWidth',wd); title('$\dot{q}_{2L}$','interpreter','latex');
+    grid on; set(gca,'FontSize',sz)
+    legend('reference','NMPC trajectory');
+    set(legend,...
+        'Position',[0.409392268785169 0.188841051895204 0.16950092713185 0.105493865578861]);
+
+    sgtitle(plot_title+" velocities");
+    set(gcf,'color','w');
 end
 
 if plot_u
     figure % plot u
     subplot(2,2,1);
-    plot(Time(1:end-1),u_cl(:,1)); title('u_q1R');
-    hold on; plot(Time(1:size(U_REF_Original,2)),U_REF_Original(1,1:size(U_REF_Original,2))); 
-    legend('u_q1R','u_q1R_{ref}','location','best');
+    plot(Time(1:size(U_REF_Original,2)),U_REF_Original(1,1:size(U_REF_Original,2)),'color','g','LineWidth',wdr,'LineStyle','--'); 
+    hold on; plot(Time(1:end-1),u_cl(:,1),'color',blue,'LineWidth',wd); title('$u_{q_{1R}}$','interpreter','latex');
+    grid on; set(gca,'FontSize',sz)
+    
     subplot(2,2,2);
-    plot(Time(1:end-1),u_cl(:,2)); title('u_q2R');
-    hold on; plot(Time(1:size(U_REF_Original,2)),U_REF_Original(2,1:size(U_REF_Original,2))); 
-    legend('u_q2R','u_q2R_{ref}','location','best');
+    plot(Time(1:size(U_REF_Original,2)),U_REF_Original(2,1:size(U_REF_Original,2)),'color','g','LineWidth',wdr,'LineStyle','--'); 
+    hold on; plot(Time(1:end-1),u_cl(:,2),'color',blue,'LineWidth',wd); title('$u_{q_{2R}}$','interpreter','latex');
+    grid on; set(gca,'FontSize',sz)
+    
     subplot(2,2,3);
-    plot(Time(1:end-1),u_cl(:,3)); title('u_q1L');
-    hold on; plot(Time(1:size(U_REF_Original,2)),U_REF_Original(3,1:size(U_REF_Original,2))); 
-    legend('u_q1L','u_q1L_{ref}','location','best');
+    plot(Time(1:size(U_REF_Original,2)),U_REF_Original(3,1:size(U_REF_Original,2)),'color','g','LineWidth',wdr,'LineStyle','--'); 
+    hold on; plot(Time(1:end-1),u_cl(:,3),'color',blue,'LineWidth',wd); title('$u_{q_{1L}}$','interpreter','latex');
+    grid on; set(gca,'FontSize',sz)
+    
     subplot(2,2,4);
-    plot(Time(1:end-1),u_cl(:,4)); title('u_q2L');
-    hold on; plot(Time(1:size(U_REF_Original,2)),U_REF_Original(4,1:size(U_REF_Original,2))); 
-    legend('u_q2L','u_q2L_{ref}','location','best');
+    plot(Time(1:size(U_REF_Original,2)),U_REF_Original(4,1:size(U_REF_Original,2)),'color','g','LineWidth',wdr,'LineStyle','--'); 
+    hold on; plot(Time(1:end-1),u_cl(:,4),'color',blue,'LineWidth',wd); title('$u_{q_{2L}}$','interpreter','latex');
+    grid on; set(gca,'FontSize',sz)
+    
+    legend('reference','NMPC trajectory','location','best');
+    sgtitle(plot_title+" control inputs");
+    set(gcf,'color','w');
 end
 
 
