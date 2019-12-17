@@ -16,12 +16,15 @@ N = 10; % prediction horizon
 
 %% Load Reference Trajectory
 cur = pwd;
-% trajName = 'one_sec_traj_9-Dec-2019-21-39-45-0500.mat';
-% param=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\',trajName]);
+stpheight = 0.2;
+dir = 'descend';
+trajName = string(stpheight)+'_'+dir+'.mat';
+if isequal(dir,'ascend')
+    param=load(fullfile('..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend\',trajName));
+else
+    param=load(fullfile('..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsDescend\',trajName));
+end
 
-trajName = '0.04_ascend.mat';
-param=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend\',trajName]);
-addpath('..\rabbit_stepUp');
 trajRef=calculations.referenceTrajBez(param.gait,DT);
 X_REF_Original = [trajRef.x; trajRef.dx];
 U_REF_Original = trajRef.u;
@@ -312,12 +315,6 @@ while(mpciter < sim_time / DT)
     
 end
 main_loop_time = toc(main_loop);
-if false
-    traj_total_error = norm(x_traj - X_REF_Original);
-    traj_pos_error = norm(x_traj(1:7,:) - X_REF_Original(1:7,:));
-    traj_vel_error = norm(x_traj(8:end,:) - X_REF_Original(8:end,:));
-end
-traj_state_error = 
 average_mpc_time = main_loop_time/(mpciter+1);
 disp("Average MPC Time = " + average_mpc_time);
 Time(end+1) = Time(end) + DT;
@@ -325,27 +322,33 @@ Time(end+1) = Time(end) + DT;
 %% Error and toe pos
 X_error = x_traj - X_REF_Original;
 U_error = u_cl - U_REF_Original(:,1:end-1)';
-
+disp("2-Norm pos error = " + norm(X_error(:,1:7)));
+disp("2-Norm vel error = " + norm(X_error(:,8:end)));
+disp("2-Norm state error = " + norm(X_error));
+disp("2-Norm ctrl error = " + norm(U_error));
 swingPosEnd = leftToePos(x_traj(1:7,end));
 disp("End position of swing foot: ")
 disp(swingPosEnd);
 
 
+%% Save Workspace to results folder
+file_name = stpheight+"_"+dir+"_Trajectory.mat";
+save(fullfile(pwd, 'Results/TrajectoryTracking/', file_name));
 
 %% Plot results
 plot_q = true;
 plot_dq = false;
 plot_u = false;
 if (false)
-    Plot_MPC_Traj(Time,x_traj,X_REF_Original,u_cl,U_REF_Original,plot_q,plot_dq,plot_u); 
+    Plot_MPC_Traj(Time,x_traj,X_REF_Original,u_cl,U_REF_Original,plot_q,plot_dq,plot_u,[]); 
 end
 
-% plot error
-    Plot_MPC_Traj(Time,X_error,X_error,U_error,U_error,plot_q,plot_dq,plot_u); 
-
+if false
+    Plot_MPC_Traj(Time,X_error,X_error,U_error,U_error,plot_q,plot_dq,plot_u,'error'); 
+end
 
 %% Animation
-animateTraj = true;
+animateTraj = false;
 animateRef = false;
 if true
    Animate_MPC_Traj(Time,X_REF_Original,x_traj,animateTraj,animateRef) 
