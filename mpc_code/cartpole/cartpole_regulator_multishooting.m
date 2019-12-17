@@ -182,41 +182,43 @@ end
 if true
     figure
     subplot(2,3,1);
-    plot(t,x_traj(1,:),'LineWidth',2); title('$\mathbf{x}$','interpreter','latex','FontSize',sz); grid on;
-    hold on; line([0 sim_time],[xs(1) xs(1)],'LineStyle','--','color','m','LineWidth',1); xlim([0 sim_time]);
-    hold on; line([0 sim_time],[args.lbx(1) args.lbx(1)],'LineStyle','--','color','r','LineWidth',1);
-    hold on; line([0 sim_time],[args.ubx(1) args.ubx(1)],'LineStyle','--','color','r','LineWidth',1);
+    line([0 sim_time],[xs(1) xs(1)],'LineStyle','--','color','g','LineWidth',2); xlim([0 sim_time]);
+    hold on; line([0 sim_time],[args.lbx(1) args.lbx(1)],'LineStyle','--','color','r','LineWidth',2);
+    hold on; line([0 sim_time],[args.ubx(1) args.ubx(1)],'LineStyle','--','color','r','LineWidth',2);
+    hold on; plot(t,x_traj(1,:),'LineWidth',2); title('$\mathbf{x}$','interpreter','latex','FontSize',sz); grid on;
     xlabel('Time [sec]'); ylabel('$x\ [m]$','interpreter','latex');
     set(gca,'FontSize',sz)
     
     subplot(2,3,2);
-    plot(t,x_traj(2,:),'LineWidth',2); title('$\mathbf{\theta}$','interpreter','latex','FontSize',sz); grid on;
-    hold on; line([0 sim_time],[xs(2) xs(2)],'LineStyle','--','color','m','LineWidth',1); xlim([0 sim_time]);
-    hold on; line([0 sim_time],[args.lbx(2) args.lbx(2)],'LineStyle','--','color','r','LineWidth',1)
-    hold on; line([0 sim_time],[args.ubx(2) args.ubx(2)],'LineStyle','--','color','r','LineWidth',1)
+    line([0 sim_time],[xs(2) xs(2)],'LineStyle','--','color','g','LineWidth',2); xlim([0 sim_time]);
+    hold on; line([0 sim_time],[args.lbx(2) args.lbx(2)],'LineStyle','--','color','r','LineWidth',2)
+    hold on; line([0 sim_time],[args.ubx(2) args.ubx(2)],'LineStyle','--','color','r','LineWidth',2)
+    hold on; plot(t,x_traj(2,:),'LineWidth',2); title('$\mathbf{\theta}$','interpreter','latex','FontSize',sz); grid on;
     xlabel('Time [sec]');ylabel('$\theta\ [rad]$','interpreter','latex');
     set(gca,'FontSize',sz)
     
     subplot(2,3,4);
-    plot(t,x_traj(3,:),'LineWidth',2); title('$\mathbf{\dot{x}}$','interpreter','latex','FontSize',sz); grid on;
-    hold on; line([0 sim_time],[xs(3) xs(3)],'LineStyle','--','color','m','LineWidth',1); xlim([0 sim_time]);
-    hold on; line([0 sim_time],[args.lbx(3) args.lbx(3)],'LineStyle','--','color','r','LineWidth',1)
-    hold on; line([0 sim_time],[args.ubx(3) args.ubx(3)],'LineStyle','--','color','r','LineWidth',1)
+    line([0 sim_time],[xs(3) xs(3)],'LineStyle','--','color','g','LineWidth',2); xlim([0 sim_time]);
+    hold on; line([0 sim_time],[args.lbx(3) args.lbx(3)],'LineStyle','--','color','r','LineWidth',2)
+    hold on; line([0 sim_time],[args.ubx(3) args.ubx(3)],'LineStyle','--','color','r','LineWidth',2)
+    hold on; plot(t,x_traj(3,:),'LineWidth',2); title('$\mathbf{\dot{x}}$','interpreter','latex','FontSize',sz); grid on;
     xlabel('Time [sec]'); ylabel('$\dot{x}\ [m/s]$','interpreter','latex');
     set(gca,'FontSize',sz)
     
     subplot(2,3,5);
-    plot(t,x_traj(4,:),'LineWidth',2); title('$\mathbf{\dot{\theta}}$','interpreter','latex','FontSize',sz); grid on;
-    hold on; line([0 sim_time],[xs(4) xs(4)],'LineStyle','--','color','m','LineWidth',1); xlim([0 sim_time]);
-    hold on; line([0 sim_time],[args.lbx(4) args.lbx(4)],'LineStyle','--','color','r','LineWidth',1)
-    hold on; line([0 sim_time],[args.ubx(4) args.ubx(4)],'LineStyle','--','color','r','LineWidth',1)
+    line([0 sim_time],[xs(4) xs(4)],'LineStyle','--','color','g','LineWidth',2); xlim([0 sim_time]);
+    hold on; line([0 sim_time],[args.lbx(4) args.lbx(4)],'LineStyle','--','color','r','LineWidth',2)
+    hold on; line([0 sim_time],[args.ubx(4) args.ubx(4)],'LineStyle','--','color','r','LineWidth',2)
+    hold on; plot(t,x_traj(4,:),'LineWidth',2); title('$\mathbf{\dot{\theta}}$','interpreter','latex','FontSize',sz); grid on;
     xlabel('Time [sec]'); ylabel('$\dot{\theta}\ [rad/s]$','interpreter','latex');
     set(gca,'FontSize',sz);
     
     subplot(2,3,3);
-    stairs(t(1:end-1),u_cl,'LineWidth',2); title('$\mathbf{u}$','interpreter','latex','FontSize',sz); grid on;
-    hold on; line([0 sim_time],[args.lbx(5) args.lbx(5)],'LineStyle','--','color','r','LineWidth',1)
-    hold on; line([0 sim_time],[args.ubx(5) args.ubx(5)],'LineStyle','--','color','r','LineWidth',1)
+    line([0 sim_time],[0 0],'LineStyle','--','color','g','LineWidth',2); xlim([0 sim_time]);
+    hold on; line([0 sim_time],[u_min u_min],'LineStyle','--','color','r','LineWidth',2)
+    hold on; line([0 sim_time],[u_max u_max],'LineStyle','--','color','r','LineWidth',2)
+    hold on;stairs(t(1:end-1),u_cl,'LineWidth',2); title('$\mathbf{u}$','interpreter','latex','FontSize',sz); grid on;
+    
     xlabel('Time [sec]'); ylabel('$u\ [Nm]$','interpreter','latex');
     set(gca,'FontSize',sz)
     set(gcf,'color','w');
