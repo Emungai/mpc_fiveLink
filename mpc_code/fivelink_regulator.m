@@ -16,9 +16,9 @@ N = 10; % prediction horizon
 
 %% Load Reference Trajectory
 cur = pwd;
-% trajName = 'one_sec_traj_9-Dec-2019-21-39-45-0500.mat';
-trajName = 'one_sec_nocoriolis_9-Dec-2019-22-23-15-0500.mat';
-param=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\',trajName]);
+stpheight1=0.05;
+trajName1 = string(stpheight1)+'_ascend.mat';
+param = load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend\'+trajName1]);
 addpath('..\rabbit_stepUp');
 trajRef=calculations.referenceTrajBez(param.gait,DT);
 X_REF_Original = [trajRef.x; trajRef.dx];
@@ -183,6 +183,10 @@ args.lbg(1:n_s*(N+1)) = 0;
 args.ubg(1:n_s*(N+1)) = 0; 
 
 % State inequalities
+param.bounds.RightStance.states.x.lb(3:end)=param.bounds.RightStance.states.x.lb(3:end)-0.3;
+param.bounds.RightStance.states.x.ub(3:end)=param.bounds.RightStance.states.x.ub(3:end)+0.3;
+
+
 args.lbx(1:n_s:n_s*(N+1),1) = param.bounds.RightStance.states.x.lb(1);             %state x lower bound
 args.ubx(1:n_s:n_s*(N+1),1) = param.bounds.RightStance.states.x.ub(1);              %state x upper bound
 args.lbx(2:n_s:n_s*(N+1),1) = param.bounds.RightStance.states.x.lb(2);                %state z lower bound
@@ -216,7 +220,7 @@ args.ubx(14:n_s:n_s*(N+1),1) = inf;
 
 % Control inequalities
 % torque_max =param.bounds.RightStance.inputs.Control.u.ub ; torque_min =param.bounds.RightStance.inputs.Control.u.lb;
-torque_max = inf; torque_min = -torque_max;
+torque_max = 10; torque_min = -torque_max;
 
 args.lbx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*(N+1),1) = torque_min;    % u_q1R lower bound
 args.ubx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*(N+1),1) = torque_max;   
@@ -365,13 +369,17 @@ end
 average_mpc_time = main_loop_time/(mpciter+1);
 disp("Average MPC Time = " + average_mpc_time);
 Time(end+1) = Time(end) + DT;
+%% Save Workspace to results folder
+file_name = '0.05'+"_"+'ascend'+"_Trajectory.mat";
+save(fullfile(pwd, 'Results/Regulator', file_name));
 
 %% Plot results
 plot_q = true;
 plot_dq = true;
 plot_u = true;
 if (true)
-    Plot_MPC_Traj(Time,x_traj,X_REF_REG,u_cl,U_REF_REG,plot_q,plot_dq,plot_u,'states'); 
+    plot_title='R-NMPC 0.05m ascend';
+    Plot_MPC_Traj(Time,x_traj,[X_REF_REG,X_REF_REG,X_REF_REG(:,1:end-2)],u_cl,[U_REF_REG,U_REF_REG,U_REF_REG(:,1:end-2)],plot_q,plot_dq,plot_u,plot_title,args)
 end
 
 %% Animation
