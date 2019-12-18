@@ -3,7 +3,7 @@ blue = [0, 0.4470, 0.7410];
 wdr = 2; 
 wd = 1.5;
 sz = 15;
-sim_time = 1;
+sim_time = Time(end);
 if plot_q
     figure % plot q
     subplot(3,3,1);

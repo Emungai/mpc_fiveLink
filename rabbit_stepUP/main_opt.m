@@ -112,7 +112,7 @@ nlp.update;
 for i = 1:(nlp.Phase(1).NumNode-1)
     nlp.Phase(1).ConstrTable.u_leftFootHeight_RightStance(i).setBoundary(-0.1, Inf);
 end
-nlp.Phase(1).ConstrTable.u_leftFootHeight_RightStance(end).setBoundary(-0.05, -0.05);
+nlp.Phase(1).ConstrTable.u_leftFootHeight_RightStance(end).setBoundary(0.05, 0.05);
 
 nlp.update;
 
@@ -157,14 +157,15 @@ gait = struct(...
     'inputs',inputs,...
     'params',params);
 %% SAVE
-CHARACTER_NAME = '0.05_descend';
+
+CHARACTER_NAME = '0.011_DT';
 
 if SAVE_SOLUTION
     data_name = char(datetime('now','TimeZone','local','Format','d-MMM-y-HH-mm-ssZ'));%'local/longer_double_support_wider_step_dummy';
     
     name_save = [CHARACTER_NAME, '_', data_name];
     
-    save_dir=fullfile(cur,'trajectories\stepUp\singleDomain\variousStepHeightsDescend');
+    save_dir=fullfile(cur,'trajectories\stepUp\singleDomain\decreaseDT');
     if ~exist(save_dir,'dir'), mkdir(save_dir); end
     
     if info.status ~= -1
@@ -186,9 +187,9 @@ checkVariables(nlp, sol, 1e-1, 'variableCheck.txt');
 open('constraintCheck.txt')
 open('variableCheck.txt')
 %% Animation
-q_log_R = states{1}.x; % Right stance
+q_log_R = gait(1).states.x; % Right stance
 q_log_L = q_log_R([1:3,6:7,4:5],:); % symmetric Left stance
-q_log_L(1:3,:) = q_log_L(1:3,:) + repmat((q_log_R(1:3,end)-q_log_R(1:3,1)),1,21);
+q_log_L(1:3,:) = q_log_L(1:3,:) + repmat((q_log_R(1:3,end)-q_log_R(1:3,1)),1,length(q_log_R));
 
 t_log_R = tspan{1};
 t_log_L = t_log_R + t_log_R(end);

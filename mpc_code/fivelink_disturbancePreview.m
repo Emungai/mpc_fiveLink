@@ -19,19 +19,38 @@ indx_switch = (t_switch / DT) + 1 % right continuous index point
 
 %% Load Reference Trajectory
 cur = pwd;
+%ascending traj
+stpheight1=0.04;
+stpheight2=0.2;
+dir = 'ascend';
 % first traj
-trajName1 = '0.06_ascend.mat';
-param1 = load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend\',trajName1]);
+trajName1 = string(stpheight1)+'_ascend.mat';
+param1 = load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend\'+trajName1]);
 trajRef1 = calculations.referenceTrajBez(param1.gait,DT);
 X_REF_Original_1 = [trajRef1.x; trajRef1.dx];
 U_REF_Original_1 = trajRef1.u;
 
 % second traj
-trajName2 = '0.04_ascend.mat';
-param2 = load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend\',trajName2]);
+trajName2 = string(stpheight2)+'_ascend.mat';
+param2 = load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend\'+trajName2]);
 trajRef2 = calculations.referenceTrajBez(param2.gait,DT);
 X_REF_Original_2 = [trajRef2.x; trajRef2.dx];
 U_REF_Original_2 = trajRef2.u;
+
+% %descending traj
+% % first traj
+% trajName1 = '0.04_descend.mat';
+% param1 = load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsDescend\',trajName1]);
+% trajRef1 = calculations.referenceTrajBez(param1.gait,DT);
+% X_REF_Original_1 = [trajRef1.x; trajRef1.dx];
+% U_REF_Original_1 = trajRef1.u;
+% 
+% % second traj
+% trajName2 = '0.2_descend.mat';
+% param2 = load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsDescend\',trajName2]);
+% trajRef2 = calculations.referenceTrajBez(param2.gait,DT);
+% X_REF_Original_2 = [trajRef2.x; trajRef2.dx];
+% U_REF_Original_2 = trajRef2.u;
 
 % set initial reference traj
 X_REF_Original = [X_REF_Original_1(:,1:indx_switch-1), X_REF_Original_2(:,indx_switch:end)];
@@ -117,7 +136,7 @@ Qx= diag([1 1 1 1 1 1 1]);
 Qdx= 1*diag([1 1 1 1 1 1 1]);
 Q=blkdiag(Qx,Qdx);
 Q_terminal = Q;
-% Q_terminal = 1000*blkdiag(eye(7), zeros(7,7));
+% Q_terminal =1e6* Q;
 R = 1*eye(n_c); % weighing matrices (controls)
 
 %% Build Objective Function and Equality(Dynamics) Constraints
@@ -177,6 +196,9 @@ args = struct;
 % Equality Constraints ~ Dynamics
 args.lbg(1:n_s*(N+1)) = 0;
 args.ubg(1:n_s*(N+1)) = 0; 
+
+param1.bounds.RightStance.states.x.lb(3:end)=param1.bounds.RightStance.states.x.lb(3:end)-0.3;
+param1.bounds.RightStance.states.x.ub(3:end)=param1.bounds.RightStance.states.x.ub(3:end)+0.3;
 
 % State inequalities
 args.lbx(1:n_s:n_s*(N+1),1) = param1.bounds.RightStance.states.x.lb(1);             %state x lower bound
@@ -355,29 +377,60 @@ average_mpc_time = main_loop_time/(mpciter+1);
 disp("Average MPC Time = " + average_mpc_time);
 Time(end+1) = Time(end) + DT;
 
+% %% Error and toe pos
+% X_error = x_traj - X_REF_Original;
+% U_error = u_cl - U_REF_Original(:,1:end-1)';
+% for i=1:length(x_traj)
+%     swingPos_Orig(:,i)=leftToePos(X_REF_Original(1:7,i))';
+%     swingPos_MPC(:,i)=leftToePos(x_traj(1:7,i))';
+% end
+% swingPosEnd = leftToePos(x_traj(1:7,end));
+% disp("End position of swing foot: ")
+% disp(swingPosEnd);
+% % 
+% figure
+% plot(Time,swingPos_Orig(3,:),'--')
+% hold on
+% plot(Time,swingPos_MPC(3,:))
+
 %% Error and toe pos
 X_error = x_traj - X_REF_Original;
 U_error = u_cl - U_REF_Original(:,1:end-1)';
-
+disp("2-Norm pos error = " + norm(X_error(:,1:7)));
+disp("2-Norm vel error = " + norm(X_error(:,8:end)));
+disp("2-Norm state error = " + norm(X_error));
+disp("2-Norm ctrl error = " + norm(U_error));
 swingPosEnd = leftToePos(x_traj(1:7,end));
 disp("End position of swing foot: ")
 disp(swingPosEnd);
 
-
+%% Save Workspace to results folder
+file_name = string(stpheight1)+"_"+string(stpheight2)+"_"+dir+"_Trajectory.mat";
+save(fullfile(pwd, 'Results/IOComparisons', file_name));
 
 %% Plot results
 plot_q = true;
 plot_dq = true;
 plot_u = true;
-% comparer traj's
-    Plot_MPC_Traj(Time,x_traj,X_REF_Original,u_cl,U_REF_Original,plot_q,plot_dq,plot_u,'states'); 
+save=0;
+save_dir=pwd+"\Graphs\DisturbancePreview\"
 
-% plot error
-    Plot_MPC_Traj(Time,X_error,X_error,U_error,U_error,plot_q,false,false,'error'); 
+if (true)
+    traj = string(stpheight1)+"m ->"+string(stpheight2)+"m "+dir;
+fileTitle= string(stpheight1)+"_"+string(stpheight2)+"_"+dir;
+error=0;   
+Plot_MPC_Traj_save(Time,x_traj,X_REF_Original,u_cl,U_REF_Original,plot_q,plot_dq,plot_u,traj,args,save,save_dir,fileTitle,error); 
+end
 
+if (true)
+    traj = "error"+string(stpheight1)+"m ->"+string(stpheight2)+"m "+dir;
+   fileTitle="error"+string(stpheight1)+"_"+string(stpheight2)+"_"+dir;
+   error=1; 
+   Plot_MPC_Traj_save(Time,X_error,X_error,U_error,U_error,plot_q,plot_dq,plot_u,traj,args,save,save_dir,fileTitle,error); 
+end
 
 %% Animation
-animateTraj = true;
+animateTraj = false;
 animateRef = false;
 if true
    Animate_MPC_Traj(Time,X_REF_Original_1,x_traj,animateTraj,animateRef) 

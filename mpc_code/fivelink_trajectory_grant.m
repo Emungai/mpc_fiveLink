@@ -25,9 +25,15 @@ else
     param=load(fullfile('..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsDescend\',trajName));
 end
 
+% trajName='0.005_DT_17-Dec-2019-15-10-24-0500.mat';
+% param=load(fullfile('..\rabbit_stepUp\trajectories\stepUp\singleDomain\decreaseDT\',trajName));
+
+
 trajRef=calculations.referenceTrajBez(param.gait,DT);
+% trajRef=param.gait(1).states;
 X_REF_Original = [trajRef.x; trajRef.dx];
 U_REF_Original = trajRef.u;
+% U_REF_Original =param.gait(1).inputs.u;
 
 X_REF = X_REF_Original;
 U_REF = U_REF_Original;
@@ -147,15 +153,20 @@ opts.print_time = 0;
 opts.ipopt.acceptable_tol =1e-8;
 opts.ipopt.acceptable_obj_change_tol = 1e-6;
 
+<<<<<<< HEAD:mpc_code/fivelink_trajectory_grant.m
 solver = nlpsol('solver', 'ipopt', nlp_prob,opts);
 % solver = nlpsol('solver', 'ipopt', nlp_prob);
+=======
+solver = nlpsol('solver', 'ipopt', nlp_prob);
+>>>>>>> fd58806c4190fa932107949edc283394aa7838a5:mpc_code/fivelink_trajectory.m
 
 args = struct;
 
 % Equality Constraints ~ Dynamics
 args.lbg(1:n_s*(N+1)) = 0;
 args.ubg(1:n_s*(N+1)) = 0; 
-
+param.bounds.RightStance.states.x.lb(3:end)=param.bounds.RightStance.states.x.lb(3:end)-0.3;
+param.bounds.RightStance.states.x.ub(3:end)=param.bounds.RightStance.states.x.ub(3:end)+0.3;
 % State inequalities
 param.bounds.RightStance.states.x.lb(3:end)=param.bounds.RightStance.states.x.lb(3:end)-0.3;
 param.bounds.RightStance.states.x.ub(3:end)=param.bounds.RightStance.states.x.ub(3:end)+0.3;
@@ -193,8 +204,12 @@ args.ubx(14:n_s:n_s*(N+1),1) = 20;
 
 % Control inequalities
 % torque_max =param.bounds.RightStance.inputs.Control.u.ub ; torque_min =param.bounds.RightStance.inputs.Control.u.lb;
+<<<<<<< HEAD:mpc_code/fivelink_trajectory_grant.m
 torque_max = 10; torque_min = -torque_max;
 
+=======
+torque_max =0.35; torque_min = -torque_max;
+>>>>>>> fd58806c4190fa932107949edc283394aa7838a5:mpc_code/fivelink_trajectory.m
 args.lbx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*(N+1),1) = torque_min;    % u_q1R lower bound
 args.ubx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*(N+1),1) = torque_max;   
 args.lbx(n_s*(N+1)+2:n_c:n_s*(N+1)+n_c*(N+1),1) = torque_min;    % u_q2R lower bound
@@ -335,6 +350,7 @@ disp("End position of swing foot: ")
 disp(swingPosEnd);
 
 
+<<<<<<< HEAD:mpc_code/fivelink_trajectory_grant.m
 %% Save Workspace to results folder
 % if Nstart == 10
 %     file_name = stpheight+"_"+dir+"_Trajectory.mat";
@@ -343,6 +359,12 @@ disp(swingPosEnd);
 % end
 % save(fullfile(pwd, 'Results/TrajectoryTracking/', file_name));
 
+=======
+% %% Save Workspace to results folder
+% file_name = stpheight+"_"+dir+"_Trajectory.mat";
+% save(fullfile(pwd, 'Results/TrajectoryTracking/', file_name));
+% 
+>>>>>>> fd58806c4190fa932107949edc283394aa7838a5:mpc_code/fivelink_trajectory.m
 %% Plot results
 plot_q = true;
 plot_dq = false;
@@ -353,8 +375,18 @@ if (true)
 end
 
 if false
-    Plot_MPC_Traj(Time,X_error,X_error,U_error,U_error,plot_q,plot_dq,plot_u,'error',args); 
+    save=0;
+    save_dir=[];
+    fileTitle=[];
+    traj="Error TT-NMPC 0.45Nm Torque Saturation 0.05m Ascend";
+    errors=1;
+   Plot_MPC_Traj_save(Time,X_error,X_error,U_error,U_error,plot_q,plot_dq,plot_u,traj,args,save,save_dir,fileTitle,errors); 
 end
+
+
+%% Save Workspace to results folder
+file_name = "0.45TorqueSaturation_MPCTrajectory.mat";
+save(fullfile(pwd, 'Results/IOComparisons', file_name));
 
 %% Animation
 animateTraj = true;

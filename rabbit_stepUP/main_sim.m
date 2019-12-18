@@ -30,10 +30,9 @@ export_path = fullfile(cur, 'gen/sim/');
 
 %% loading the trajectory
 cur=pwd;
-trajName='one_sec_nocoriolis_9-Dec-2019-22-23-15-0500.mat';
-trajName='opt_traj_3-Dec-2019-18-07-22-0500_Rabbit.mat';
-trajName='0.5493_sec_nocoriolis_rabbitOrig_11-Dec-2019-13-35-49-0500.mat';
-param=load(fullfile(cur,'trajectories\stepUp\singleDomain',trajName));
+
+trajName='0.05_ascend.mat';
+param=load(fullfile(cur,'trajectories\stepUp\singleDomain\variousStepHeightsAscend',trajName));
 gait=param.gait;
 % gait(1).params.ptime(1)=gait(1).tspan(end);
 %%
@@ -73,9 +72,40 @@ if COMPILE
     
     
 end
-%%
-logger=rabbit_1step.simulate(0,[gait(1).states.x(:,1);gait(1).states.dx(:,1)],3, [],'NumCycle',5);
+%% running the simulation
 
+logger=rabbit_1step.simulate(0,[gait(1).states.x(:,1);gait(1).states.dx(:,1)],3, [],'NumCycle',1);
+%% traj MPC
+MPC=load('../mpc_code/Results/IOComparisons/0.45TorqueSaturation_MPCTrajectory.mat');
+
+%% graphs
+addpath('../mpc_code/utils/');
+plot_q = true;
+plot_dq = false;
+plot_u = true;
+Time=logger(1).flow.t;
+x_traj=[logger(1).flow.ya_time;logger(1).flow.d1ya_time];
+X_REF_Original=[logger(1).flow.yd_time;logger(1).flow.d1yd_time];
+u_cl=logger(1).flow.inputs.Control.u;
+U_REF_Original=u_cl;
+args.lbx=[-10, 0.5, -1, 2, 0.5, 2, 0.5]'.*ones(7,length(logger(1).flow.t));
+args.ubx= [10, 2, 1, 5, 2, 5, 2]'.*ones(7,length(logger(1).flow.t));
+args.lbu=-0.35.*ones(4,1).*ones(4,length(logger(1).flow.t));
+args.ubu=0.35.*ones(4,1).*ones(4,length(logger(1).flow.t));
+traj ="I/O Controller 0.45Nm Torque Saturation 0.05m ascend";
+save=0;
+error=0;
+save_dir=[];
+file_title="I/O_Controller_0.05m_ascend";
+% Plot_IO_Traj(Time,logger(1).flow.states.x,X_REF_Original,u_cl,plot_q,plot_dq,plot_u,traj,args,save,save_dir,file_title,error)
+%plotting the error
+traj ="I/O Controller 0.45Nm Torque Saturation 0.05m ascend";
+error=1;
+file_title="I/O_Controller_0.05m_ascend";
+satVal=0.45.*ones(4,1).*ones(4,length(MPC.u_cl));
+Plot_IO_MPC_Traj(Time,MPC.Time,x_traj-X_REF_Original,MPC.x_traj-MPC.X_REF_Original,u_cl,MPC.u_cl',plot_q,plot_dq,plot_u,traj,satVal)
+
+% Plot_MPC_Traj(Time,x_traj,X_REF_Original,u_cl,plot_q,plot_dq,plot_u,traj,args,save,save_dir,file_title,error)
 
 %% animate
 q_log=[];

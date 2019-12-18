@@ -1,5 +1,6 @@
 function u=saturateTorque(u)
-satValue=[0.6;0.5;0.4;0.2];
+% satValue=[0.6;0.5;0.4;0.2];
+satValue=0.45*ones(4,1);
 if u(1) >= satValue(1)
     u(1)=satValue(1);
 elseif u(1) <=-satValue(1)

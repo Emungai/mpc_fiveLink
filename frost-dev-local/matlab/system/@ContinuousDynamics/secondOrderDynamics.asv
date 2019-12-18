@@ -117,6 +117,7 @@ function [xdot] = secondOrderDynamics(obj, t, x, controller, params, logger)
         else
             u = zeros(size(Be,2),1);
         end
+        u=saturateTorque(u);
         Gv_u = Be*u;
         obj.inputs_.Control.(control_name{1}) = u;
     end
