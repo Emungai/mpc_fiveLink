@@ -20,6 +20,7 @@ function [] = Animate_MPC_Traj(Time,X_REF_Original,x_traj,animateTraj,animateRef
         anim2.updateWorldPosition = true;
         conGUI2 = Animator.AnimatorControls();
         conGUI2.anim = anim2;
-        title('real trajectory');
+%         title('real trajectory');
+        set(gcf,'color','w');
     end
 end

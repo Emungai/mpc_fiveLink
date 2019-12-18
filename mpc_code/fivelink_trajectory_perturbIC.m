@@ -17,7 +17,7 @@ N = 10; % prediction horizon
 
 %% Load Reference Trajectory
 cur = pwd;
-stpheight = 0.04;
+stpheight = 0.05;
 dir = 'ascend';
 trajName = string(stpheight)+'_'+dir+'.mat';
 if isequal(dir,'ascend')
@@ -100,7 +100,7 @@ X = SX.sym('X',n_s,(N+1));
 g = [];  % constraints vector
 
 Qx= diag([1 1 1 1 1 1 1]);
-Qdx= 1*diag([1 1 1 1 1 1 1]);
+Qdx= diag([1 1 1 1 1 1 1]);
 Q=blkdiag(Qx,Qdx);
 Q_terminal = Q;
 % Q_terminal = 1000*blkdiag(eye(7), zeros(7,7));
@@ -158,6 +158,9 @@ args.lbg(1:n_s*(N+1)) = 0;
 args.ubg(1:n_s*(N+1)) = 0; 
 
 % State inequalities
+param.bounds.RightStance.states.x.lb(3:end)=param.bounds.RightStance.states.x.lb(3:end)-0.3;
+param.bounds.RightStance.states.x.ub(3:end)=param.bounds.RightStance.states.x.ub(3:end)+0.3;
+
 args.lbx(1:n_s:n_s*(N+1),1) = param.bounds.RightStance.states.x.lb(1);             %state x lower bound
 args.ubx(1:n_s:n_s*(N+1),1) = param.bounds.RightStance.states.x.ub(1);              %state x upper bound
 args.lbx(2:n_s:n_s*(N+1),1) = param.bounds.RightStance.states.x.lb(2);                %state z lower bound
@@ -207,27 +210,36 @@ args.ubx(n_s*(N+1)+4:n_c:n_s*(N+1)+n_c*(N+1),1) = torque_max;
 
 
 %% MPC Calculation
+
+% NOTE: THERE IS a huge difference when using the X_REF_Original initial
+% condition that was calculated from bezfit and the exact initial condition
+% given from the FROST trajectory
+
 t0 = 0;
 Time(1) = t0;
 t_final = DT * (size(X_REF_Original,2)-1);
+lead = 5;
+traj2 = 0.05;
+traj3 = -1;
 
-% trajName2 = '0.05_ascend.mat';
-% param2=load(['..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend\',trajName2]);
-% x0 = [param2.gait(1).states.x(:,1); param2.gait(1).states.dx(:,1)] + ...
-%      [0; 0; 0; 0; 0; 0; 0;
-%       0; 0; 0; 0; 0; 0; 0];    % initial condition. 14X1
-x0 = X_REF_Original(:,1);
- 
-% IC_perturb = [0; 0; 0; 0; 0; 0; 0;
-%               0; 0; 0; 0; 0; -0.5; 0.5]; 
+x0 = [param.gait(1).states.x(:,1); param.gait(1).states.dx(:,1)];    % initial condition. 14X1
 
-IC_perturb = X_REF_Original(:,20) - X_REF_Original(:,1);
-          
-
-x0 = x0 + IC_perturb;
+if traj2 > 0        % use different traj as IC
+    trajName2 = traj2+"_ascend.mat";
+    param2=load(fullfile('..\rabbit_stepUp\trajectories\stepUp\singleDomain\variousStepHeightsAscend\',trajName2));
+    xref2 = [param2.gait(1).states.x(:,1); param2.gait(1).states.dx(:,1)];
+    IC_perturb =  xref2 - x0;
+    x0 = IC_perturb + x0;
+elseif traj3 > 0    % perturb velocities of IC
+    IC_perturb = [0; 0; 0; 0; 0; 0; 0;
+                  0; 0; 0; 0; 0; -0.25; 0.5]; 
+    x0 = x0 + IC_perturb;
+else                % choose state later in the traj
+    IC_perturb = [param.gait(1).states.x(:,lead); param.gait(1).states.dx(:,lead)] - x0;
+    x0 = IC_perturb + x0;
+end
 
 x_traj(:,1) = x0; % xx contains the history of states
-
 
 U_DEC = zeros(N+1,n_c);
 
@@ -339,7 +351,13 @@ disp(swingPosEnd);
 
 
 %% Save Workspace to results folder
-file_name = stpheight+"_"+dir+"_ICperturbation.mat";
+if traj2 > 0
+    file_name = stpheight+"_"+dir+"_"+traj2+"IC.mat";
+elseif traj3 > 0
+    file_name = stpheight+"_"+dir+"_"+"velpert.mat";
+else
+    file_name = stpheight+"_"+dir+"_"+lead+"trajlead.mat";
+end
 save(fullfile(pwd, 'Results/Perturbations/', file_name));
 
 %% Plot results
