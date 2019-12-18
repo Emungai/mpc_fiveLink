@@ -7,5 +7,5 @@ The stair climbing trajectories (ascent and descent) can be found in the rabbit_
   * The resultant trajectories are stored in the mpc_code/Results directory. 
   * After loading one of these trajectories, the Plot_MPC_traj.m and Animate_MPC_Traj.m function in the mpc_code/utils/ directory can be used to view the results.
 
-A report describing our methodology for structuring and computing the TT-NMPC controller is included here. 
+A report describing our methodology for structuring and computing the TT-NMPC controller is included [here](https://github.com/Emungai/mpc_fiveLink/blob/master/MPC_FiveLink_Report.pdf). 
 
