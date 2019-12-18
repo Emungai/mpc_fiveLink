@@ -1,4 +1,4 @@
-# mpc_fiveLink
+# Trajectory Tracking Nonlinear Model Predictive Control for Stair Climbing of a Planar Five Link Walker
 
 The stair climbing trajectories (ascent and descent) can be found in the rabbit_stepUp/trajectories/stepUp/singleDomain directory. The Trajectory Tracking NMPC code is found in the mpc_code/ directory. The steps needed to run this code are outlined below.
 * To run the code open the fivelink_trajectory.m file and run. 
