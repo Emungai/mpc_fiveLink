@@ -153,12 +153,7 @@ opts.print_time = 0;
 opts.ipopt.acceptable_tol =1e-8;
 opts.ipopt.acceptable_obj_change_tol = 1e-6;
 
-<<<<<<< HEAD:mpc_code/fivelink_trajectory_grant.m
 solver = nlpsol('solver', 'ipopt', nlp_prob,opts);
-% solver = nlpsol('solver', 'ipopt', nlp_prob);
-=======
-solver = nlpsol('solver', 'ipopt', nlp_prob);
->>>>>>> fd58806c4190fa932107949edc283394aa7838a5:mpc_code/fivelink_trajectory.m
 
 args = struct;
 
@@ -204,12 +199,8 @@ args.ubx(14:n_s:n_s*(N+1),1) = 20;
 
 % Control inequalities
 % torque_max =param.bounds.RightStance.inputs.Control.u.ub ; torque_min =param.bounds.RightStance.inputs.Control.u.lb;
-<<<<<<< HEAD:mpc_code/fivelink_trajectory_grant.m
 torque_max = 10; torque_min = -torque_max;
 
-=======
-torque_max =0.35; torque_min = -torque_max;
->>>>>>> fd58806c4190fa932107949edc283394aa7838a5:mpc_code/fivelink_trajectory.m
 args.lbx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*(N+1),1) = torque_min;    % u_q1R lower bound
 args.ubx(n_s*(N+1)+1:n_c:n_s*(N+1)+n_c*(N+1),1) = torque_max;   
 args.lbx(n_s*(N+1)+2:n_c:n_s*(N+1)+n_c*(N+1),1) = torque_min;    % u_q2R lower bound
@@ -349,8 +340,6 @@ swingPosEnd = leftToePos(x_traj(1:7,end));
 disp("End position of swing foot: ")
 disp(swingPosEnd);
 
-
-<<<<<<< HEAD:mpc_code/fivelink_trajectory_grant.m
 %% Save Workspace to results folder
 % if Nstart == 10
 %     file_name = stpheight+"_"+dir+"_Trajectory.mat";
@@ -359,16 +348,10 @@ disp(swingPosEnd);
 % end
 % save(fullfile(pwd, 'Results/TrajectoryTracking/', file_name));
 
-=======
-% %% Save Workspace to results folder
-% file_name = stpheight+"_"+dir+"_Trajectory.mat";
-% save(fullfile(pwd, 'Results/TrajectoryTracking/', file_name));
-% 
->>>>>>> fd58806c4190fa932107949edc283394aa7838a5:mpc_code/fivelink_trajectory.m
 %% Plot results
 plot_q = true;
-plot_dq = false;
-plot_u = false;
+plot_dq = true;
+plot_u = true;
 traj = string(stpheight)+'m '+dir;
 if (true)
     Plot_MPC_Traj(Time,x_traj,X_REF_Original,u_cl,U_REF_Original,plot_q,plot_dq,plot_u,traj,args); 
@@ -389,8 +372,8 @@ file_name = "0.45TorqueSaturation_MPCTrajectory.mat";
 save(fullfile(pwd, 'Results/IOComparisons', file_name));
 
 %% Animation
-animateTraj = true;
-animateRef = false;
+animateTraj = false;
+animateRef = true;
 if true
    Animate_MPC_Traj(Time,X_REF_Original,x_traj,animateTraj,animateRef) 
 end
